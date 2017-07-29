@@ -1,4 +1,9 @@
+module Model
+    (Card, Cards, Color, Value, Player, PlayerMove, PlayerNumber, GameAction, GameState, PlayerState, deck
+    ) where
+
 import Data.Map
+-- import System.Random
 
 data Card = Card {value :: Value, color :: Color} deriving (Read, Show, Eq)
 data Color = Eichel | Gras | Herz | Schellen deriving (Read, Show, Enum, Eq, Ord)
@@ -43,9 +48,3 @@ data GameState = GameState {
   Geber -> cannot estimate #ofTricks so that they match the number of rounds
   allPossibleCards
 -}
-deal :: Cards -> Int -> (Cards, Cards)
-deal pile numberCards = (take numberCards pile, drop numberCards pile)
-
-main :: IO ()
-main = do
-  print (deck `deal` 5)
