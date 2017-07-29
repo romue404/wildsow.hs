@@ -1,6 +1,8 @@
 module Main where
 
 import Lib
+import Model
+import Actions
 
 main :: IO ()
-main = someFunc
+main = print(deck)
