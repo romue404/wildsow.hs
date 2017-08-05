@@ -2,7 +2,6 @@ module Actions where
 import Model
 import System.Random
 
-
 -- function withResupply - endless stream of shuffled decks
 -- needs work when not enough cards can be dealt
 deal :: Cards -> Int -> (Cards, Cards)
@@ -21,6 +20,7 @@ shuffle x = if length x < 2 then return x else do
 maxCardsPerPlayer :: Cards -> Int -> Int
 maxCardsPerPlayer deck numberOfPlayers =  (length deck) `div` numberOfPlayers
 
+
 nextPlayerNumber :: Int -> Int -> Int
 nextPlayerNumber previousPlayerNumber numberOfPlayers = previousPlayerNumber `mod` numberOfPlayers + 1
 
@@ -32,8 +32,8 @@ cardsPerRound deck players =
 cardsWithColor :: Cards -> Color -> Cards
 cardsWithColor hand color = filter (\(Card v c) ->  c == color) hand
 
-allowedToPlay :: Cards -> Color -> Color -> Cards
-allowedToPlay hand trumpColor currentColor =
+playeableCards :: Cards -> Color -> Color -> Cards
+playeableCards hand trumpColor currentColor =
   case cardsWithColor hand trumpColor of
        trumpCards@(c:cs)-> trumpCards
        [] -> case cardsWithColor hand currentColor of
