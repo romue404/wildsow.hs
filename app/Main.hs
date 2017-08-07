@@ -25,8 +25,11 @@ initGameState = GameState {
 initGameStateM = return () :: State GameState ()
 
 testM = do
-  s <- gets pile
-  lift (print s)
+  s <- get
+  lift (print $ currentColor s)
+  modify(processMove(TellColor p1 Herz))
+  s' <- get
+  lift (print $ currentColor s')
   return ()
 
 

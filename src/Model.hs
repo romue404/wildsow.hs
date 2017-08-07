@@ -8,7 +8,7 @@ import Requisites
 
 data Card = Card {value :: Value, color :: Color} deriving (Read, Show, Eq)
 data Color = Eichel | Gras | Herz | Schellen deriving (Read, Show, Enum, Eq, Bounded)
-data Value =  Six| Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Read,  Show, Enum, Eq, Ord, Bounded)
+data Value =  Six| Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Read, Show, Enum, Eq, Ord, Bounded)
 
 instance CardEq Card where
    colorEq (Card _ c) (Card _ c') =  c == c'
@@ -33,7 +33,7 @@ data PlayerMove = PlayCard Player Card | TellNumberOfTricks Player Int | TellCol
 
 data GamePhase = GameOver | WaitingForTricks Player | WaitingForColor Player | WaitingForCard Player  | Evaluation
 
-data PlayerState = PlayerState {player :: Player, playedCard :: Maybe Card, hand :: Cards, tricks :: [Int], score :: [Integer], tricksSubround::[(Int,Int)]}
+data PlayerState = PlayerState {player :: Player, playedCard :: Maybe Card, hand :: Cards, tricks :: [Int], score :: [Int], tricksSubround::[(Int,Int)]} deriving (Read, Show)
 
 data GameState = GameState {
   phase :: GamePhase,
