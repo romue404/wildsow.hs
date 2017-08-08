@@ -17,17 +17,11 @@ shuffle x = if length x < 2 then return x else do
   r <- shuffle (take i x ++ drop (i+1) x)
   return (x!!i : r)
 
-maxCardsPerPlayer :: Cards -> Int -> Int
-maxCardsPerPlayer deck numberOfPlayers =  (length deck) `div` numberOfPlayers
 
 
 nextPlayerNumber :: Int -> Int -> Int
 nextPlayerNumber previousPlayerNumber numberOfPlayers = previousPlayerNumber `mod` numberOfPlayers + 1
 
-cardsPerRound :: Cards -> Int -> [Int]
-cardsPerRound deck players =
-  map (\x -> abs(x - rounds) + 1) [1..rounds * 2 - 1]
-  where rounds = maxCardsPerPlayer deck players
 
 cardsWithColor :: Cards -> Color -> Cards
 cardsWithColor hand color = filter (\(Card v c) ->  c == color) hand

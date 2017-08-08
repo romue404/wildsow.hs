@@ -48,7 +48,7 @@ data GameState = GameState {
 initWildsowGameState :: StdGen -> GameState
 initWildsowGameState gen = GameState{
   phase = Idle,
-  currentRound = 1,
+  currentRound = 1, -- do not change!
   currentColor = Nothing,
   pile = shuffledPile',
   trump = color trump',

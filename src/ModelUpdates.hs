@@ -7,6 +7,7 @@ import Data.Maybe
 import Control.Monad
 import Types
 import System.Random.Shuffle
+import System.Random
 
 
 -- data GamePhase = NewGame | GameOver | WaitingForTricks Player | WaitingForCards Player   | Evaluation
@@ -63,8 +64,28 @@ evaluateSubRound gameState =
       winner = if (not . null) candidatesTrump then highestCard candidatesTrump else highestCard candidatesColor
   in gameState{players = updatePlayer (\p -> p{tricksSubround = [(round, 1)] ++ tricksSubround p}) winner players}
 
+-- show this in presentation
+dealCards :: GameState -> GameState
+dealCards gs@GameState{currentRound=round, pile=pile, players=players, stdGen = gen} = gs{pile=undealtCards, players=playersWithDealtCards}
+  where numberOfCards = (cardsPerRound Model.deck $ length players) !! round-1
+        (shuffledDeck, gen') = (shuffle' Model.deck (length Model.deck) gen, snd $ next gen)
+        chunked = sublist numberOfCards shuffledDeck
+        playersWithDealtCards = map (\(chunk, player) ->player{hand=chunk, playedCard=Nothing}) (zip chunked players)
+        undealtCards = concat $ drop (length players) chunked
 
 
+cardsPerRound :: Cards -> Int -> [Int]
+cardsPerRound deck players =
+  map (\x -> abs(x - rounds) + 1) [1..rounds * 2 - 1]
+  where rounds = maxCardsPerPlayer deck players
+
+maxCardsPerPlayer :: Cards -> Int -> Int
+maxCardsPerPlayer deck numberOfPlayers =  (length deck) `div` numberOfPlayers
+
+sublist :: Int -> [a] -> [[a]]
+sublist n ls
+    | n <= 0 || null ls = []
+    | otherwise = take n ls:sublist n (drop n ls)
 highestCard :: [(Player, Card)] -> Player
 highestCard pcs = fst$ maximumBy (comparing(value . snd)) pcs
 
@@ -92,7 +113,10 @@ clearPlayedCards gameState =
   in gameState {players = players'}
 
 setNewTrump :: GameState -> GameState
-setNewTrump gameState = gameState {trump= Model.color . head $ pile gameState, pile= tail $ pile gameState}
+setNewTrump gameState = gameState {trump= trump, pile = rest}
+  where (trump, rest) = case pile gameState of
+                        [] -> ((shuffle' Model.colors (length Model.colors) $ Model.stdGen gameState) !! 0, [])
+                        (x:xs) -> (Model.color x, xs)
 
 tricksPlayerUpdate :: Int -> Player -> [PlayerState] -> [PlayerState]
 tricksPlayerUpdate tricks = updatePlayer $ tellTricks tricks

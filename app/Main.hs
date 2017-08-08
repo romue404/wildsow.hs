@@ -12,8 +12,8 @@ type App = StateT GameState IO ()
 
 initGameStateM = return () :: State GameState ()
 
-testM :: App
-testM = do
+wildsow :: App
+wildsow = do
   modify(step . processMove(TellColor p1 Herz))
   modify(step . processMove(TellNumberOfTricks p1 3))
   modify(step . processMove(TellNumberOfTricks p2 3))
@@ -23,11 +23,12 @@ testM = do
   lift $ print $ players s
   lift $ print $ allTricksSet s
   lift $ print $ phase s
+  lift $ print $ trump s
   return()
 
 
 main = do
   gen <- getStdGen
-  evalStateT testM $ initWildsowGameState gen
+  evalStateT wildsow $ initWildsowGameState gen
 
 
