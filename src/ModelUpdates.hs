@@ -6,6 +6,7 @@ import Data.Ord
 import Data.Maybe
 import Control.Monad
 import Types
+import System.Random.Shuffle
 
 
 -- data GamePhase = NewGame | GameOver | WaitingForTricks Player | WaitingForCards Player   | Evaluation
@@ -27,6 +28,7 @@ step gs@GameState {phase = Evaluation}
   -- TODO deal cards
   -- TODO waitingForColor
 step gs@GameState {phase = GameOver} = gs
+step gs@GameState {phase = _} = gs
 
 
 processMove :: PlayerMove -> GameState-> GameState
@@ -74,7 +76,7 @@ waitForColor gameState =  gameState{players = playerQueue, phase = WaitingForCol
 
 -- TODO avoid duplication
 waitForNextTricks :: GameState -> GameState
-waitForNextTricks gameState =  gameState{players = playerQueue, phase = WaitingForCard nextInLine}
+waitForNextTricks gameState =  gameState{players = playerQueue, phase = WaitingForTricks nextInLine}
   where playerQueue = nextPlayer(players gameState)
         nextInLine = (player . head) playerQueue
 -- TODO avoid duplication
@@ -126,4 +128,4 @@ allTricksSet :: GameState -> Bool
 allTricksSet gameState =  flip(all) players' haveEnoughEntries
   where players' = players gameState
         round = currentRound gameState
-        haveEnoughEntries = (\p -> length(tricks p) == round)
+        haveEnoughEntries = (\PlayerState{tricks=t} -> length(t) >=  round)
