@@ -22,12 +22,11 @@ step gs@GameState {phase=WaitingForColor p} =
   case currentColor gs of
     Nothing -> gs
     Just c -> gs{phase = WaitingForTricks p}
-step gs@GameState {phase = Evaluation}
+step gs@GameState {phase = Evaluation, currentRound=round}
   |not $ allHandsPlayed gs = (clearPlayedCards . setNewTrump . waitForNextCard . evaluateSubRound) gs
-  |otherwise = (waitForColor . clearPlayedCards . setNewTrump . evaluateRound. evaluateSubRound) gs{players = nextPlayer $ players gs}
+  |round+1 >= length  (cardsPerRound Model.deck $ length $ players gs) = (evaluateRound. evaluateSubRound) gs{phase=GameOver}
+  |otherwise = (waitForColor . clearPlayedCards . setNewTrump . dealCards . evaluateRound. evaluateSubRound) gs{players = nextPlayer $ players gs}
   --  new round means we have to change the player twice
-  -- TODO deal cards
-  -- TODO waitingForColor
 step gs@GameState {phase = GameOver} = gs
 step gs@GameState {phase = _} = gs
 
@@ -66,12 +65,13 @@ evaluateSubRound gameState =
 
 -- show this in presentation
 dealCards :: GameState -> GameState
-dealCards gs@GameState{currentRound=round, pile=pile, players=players, stdGen = gen} = gs{pile=undealtCards, players=playersWithDealtCards}
-  where numberOfCards = (cardsPerRound Model.deck $ length players) !! round-1
-        (shuffledDeck, gen') = (shuffle' Model.deck (length Model.deck) gen, snd $ next gen)
-        chunked = sublist numberOfCards shuffledDeck
-        playersWithDealtCards = map (\(chunk, player) ->player{hand=chunk, playedCard=Nothing}) (zip chunked players)
-        undealtCards = concat $ drop (length players) chunked
+dealCards gs@GameState{currentRound=round, pile=pile, players=players, stdGen = gen} =
+  gs{pile=undealtCards, players=playersWithDealtCards, stdGen=gen'}
+    where numberOfCards = (cardsPerRound Model.deck $ length players) !! round
+          (shuffledDeck, gen') = (shuffle' Model.deck (length Model.deck) gen, snd $ next gen)
+          chunked = sublist numberOfCards shuffledDeck
+          playersWithDealtCards = map (\(chunk, player) ->player{hand=chunk, playedCard=Nothing}) (zip chunked players)
+          undealtCards = concat $ drop (length players) chunked
 
 
 cardsPerRound :: Cards -> Int -> [Int]
@@ -86,6 +86,7 @@ sublist :: Int -> [a] -> [[a]]
 sublist n ls
     | n <= 0 || null ls = []
     | otherwise = take n ls:sublist n (drop n ls)
+
 highestCard :: [(Player, Card)] -> Player
 highestCard pcs = fst$ maximumBy (comparing(value . snd)) pcs
 
@@ -153,3 +154,26 @@ allTricksSet gameState =  flip(all) players' haveEnoughEntries
   where players' = players gameState
         round = currentRound gameState
         haveEnoughEntries = (\PlayerState{tricks=t} -> length(t) >=  round)
+
+
+
+
+
+-- INIT --
+
+initWildsowGameState :: StdGen -> GameState
+initWildsowGameState gen = dealCards .setNewTrump $ GameState{
+  phase = Idle,
+  currentRound = 0,
+  currentColor = Nothing,
+  pile = [],
+  trump = Gras,
+  players=(initPlayerState p1):(initPlayerState p2):(initPlayerState p3):(initPlayerState p4):[],
+  stdGen=gen
+}
+
+initPlayerState player = PlayerState player Nothing [] [] [] []
+p1 = Player "Thomas Mueller" 1
+p2 = Player "James Roriguez" 2
+p3 = Player "Arjen Robben" 3
+p4 = Player "Frank Ribery" 4
