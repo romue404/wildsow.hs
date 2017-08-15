@@ -8,3 +8,5 @@ class CardEq a where
   completeEq :: a -> a -> Bool
   completeEq a b = colorEq a b && valueEq a b
 
+class PlayerAction action where
+  whos :: action -> String

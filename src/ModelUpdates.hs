@@ -8,10 +8,11 @@ import Control.Monad
 import Types
 import System.Random.Shuffle
 import System.Random
+import Control.Applicative
 
-
--- data GamePhase = NewGame | GameOver | WaitingForTricks Player | WaitingForCards Player   | Evaluation
+----------------------------------- STEPPING THE GAME FORWARD -----------------------------------
 step :: GameState -> GameState
+step gs@GameState {phase = Idle} = (waitForColor . setNewTrump . dealCards) gs
 step gs@GameState {phase = WaitingForTricks p}
   |allTricksSet gs = waitForNextCard gs
   |otherwise = waitForNextTricks gs
@@ -28,14 +29,28 @@ step gs@GameState {phase = Evaluation, currentRound=round}
   |otherwise = (waitForColor . clearPlayedCards . setNewTrump . dealCards . evaluateRound. evaluateSubRound) gs{players = nextPlayer $ players gs}
   --  new round means we have to change the player twice
 step gs@GameState {phase = GameOver} = gs
-step gs@GameState {phase = _} = gs
+
+
+moveValidataionPipeline :: PlayerMove -> GameState -> [(Bool, PlayerMoveError)]
+moveValidationPipeline (PlayCard name card) gs@GameState{phase=p} =
+  [(isWaitingForCards p, UnexpectedMove),
+  (isPlayersTurn (Player name) gs, NotPlayersTurn),
+  (card `elem` playeableCards (Player name) gs, MoveAgainstRules)]
+moveValidataionPipeline (TellNumberOfTricks name tricks) gs@GameState{phase=p} =
+  [(isWaitingForTricks p, UnexpectedMove),
+  (isPlayersTurn (Player name) gs, NotPlayersTurn)]
+moveValidataionPipeline (TellColor name color) gs@GameState{phase=p} =
+  [(isWaitingForColor p, UnexpectedMove),
+  (isPlayersTurn (Player name) gs, NotPlayersTurn)]
 
 
 processMove :: PlayerMove -> GameState-> GameState
-processMove (PlayCard player card) gs =  gs{players = cardPlayedUpdate card player $ Model.players gs}
-processMove (TellNumberOfTricks player tricks) gs =  gs{players = tricksPlayerUpdate tricks player $ Model.players gs}
+processMove (PlayCard name card) gs =  gs{players = cardPlayedUpdate card (Player name) $ Model.players gs}
+processMove (TellNumberOfTricks name tricks) gs =  gs{players = tricksPlayerUpdate tricks (Player name) $ Model.players gs}
 processMove (TellColor _ color) gs = gs{currentColor=Just color}
 
+
+----------------------------------- HELPER FUNCTIONS -----------------------------------
 
 evaluateRound :: GameState -> GameState
 evaluateRound gameState = gameState{players = playersWithScore, currentRound = round + 1}
@@ -63,6 +78,28 @@ evaluateSubRound gameState =
       winner = if (not . null) candidatesTrump then highestCard candidatesTrump else highestCard candidatesColor
   in gameState{players = updatePlayer (\p -> p{tricksSubround = [(round, 1)] ++ tricksSubround p}) winner players}
 
+
+cardsOnTable :: [PlayerState] -> Cards
+cardsOnTable ps = catMaybes $ playedCard `fmap` ps
+
+orElseList :: [a] -> [a] -> [a]
+orElseList (x:xs) fallback = (x:xs)
+orElseList [] fallback = fallback
+
+playeableCards :: Player -> GameState -> Cards
+playeableCards player gs@GameState{players=players, trump=trump, currentColor=currentColor} =
+  fromMaybe [] $ do
+    currentColor' <- currentColor
+    player' <- find (\p -> player ==  (Model.player p)) players
+    let table = cardsOnTable players
+    let playersHand = hand player'
+    let trumpsOnTable = cardsWithColor table trump
+    let playersTrumps = cardsWithColor playersHand trump
+    let playersCardsWithColor = cardsWithColor playersHand currentColor'
+    case trumpsOnTable of
+      (c:cs) -> Just $ orElseList playersTrumps (orElseList playersCardsWithColor playersHand)
+      [] -> Just $ orElseList playersCardsWithColor playersHand
+
 -- show this in presentation
 dealCards :: GameState -> GameState
 dealCards gs@GameState{currentRound=round, pile=pile, players=players, stdGen = gen} =
@@ -73,6 +110,8 @@ dealCards gs@GameState{currentRound=round, pile=pile, players=players, stdGen = 
           playersWithDealtCards = map (\(chunk, player) ->player{hand=chunk, playedCard=Nothing}) (zip chunked players)
           undealtCards = concat $ drop (length players) chunked
 
+cardsWithColor :: Cards -> Color -> Cards
+cardsWithColor hand color = filter (\(Card v c) ->  c == color) hand
 
 cardsPerRound :: Cards -> Int -> [Int]
 cardsPerRound deck players =
@@ -143,9 +182,6 @@ allHandsPlayed gs = all (\p -> null $ hand p) $ players gs
 isRoundStarter :: Player -> GameState -> Bool
 isRoundStarter p gameState =  p == (player $ head $ players gameState) &&  (all (\p -> isNothing $ playedCard p) $ players gameState)
 
-isPlayersTurn :: Player -> GameState -> Bool
-isPlayersTurn player gameState =  player == (Model.player $ head $ players gameState)
-
 nextPlayer :: [PlayerState] -> [PlayerState]
 nextPlayer (p:ps) = ps ++ [p]
 
@@ -155,25 +191,44 @@ allTricksSet gameState =  flip(all) players' haveEnoughEntries
         round = currentRound gameState
         haveEnoughEntries = (\PlayerState{tricks=t} -> length(t) >=  round)
 
+initPlayerState player = PlayerState player Nothing [] [] [] []
 
+addPlayers :: [Player] -> GameState -> GameState
+addPlayers newPlayers gs@GameState{players=players} = gs{players= players ++ (map initPlayerState newPlayers) }
 
+isPlayersTurn :: Player -> GameState -> Bool
+isPlayersTurn player GameState{phase=WaitingForCard player'}  = player == player'
+isPlayersTurn player GameState{phase=WaitingForTricks player'}  =  player == player'
+isPlayersTurn player GameState{phase=WaitingForColor player'}  =  player == player'
+
+isWaitingForCards :: GamePhase -> Bool
+isWaitingForCards (WaitingForCard _) = True
+isWaitingForCards _ = False
+
+isWaitingForTricks :: GamePhase -> Bool
+isWaitingForTricks (WaitingForTricks  _) = True
+isWaitingForTricks _ = False
+
+isWaitingForColor :: GamePhase -> Bool
+isWaitingForColor (WaitingForColor _) = True
+isWaitingForColor _ = False
 
 
 -- INIT --
 
 initWildsowGameState :: StdGen -> GameState
-initWildsowGameState gen = dealCards .setNewTrump $ GameState{
+initWildsowGameState gen =  GameState{
   phase = Idle,
   currentRound = 0,
   currentColor = Nothing,
   pile = [],
   trump = Gras,
-  players=(initPlayerState p1):(initPlayerState p2):(initPlayerState p3):(initPlayerState p4):[],
+  players= [],
   stdGen=gen
 }
 
-initPlayerState player = PlayerState player Nothing [] [] [] []
-p1 = Player "Thomas Mueller" 1
-p2 = Player "James Roriguez" 2
-p3 = Player "Arjen Robben" 3
-p4 = Player "Frank Ribery" 4
+
+p1 = Player "Thomas Mueller"
+p2 = Player "James Roriguez"
+p3 = Player "Arjen Robben"
+p4 = Player "Frank Ribery"
