@@ -31,24 +31,34 @@ step gs@GameState {phase = Evaluation, currentRound=round}
 step gs@GameState {phase = GameOver} = gs
 
 
-moveValidataionPipeline :: PlayerMove -> GameState -> [(Bool, PlayerMoveError)]
-moveValidationPipeline (PlayCard name card) gs@GameState{phase=p} =
-  [(isWaitingForCards p, UnexpectedMove),
-  (isPlayersTurn (Player name) gs, NotPlayersTurn),
-  (card `elem` playeableCards (Player name) gs, MoveAgainstRules)]
-moveValidataionPipeline (TellNumberOfTricks name tricks) gs@GameState{phase=p} =
-  [(isWaitingForTricks p, UnexpectedMove),
-  (isPlayersTurn (Player name) gs, NotPlayersTurn)]
-moveValidataionPipeline (TellColor name color) gs@GameState{phase=p} =
-  [(isWaitingForColor p, UnexpectedMove),
-  (isPlayersTurn (Player name) gs, NotPlayersTurn)]
+moveValidataion :: PlayerMove -> Model.GameState -> Either Model.PlayerMoveError Model.GameState
+moveValidation move@(PlayCard name card) gs@GameState{phase=p} =
+  checkMove [(isWaitingForCards p, UnexpectedMove),
+             (isPlayersTurn (Player name) gs, NotPlayersTurn),
+             (card `elem` playeableCards (Player name) gs, MoveAgainstRules "You are not allowed to play this card")]
+             move gs
+moveValidataion move@(TellNumberOfTricks name tricks) gs@GameState{phase=p} =
+  checkMove [(isWaitingForTricks p, UnexpectedMove),
+            (isPlayersTurn (Player name) gs, NotPlayersTurn), (tricks >= 0, MoveAgainstRules "Tricks must be >= 0")]
+            move gs
+
+moveValidataion move@(TellColor name color) gs@GameState{phase=p} =
+  checkMove [(isWaitingForColor p, UnexpectedMove),
+            (isPlayersTurn (Player name) gs, NotPlayersTurn)] move gs
 
 
 processMove :: PlayerMove -> GameState-> GameState
-processMove (PlayCard name card) gs =  gs{players = cardPlayedUpdate card (Player name) $ Model.players gs}
+processMove (PlayCard name card) gs = gs{players = cardPlayedUpdate card (Player name) $ Model.players gs}
 processMove (TellNumberOfTricks name tricks) gs =  gs{players = tricksPlayerUpdate tricks (Player name) $ Model.players gs}
 processMove (TellColor _ color) gs = gs{currentColor=Just color}
 
+
+checkMove :: [(Bool, Model.PlayerMoveError)] -> Model.PlayerMove -> Model.GameState -> Either Model.PlayerMoveError Model.GameState
+checkMove preds move  gs = gameStateOrError
+  where unpassed = filter (\(a,b) -> a == False) preds
+        gameStateOrError = case unpassed of
+          [] -> Right $ (step . processMove(move)) gs
+          ((_, e):es) -> Left e
 
 ----------------------------------- HELPER FUNCTIONS -----------------------------------
 

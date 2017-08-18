@@ -36,7 +36,7 @@ data GamePhase = Idle | GameOver | WaitingForTricks Player | WaitingForColor Pla
 
 data PlayerState = PlayerState {player :: Player, playedCard :: Maybe Card, hand :: Cards, tricks :: [Int], score :: [Int], tricksSubround::[(Int,Int)]} deriving (Read, Show)
 
-data PlayerMoveError = NotPlayersTurn | MoveAgainstRules | UnexpectedMove deriving Show
+data PlayerMoveError = NotPlayersTurn | MoveAgainstRules String | UnexpectedMove deriving Show
 
 data GameState = GameState {
   phase :: GamePhase,

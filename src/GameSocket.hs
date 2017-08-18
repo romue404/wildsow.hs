@@ -24,6 +24,8 @@ import Control.Monad.Except (MonadError, throwError)
 import Data.Typeable
 import Types
 
+
+----------------------------------------------------- COMMUNICATION DATA -----------------------------------------------------
 type GameId = String
 type ServerState = [ClientWithConnection]
 type ClientWithConnection = (Client, WS.Connection)
@@ -32,6 +34,11 @@ data Client = Client {name::String}  deriving (Eq, Show)
 data ClientMessage =
   Join {userName::String, gameId::String} | Create {userName::String, gameId::String} |GameAction GameId GameModel.PlayerMove
   deriving (Show)
+
+instance PlayerAction ClientMessage where
+  whos (Join userName _) = userName
+  whos (Create userName _) = userName
+  whos (GameAction id ga) = whos ga
 
 deriveJSON defaultOptions ''Client -- template haskell
 instance FromJSON ClientMessage where
@@ -53,64 +60,94 @@ instance FromJSON ClientMessage where
         return $ GameAction gameId $ GameModel.TellColor userName color
       _        -> fail ("unknown kind: " ++ kind)
 
+----------------------------------------------------- GAME SOCKET -----------------------------------------------------
 
 gameSocket :: IO()
 gameSocket = do
-  socketState <- newMVar []
   games <-  atomically $ newTVar (Map.empty:: Games)
-  WS.runServer "127.0.0.1" 8080 $ app socketState games
+  WS.runServer "127.0.0.1" 8080 $ app games
 
-app :: MVar ServerState -> TVar (NetworkManagement.GameChannels GameId) -> WS.PendingConnection ->  IO ()
-app state games pending = do
+app :: TVar (NetworkManagement.GameChannels GameId) -> WS.PendingConnection ->  IO ()
+app games pending = do
   conn <- WS.acceptRequest pending
   WS.forkPingThread conn 30 -- ensure the connection stays alive
   forever $ handle (errorHandler conn) (do
     msg <- WS.receiveData conn
-    clients <- readMVar state
     action <- maybe (throw NetworkManagement.ParseError) pure (decode(msg)::Maybe ClientMessage)
+
+    res <- case action of
+      Join userName gameId -> do
+        joined <- (atomically $ loginSTM gameId games (GameModel.Player userName))
+        either (throw) (pure) joined
+
+      Create userName gameId -> do
+        gen <- newStdGen
+        created <- (atomically $ createSTM gameId games (GameModel.Player userName) gen)
+        channel <- either (throw) (pure) created
+        -- hier gamestate verschicken bzw in die 2. phase wechseln
+        WS.sendTextData conn ("Created a new channel + game"::Text)
+        return ()
+      otherwise -> return ()
     -- hier alles parsen und action behandlung machen
     --let player = GameModel.Player name
-    t <- atomically $ handleMessages games action
-    x <- print(show t)
+    x <- print(show res)
     gen <- newStdGen
     WS.sendTextData conn ("Parsed:" `mappend` (T.pack(show $ action))::Text))
 
 
---handleMessages :: TVar(Games) -> ClientMessage -> IO()
-handleMessages gameChannels (Join userName gameId) =
-  do
-    games <- readTVar gameChannels
-    if not (NetworkManagement.channelExists gameId games) then return $ Left NetworkManagement.EntityDoesNotExist
-    else
-     (modifyTVar gameChannels $ NetworkManagement.joinChannel (GameModel.Player userName) gameId)
-     >> (return $ Right ())
+----------------------------------------------------- PERSIST ACTIONS VIA STM -----------------------------------------------------
 
-handleMessages gameChannels (Create userName gameId) = undefined
-handleMessages gameChannels (GameAction gameId action) =
-  do
-    games <- readTVar gameChannels
-    let player = GameModel.Player (whos action)
-    let checkNetwork = [(not(NetworkManagement.channelExists gameId games), NetworkManagement.EntityDoesNotExist),
-                        ((NetworkManagement.isMemberOfChannel player gameId games), NetworkManagement.NotAMember)]
-    let checkGameLogic =  fromMaybe [] $ do
-                            channel <- NetworkManagement.getChannel gameId games
-                            let validations = GameUpdates.moveValidataionPipeline action $ NetworkManagement.gameState channel
-                            return $ map (\(a,b) -> (a, NetworkManagement.GameError b)) validations
-    let combined = checkNetwork ++ checkGameLogic
-    -- if isEmpty -> carry on and return gamechannel -> else return Left $ first error
-    if length combined == 0 then modifyTVar gameChannels (\gc -> NetworkManagement.stepGameInChannel action gameId gc) >> (return $ Right ())
-    else  return $ Left $ (snd . head) combined
-    -- gameover detection
-    -- closing connection behandeln
+loginSTM ::
+  (Ord id) => id
+  -> TVar(NetworkManagement.GameChannels id)
+  -> GameModel.Player
+  -> STM(Either NetworkManagement.GameNetworkingException ())
+loginSTM id channels player = do
+  games <- readTVar channels
+  let checks = (NetworkManagement.getChannel' id games) >>= NetworkManagement.checkChannelLimit GameModel.maxAmountOfPlayers
+  case checks of
+    Left error -> return $ Left error
+    Right channel -> (writeTVar channels $ (NetworkManagement.joinChannel player id games)) >> (return $ Right ())
 
+createSTM ::
+  (Ord id) => id
+  -> TVar(NetworkManagement.GameChannels id)
+  -> GameModel.Player
+  -> StdGen
+  -> STM(Either NetworkManagement.GameNetworkingException NetworkManagement.GameChannel)
+createSTM id channels player gen = do
+  games <- readTVar channels
+  case swapEither(NetworkManagement.getChannel' id games) of
+    Left _ -> return $ Left NetworkManagement.EntityAlreadyExists
+    Right _ -> (
+      let (updatedChannels, newChannel) = (NetworkManagement.createChannel player id gen games)
+      in do
+        writeTVar channels $ updatedChannels
+        return $ Right newChannel
+      )
 
---check' predicates = fst map (== True)
+gameActionSTM ::
+  GameId
+  -> TVar(NetworkManagement.GameChannels GameId)
+  -> GameModel.Player
+  -> GameModel.PlayerMove
+  -> STM(Either NetworkManagement.GameNetworkingException ())
+gameActionSTM gameId channels player move = do
+  games <- readTVar channels
+  let eihterNewState = do
+            state <- (NetworkManagement.gameState) <$>  (NetworkManagement.getChannel' gameId games)
+            mapEitherR (\r -> NetworkManagement.GameError r) (GameUpdates.moveValidataion move state)
+  case eihterNewState of
+    Left err -> return $ Left err
+    Right newState -> do
+      writeTVar channels $ NetworkManagement.stepGameInChannel newState gameId games
+      return $ Right ()
 
-
-
+----------------------------------------------------- COMMUNICATE MESSAGES TO CLIENTS -----------------------------------------------------
 
 errorHandler :: WS.Connection -> NetworkManagement.GameNetworkingException -> IO ()
 errorHandler conn e = WS.sendTextData conn (T.pack(show e)::Text)
+
 
 broadcast :: Text -> ServerState -> IO ()
 broadcast message clients = do
@@ -118,28 +155,7 @@ broadcast message clients = do
    forM_ clients $ \(_, conn) -> WS.sendTextData conn message
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+----------------------------------------------------- HELPER -----------------------------------------------------
 mapEitherR f (Left error) = Left(f error)
 mapEitherR f (Right r) = Right(r)
 
