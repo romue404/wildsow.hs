@@ -27,8 +27,6 @@ import Types
 
 ----------------------------------------------------- COMMUNICATION DATA -----------------------------------------------------
 type GameId = String
-type ServerState = [ClientWithConnection]
-type ClientWithConnection = (Client, WS.Connection)
 type Games = NetworkManagement.GameChannels GameId
 data Client = Client {name::String}  deriving (Eq, Show)
 data ClientMessage =
@@ -74,25 +72,23 @@ app games pending = do
   forever $ handle (errorHandler conn) (do
     msg <- WS.receiveData conn
     action <- maybe (throw NetworkManagement.ParseError) pure (decode(msg)::Maybe ClientMessage)
-
     res <- case action of
       Join userName gameId -> do
-        joined <- (atomically $ loginSTM gameId games (GameModel.Player userName))
+        joined <- atomically $ loginSTM gameId games ((GameModel.Player userName), conn)
         either (throw) (pure) joined
-
       Create userName gameId -> do
         gen <- newStdGen
-        created <- (atomically $ createSTM gameId games (GameModel.Player userName) gen)
+        created <- (atomically $ createSTM gameId games (GameModel.Player userName, conn) gen)
         channel <- either (throw) (pure) created
         -- hier gamestate verschicken bzw in die 2. phase wechseln
-        WS.sendTextData conn ("Created a new channel + game"::Text)
-        return ()
-      otherwise -> return ()
+        broadcastState gameId games (NetworkManagement.gameState channel)
+      (GameAction id move) -> do
+        possibleAction <- atomically $ gameActionSTM id games (GameModel.Player $ whos move) move
+        state <- either (throw) (pure) possibleAction
+        broadcastState id games state
     -- hier alles parsen und action behandlung machen
-    --let player = GameModel.Player name
-    x <- print(show res)
-    gen <- newStdGen
-    WS.sendTextData conn ("Parsed:" `mappend` (T.pack(show $ action))::Text))
+    --WS.sendTextData conn ("Parsed:" `mappend` (T.pack(show $ action))::Text)
+    return res)
 
 
 ----------------------------------------------------- PERSIST ACTIONS VIA STM -----------------------------------------------------
@@ -100,7 +96,7 @@ app games pending = do
 loginSTM ::
   (Ord id) => id
   -> TVar(NetworkManagement.GameChannels id)
-  -> GameModel.Player
+  -> (GameModel.Player, WS.Connection)
   -> STM(Either NetworkManagement.GameNetworkingException ())
 loginSTM id channels player = do
   games <- readTVar channels
@@ -112,7 +108,7 @@ loginSTM id channels player = do
 createSTM ::
   (Ord id) => id
   -> TVar(NetworkManagement.GameChannels id)
-  -> GameModel.Player
+  -> (GameModel.Player, WS.Connection)
   -> StdGen
   -> STM(Either NetworkManagement.GameNetworkingException NetworkManagement.GameChannel)
 createSTM id channels player gen = do
@@ -131,28 +127,32 @@ gameActionSTM ::
   -> TVar(NetworkManagement.GameChannels GameId)
   -> GameModel.Player
   -> GameModel.PlayerMove
-  -> STM(Either NetworkManagement.GameNetworkingException ())
+  -> STM(Either NetworkManagement.GameNetworkingException GameModel.GameState)
 gameActionSTM gameId channels player move = do
   games <- readTVar channels
   let eihterNewState = do
-            state <- (NetworkManagement.gameState) <$>  (NetworkManagement.getChannel' gameId games)
+            (NetworkManagement.GameChannel players state) <- NetworkManagement.getChannel' gameId games
             mapEitherR (\r -> NetworkManagement.GameError r) (GameUpdates.moveValidataion move state)
   case eihterNewState of
     Left err -> return $ Left err
     Right newState -> do
       writeTVar channels $ NetworkManagement.stepGameInChannel newState gameId games
-      return $ Right ()
+      return $ Right (newState)
+
+-- TODO fetch gamestate inside stm
+broadcastState id channels state =
+  do
+    recieivers <- atomically $ do
+        game <- readTVar channels
+        let receiver = fromMaybe [] $ (fmap snd) <$> NetworkManagement.connectedPlayers <$> NetworkManagement.getChannel id game
+        return receiver
+    cast <- forM_ recieivers (\conn -> WS.sendTextData conn (Data.Aeson.encode(state)))
+    return ()
 
 ----------------------------------------------------- COMMUNICATE MESSAGES TO CLIENTS -----------------------------------------------------
 
 errorHandler :: WS.Connection -> NetworkManagement.GameNetworkingException -> IO ()
-errorHandler conn e = WS.sendTextData conn (T.pack(show e)::Text)
-
-
-broadcast :: Text -> ServerState -> IO ()
-broadcast message clients = do
-   T.putStrLn message
-   forM_ clients $ \(_, conn) -> WS.sendTextData conn message
+errorHandler conn e = WS.sendTextData conn (Data.Aeson.encode(e))
 
 
 ----------------------------------------------------- HELPER -----------------------------------------------------

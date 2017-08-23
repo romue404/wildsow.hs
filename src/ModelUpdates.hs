@@ -33,17 +33,22 @@ step gs@GameState {phase = GameOver} = gs
 
 moveValidataion :: PlayerMove -> Model.GameState -> Either Model.PlayerMoveError Model.GameState
 moveValidation move@(PlayCard name card) gs@GameState{phase=p} =
-  checkMove [(isWaitingForCards p, UnexpectedMove),
+  checkMove [(enoughPlayers gs, NotEnoughPlayers),
+             (isWaitingForCards p, UnexpectedMove),
              (isPlayersTurn (Player name) gs, NotPlayersTurn),
-             (card `elem` playeableCards (Player name) gs, MoveAgainstRules "You are not allowed to play this card")]
+             (card `elem` playeableCards (Player name) gs, MoveAgainstRules "You are not allowed to play this card")
+             ]
              move gs
 moveValidataion move@(TellNumberOfTricks name tricks) gs@GameState{phase=p} =
-  checkMove [(isWaitingForTricks p, UnexpectedMove),
-            (isPlayersTurn (Player name) gs, NotPlayersTurn), (tricks >= 0, MoveAgainstRules "Tricks must be >= 0")]
+  checkMove [(enoughPlayers gs, NotEnoughPlayers),
+            (isWaitingForTricks p, UnexpectedMove),
+            (isPlayersTurn (Player name) gs, NotPlayersTurn), (tricks >= 0, MoveAgainstRules "Tricks must be >= 0")
+            ]
             move gs
 
 moveValidataion move@(TellColor name color) gs@GameState{phase=p} =
-  checkMove [(isWaitingForColor p, UnexpectedMove),
+  checkMove [(enoughPlayers gs, NotEnoughPlayers),
+            (isWaitingForColor p, UnexpectedMove),
             (isPlayersTurn (Player name) gs, NotPlayersTurn)] move gs
 
 
@@ -88,6 +93,12 @@ evaluateSubRound gameState =
       winner = if (not . null) candidatesTrump then highestCard candidatesTrump else highestCard candidatesColor
   in gameState{players = updatePlayer (\p -> p{tricksSubround = [(round, 1)] ++ tricksSubround p}) winner players}
 
+
+enoughPlayers :: GameState -> Bool
+enoughPlayers gs = playersInGame gs >= Model.minAmountOfPlayers
+
+playersInGame :: GameState -> Int
+playersInGame GameState{players=ps} = length ps
 
 cardsOnTable :: [PlayerState] -> Cards
 cardsOnTable ps = catMaybes $ playedCard `fmap` ps

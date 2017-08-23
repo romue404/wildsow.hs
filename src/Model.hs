@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, TemplateHaskell, DeriveAnyClass , FlexibleContexts #-}
+{-# LANGUAGE OverloadedStrings, TemplateHaskell, DeriveAnyClass , FlexibleContexts, RecordWildCards #-}
 
 module Model where
 
@@ -7,7 +7,7 @@ import Requisites
 import System.Random(StdGen, newStdGen, next, mkStdGen)
 import System.Random.Shuffle
 import Data.Aeson.TH(deriveJSON, defaultOptions)
-import Data.Aeson as Aeson(encode, decode, eitherDecode)
+import Data.Aeson as Aeson hiding (Value)
 
 data Card = Card {value :: Value, color :: Color} deriving (Read, Show, Eq)
 data Color = Eichel | Gras | Herz | Schellen deriving (Read, Show, Enum, Eq, Bounded)
@@ -36,7 +36,7 @@ data GamePhase = Idle | GameOver | WaitingForTricks Player | WaitingForColor Pla
 
 data PlayerState = PlayerState {player :: Player, playedCard :: Maybe Card, hand :: Cards, tricks :: [Int], score :: [Int], tricksSubround::[(Int,Int)]} deriving (Read, Show)
 
-data PlayerMoveError = NotPlayersTurn | MoveAgainstRules String | UnexpectedMove deriving Show
+data PlayerMoveError = NotPlayersTurn | MoveAgainstRules String | UnexpectedMove | NotEnoughPlayers deriving Show
 
 data GameState = GameState {
   phase :: GamePhase,
@@ -66,10 +66,20 @@ instance Show GamePhase where
   show (Evaluation) = "Evaluation"
 
 deriveJSON defaultOptions ''PlayerState
+deriveJSON defaultOptions ''PlayerMoveError
 deriveJSON defaultOptions ''GamePhase
 deriveJSON defaultOptions ''Player
 deriveJSON defaultOptions ''Value
 deriveJSON defaultOptions ''Color
 deriveJSON defaultOptions ''Card
 
+
+instance ToJSON GameState where
+  toJSON GameState{..} = object [
+    "phase" .= show phase,
+    "round"  .= currentRound,
+    "color" .= currentColor,
+    "trump"  .= trump,
+    "playerState" .= players
+    ]
 
