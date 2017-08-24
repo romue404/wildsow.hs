@@ -1,1 +1,5 @@
 # wildsow-hs
+
+## API
+
+### PlayerHand
