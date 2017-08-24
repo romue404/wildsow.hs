@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Schwarze Sau</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" >
   <link rel="stylesheet" href="bower_components/materialize/dist/css/materialize.min.css">
+  <link rel="stylesheet" href="game.css">
 </head>
 <body>
 
@@ -41,6 +43,109 @@
 
 </div>
 
+<div class="container">
+  <div class="row center">
+    <p class="light center">When a player discarded a card, inform other players (session polling, socket push?)</p>
+    <div class="col s6">
+      <button class="btn green" id="played1">Player1 discarded a card</button>
+    </div>
+    <div class="col s6">
+      <button class="btn green" id="played2">Player2 discarded a card</button>
+    </div>
+  </div>
+  <div class="row center">
+    <div class="col s6">
+      <button class="btn green" id="played3">Player3 discarded a card</button>
+    </div>
+    <div class="col s6">
+      <button class="btn green" id="played4">Player4 discarded a card</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="game-table" class="board">
+
+  <div class="heap" id="heap">
+    <div class="gamecards">
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+    </div>
+  </div>
+
+  <div class="player1">
+    <div class="gamecards">
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="player2">
+    <div class="gamecards">
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="player3">
+    <div class="gamecards">
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="player4">
+    <div class="gamecards">
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+    </div>
+  </div>
+
+</div>
 <!-- Modal Structure -->
 <div id="score-board" class="modal">
   <div class="modal-content">
@@ -100,11 +205,6 @@
   </div>
 </div>
 
-<div id="game-table">
-  <div>
-    
-  </div>
-</div>
 
 
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
