@@ -60,6 +60,8 @@ $(document).ready(function(){
     tbial.y4++;
   })
 
+
+
 });
 
 var connection = new WebSocket("ws://localhost:8080");
