@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Schwarze Sau</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" >
+  <link rel="stylesheet" href="bower_components/materialize/dist/css/materialize.min.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+
+<div id="game-info" class="row">
+
+  <div class="col s12 m6">
+    <strong>Game Name: </strong>Hackers Party
+  </div>
+
+  <div class="col s12 m6">
+
+    <strong>Current total score: </strong>
+
+    <table>
+      <thead>
+      <tr>
+        <th>Player 1</th>
+        <th>Player 2</th>
+        <th>Player 3</th>
+      </tr>
+      </thead>
+      <tobdy>
+        <tr>
+          <td>30</td>
+          <td>5</td>
+          <td>7</td>
+        </tr>
+      </tobdy>
+
+    </table>
+
+    <a class="waves-effect waves-light btn modal-trigger" href="#score-board">Show full score</a>
+
+  </div>
+
+</div>
+
+<div class="row">
+
+  <div class="col s1">Spieler 1</div>
+  <div class="col s1"><input placeholder="Spieler Name"></div>
+  <div class="col s2"><button class="btn green" >Name erstellen</button></div>
+  <div class="col s1"><input placeholder="Spiel Name"></div>
+  <div class="col s2"><button class="btn green" >Spiel erstellen</button></div>
+  <div class="col s1"><input placeholder="Anzahl Stiche"></div>
+  <div class="col s2"><button  class="btn green" >Stiche angeben</button></div>
+  <div class="col s2"><button class="btn green" id="played1">Karte spielen</button></div>
+
+</div>
+
+<div class="row">
+
+  <div class="col s1">Spieler 2</div>
+  <div class="col s1"><input placeholder="Spieler Name"></div>
+  <div class="col s2"><button class="btn green" >Name erstellen</button></div>
+  <div class="col s1"><input placeholder="Spiel Name"></div>
+  <div class="col s2"><button class="btn green" >Spiel beitreten</button></div>
+  <div class="col s1"><input placeholder="Anzahl Stiche"></div>
+  <div class="col s2"><button  class="btn green" >Stiche angeben</button></div>
+  <div class="col s2"><button class="btn green" id="played2">Karte spielen</button></div>
+
+</div>
+
+<div class="row">
+
+  <div class="col s1">Spieler 3</div>
+  <div class="col s1"><input placeholder="Spieler Name"></div>
+  <div class="col s2"><button class="btn green" >Name erstellen</button></div>
+  <div class="col s1"><input placeholder="Spiel Name"></div>
+  <div class="col s2"><button class="btn green" >Spiel beitreten</button></div>
+  <div class="col s1"><input placeholder="Anzahl Stiche"></div>
+  <div class="col s2"><button  class="btn green" >Stiche angeben</button></div>
+  <div class="col s2"><button class="btn green" id="played3">Karte spielen</button></div>
+
+</div>
+
+<div class="row">
+
+  <div class="col s1">Spieler 4</div>
+  <div class="col s1"><input placeholder="Spieler Name"></div>
+  <div class="col s2"><button class="btn green" >Name erstellen</button></div>
+  <div class="col s1"><input placeholder="Spiel Name"></div>
+  <div class="col s2"><button class="btn green" >Spiel beitreten</button></div>
+  <div class="col s1"><input placeholder="Anzahl Stiche"></div>
+  <div class="col s2"><button  class="btn green" >Stiche angeben</button></div>
+  <div class="col s2"><button class="btn green" id="played4">Karte spielen</button></div>
+
+</div>
+
+<div id="game-table" class="board">
+
+  <div class="heap" id="heap">
+    <div class="gamecards">
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+    </div>
+  </div>
+
+  <div class="player1">
+    <div class="gamecards">
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="player2">
+    <div class="gamecards">
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="player3">
+    <div class="gamecards">
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+
+      <div class="gamecard">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="player4">
+    <div class="gamecards">
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+      <div class="gamecard"></div>
+    </div>
+  </div>
+
+</div>
+<!-- Modal Structure -->
+<div id="score-board" class="modal">
+  <div class="modal-content">
+    <h4>Current Score</h4>
+    <table>
+      <thead>
+      <tr>
+        <th>Runde</th>
+        <th>#Karte</th>
+        <th>Player 1</th>
+        <th>Player 2</th>
+        <th>Player 3</th>
+      </tr>
+      </thead>
+      <tobdy>
+        <tr>
+          <td>1</td>
+          <td>2</td>
+          <td>30</td>
+          <td>5</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>2</td>
+          <td>30</td>
+          <td>5</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>2</td>
+          <td>30</td>
+          <td>5</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>2</td>
+          <td>30</td>
+          <td>5</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>2</td>
+          <td>30</td>
+          <td>5</td>
+          <td>7</td>
+        </tr>
+      </tobdy>
+
+    </table>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+  </div>
+</div>
+
+
+
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/materialize/dist/js/materialize.min.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

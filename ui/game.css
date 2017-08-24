@@ -1,0 +1,68 @@
+#game-table {
+    margin-left: 450px;
+    margin-top: 100px;
+    height: 800px;
+    width: 800px;
+    background-image: url('retina_wood.png');
+    position: relative;
+}
+
+
+.gamecards .gamecard {
+    height: 124px;
+    width: 85px;
+    position: absolute;
+    display: inline-block;
+    background-image: url('card.jpg');
+    background-size: contain;
+    transition:5s;
+    -webkit-transition:5s;
+    -moz-transition:5s;
+    -o-transition: 5s;
+    -ms-transition: 5s;
+}
+.player1 .gamecards .gamecard {
+    top: 20px;
+    left: 350px;
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+}
+.player2 .gamecards .gamecard {
+    top: 350px;
+    left: 40px;
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+}
+.player3 .gamecards .gamecard {
+    top: 350px;
+    right: 40px;
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+}
+.player4 .gamecards .gamecard {
+    position: absolute;
+    bottom: 20px;
+    left: 350px;
+}
+.heap .gamecards .gamecard {
+    position: absolute;
+    top: 350px;
+    left: 350px;
+}
+.heap {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    top: 250px;
+    left: 250px;
+    border: 1px solid black;
+}
+.green-hover {
+    background-color: greenyellow;
+}
