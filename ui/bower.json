@@ -1,0 +1,20 @@
+{
+  "name": "ui",
+  "homepage": "https://github.com/romue404/wildsow.hs",
+  "authors": [
+    "zhenhaoli <zhenhao.li@outlook.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "materialize": "^0.100.1"
+  }
+}
