@@ -12,9 +12,8 @@ import Data.Aeson as Aeson hiding (Value)
 data Card = Card {value :: Value, color :: Color} deriving (Read, Show, Eq)
 data Color = Eichel | Gras | Herz | Schellen deriving (Read, Show, Enum, Eq, Bounded)
 data Value =  Six| Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Read, Show, Enum, Eq, Ord, Bounded)
-
 type Cards = [Card]
-data Player = Player {name :: String} deriving (Read, Show, Eq)
+data Player = HumanPlayer {name :: String} | Ai {name :: String} deriving (Read, Show, Eq)
 
 colors = listAll::[Color]
 values = listAll:: [Value]
@@ -28,15 +27,18 @@ maxAmountOfPlayers = 6
 deck :: Cards
 deck = [Card v c | c <- colors, v <- values]
 
-data PlayerMove = PlayCard String Card
+data PlayerMove =
+    PlayCard String Card
   | TellNumberOfTricks String Int
-  | TellColor String Color deriving (Read, Show, Eq)
+  | TellColor String Color
+  | Join String
+  | Leave Player deriving (Read, Show, Eq)
 
 data GamePhase = Idle | GameOver | WaitingForTricks Player | WaitingForColor Player | WaitingForCard Player  | Evaluation deriving (Read)
 
 data PlayerState = PlayerState {player :: Player, playedCard :: Maybe Card, hand :: Cards, tricks :: [Int], score :: [Int], tricksSubround::[(Int,Int)]} deriving (Read, Show)
 
-data PlayerMoveError = NotPlayersTurn | MoveAgainstRules String | UnexpectedMove | NotEnoughPlayers deriving Show
+data PlayerMoveError = NotPlayersTurn | MoveAgainstRules String | UnexpectedMove | NotEnoughPlayers | GameFull deriving (Show)
 
 data GameState = GameState {
   phase :: GamePhase,
@@ -83,3 +85,20 @@ instance ToJSON GameState where
     "playerState" .= players
     ]
 
+
+-- INIT --
+initWildsowGameState :: StdGen -> GameState
+initWildsowGameState gen =  GameState{
+  phase = Idle,
+  currentRound = 0,
+  currentColor = Nothing,
+  pile = [],
+  trump = Gras,
+  players= [],
+  stdGen=gen
+}
+
+ai1 = Ai "Thomas Mueller"
+ai2 = Ai "James Roriguez"
+ai3 = Ai "Arjen Robben"
+ai4 = Ai "Frank Ribery"

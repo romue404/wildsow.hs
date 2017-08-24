@@ -32,31 +32,34 @@ step gs@GameState {phase = GameOver} = gs
 
 
 moveValidataion :: PlayerMove -> Model.GameState -> Either Model.PlayerMoveError Model.GameState
-moveValidation move@(PlayCard name card) gs@GameState{phase=p} =
-  checkMove [(enoughPlayers gs, NotEnoughPlayers),
+moveValidation move@(PlayCard name card) gs@GameState{phase=p,  players=players} =
+  checkMove [(enoughPlayers players, NotEnoughPlayers),
              (isWaitingForCards p, UnexpectedMove),
-             (isPlayersTurn (Player name) gs, NotPlayersTurn),
-             (card `elem` playeableCards (Player name) gs, MoveAgainstRules "You are not allowed to play this card")
+             (isPlayersTurn name p, NotPlayersTurn),
+             (card `elem` playeableCards name gs, MoveAgainstRules "You are not allowed to play this card")
              ]
              move gs
-moveValidataion move@(TellNumberOfTricks name tricks) gs@GameState{phase=p} =
-  checkMove [(enoughPlayers gs, NotEnoughPlayers),
+moveValidataion move@(TellNumberOfTricks name tricks) gs@GameState{phase=p, players=players} =
+  checkMove [(enoughPlayers players, NotEnoughPlayers),
             (isWaitingForTricks p, UnexpectedMove),
-            (isPlayersTurn (Player name) gs, NotPlayersTurn), (tricks >= 0, MoveAgainstRules "Tricks must be >= 0")
+            (isPlayersTurn name p, NotPlayersTurn), (tricks >= 0, MoveAgainstRules "Tricks must be >= 0")
             ]
             move gs
 
-moveValidataion move@(TellColor name color) gs@GameState{phase=p} =
-  checkMove [(enoughPlayers gs, NotEnoughPlayers),
+moveValidataion move@(TellColor name color) gs@GameState{phase=p, players=players} =
+  checkMove [(enoughPlayers players, NotEnoughPlayers),
             (isWaitingForColor p, UnexpectedMove),
-            (isPlayersTurn (Player name) gs, NotPlayersTurn)] move gs
+            (isPlayersTurn name p, NotPlayersTurn)] move gs
 
+moveValidataion move@(Join name) gs@GameState{phase=p, players=players} = checkMove [(isIdle p || mayJoin players, GameFull)] move gs
+moveValidataion move@(Leave p) gs= checkMove [] move gs -- pass through
 
 processMove :: PlayerMove -> GameState-> GameState
-processMove (PlayCard name card) gs = gs{players = cardPlayedUpdate card (Player name) $ Model.players gs}
-processMove (TellNumberOfTricks name tricks) gs =  gs{players = tricksPlayerUpdate tricks (Player name) $ Model.players gs}
+processMove (PlayCard name card) gs = gs{players = cardPlayedUpdate card (HumanPlayer name) $ Model.players gs}
+processMove (TellNumberOfTricks name tricks) gs =  gs{players = tricksPlayerUpdate tricks (HumanPlayer name) $ Model.players gs}
 processMove (TellColor _ color) gs = gs{currentColor=Just color}
-
+processMove (Join name) gs = addPlayers [(HumanPlayer name)] gs
+processMove (Leave p) gs@Model.GameState{players=ps} =  gs{players= (replacePlayerWithBot p Model.ai1 ps)} --TODO!
 
 checkMove :: [(Bool, Model.PlayerMoveError)] -> Model.PlayerMove -> Model.GameState -> Either Model.PlayerMoveError Model.GameState
 checkMove preds move  gs = gameStateOrError
@@ -94,12 +97,6 @@ evaluateSubRound gameState =
   in gameState{players = updatePlayer (\p -> p{tricksSubround = [(round, 1)] ++ tricksSubround p}) winner players}
 
 
-enoughPlayers :: GameState -> Bool
-enoughPlayers gs = playersInGame gs >= Model.minAmountOfPlayers
-
-playersInGame :: GameState -> Int
-playersInGame GameState{players=ps} = length ps
-
 cardsOnTable :: [PlayerState] -> Cards
 cardsOnTable ps = catMaybes $ playedCard `fmap` ps
 
@@ -107,11 +104,11 @@ orElseList :: [a] -> [a] -> [a]
 orElseList (x:xs) fallback = (x:xs)
 orElseList [] fallback = fallback
 
-playeableCards :: Player -> GameState -> Cards
+playeableCards :: String -> GameState -> Cards
 playeableCards player gs@GameState{players=players, trump=trump, currentColor=currentColor} =
   fromMaybe [] $ do
     currentColor' <- currentColor
-    player' <- find (\p -> player ==  (Model.player p)) players
+    player' <- find (\p -> player ==  Model.name (Model.player p)) players
     let table = cardsOnTable players
     let playersHand = hand player'
     let trumpsOnTable = cardsWithColor table trump
@@ -191,8 +188,14 @@ cardPlayedUpdate card = updatePlayer $ playCard card
 playCard :: Card -> PlayerState -> PlayerState
 playCard card playerState = playerState{playedCard=Just(card), hand= delete card (Model.hand playerState)}
 
+replacePlayerWithBot :: Player -> Player -> [PlayerState] -> [PlayerState]
+replacePlayerWithBot player bot ps = updatePlayer (\p -> p{player=bot}) player ps
+
 updatePlayer :: (PlayerState->PlayerState) -> Player -> [PlayerState] -> [PlayerState]
 updatePlayer f p ps = map (\x -> if player x == p then f(x) else x) ps
+
+addPlayers :: [Player] -> GameState -> GameState
+addPlayers newPlayers gs@GameState{players=players} = gs{players= players ++ (map initPlayerState newPlayers) }
 
 everyPlayerPlayed :: GameState -> Bool
 everyPlayerPlayed gameState = all (\p-> isNothing $ playedCard p) $  players gameState
@@ -212,15 +215,19 @@ allTricksSet gameState =  flip(all) players' haveEnoughEntries
         round = currentRound gameState
         haveEnoughEntries = (\PlayerState{tricks=t} -> length(t) >=  round)
 
+
 initPlayerState player = PlayerState player Nothing [] [] [] []
 
-addPlayers :: [Player] -> GameState -> GameState
-addPlayers newPlayers gs@GameState{players=players} = gs{players= players ++ (map initPlayerState newPlayers) }
+enoughPlayers :: [PlayerState] -> Bool
+enoughPlayers ps = length ps >= Model.minAmountOfPlayers
 
-isPlayersTurn :: Player -> GameState -> Bool
-isPlayersTurn player GameState{phase=WaitingForCard player'}  = player == player'
-isPlayersTurn player GameState{phase=WaitingForTricks player'}  =  player == player'
-isPlayersTurn player GameState{phase=WaitingForColor player'}  =  player == player'
+mayJoin :: [PlayerState] -> Bool
+mayJoin ps = length ps < Model.maxAmountOfPlayers
+
+isPlayersTurn :: String -> GamePhase -> Bool
+isPlayersTurn player (WaitingForCard player')   = player == name player'
+isPlayersTurn player (WaitingForTricks player') = player == name player'
+isPlayersTurn player (WaitingForColor player')  = player == name player'
 
 isWaitingForCards :: GamePhase -> Bool
 isWaitingForCards (WaitingForCard _) = True
@@ -234,22 +241,7 @@ isWaitingForColor :: GamePhase -> Bool
 isWaitingForColor (WaitingForColor _) = True
 isWaitingForColor _ = False
 
+isIdle :: GamePhase -> Bool
+isIdle Idle = True
+isIdle _ = False
 
--- INIT --
-
-initWildsowGameState :: StdGen -> GameState
-initWildsowGameState gen =  GameState{
-  phase = Idle,
-  currentRound = 0,
-  currentColor = Nothing,
-  pile = [],
-  trump = Gras,
-  players= [],
-  stdGen=gen
-}
-
-
-p1 = Player "Thomas Mueller"
-p2 = Player "James Roriguez"
-p3 = Player "Arjen Robben"
-p4 = Player "Frank Ribery"

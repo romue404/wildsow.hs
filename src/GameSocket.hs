@@ -45,7 +45,7 @@ instance FromJSON ClientMessage where
     userName <- o.: "userName"
     gameId <- o.: "gameId"
     case kind of
-      "join"  -> do return $ Join userName gameId
+      "join"  -> do return $ GameAction gameId $ GameModel.Join userName
       "create"-> do return $ Create userName gameId
       "tellNumberOfTricks" -> do
         tricks <- o.: "tricks"
@@ -74,16 +74,16 @@ app games pending = do
     action <- maybe (throw NetworkManagement.ParseError) pure (decode(msg)::Maybe ClientMessage)
     res <- case action of
       Join userName gameId -> do
-        joined <- atomically $ loginSTM gameId games ((GameModel.Player userName), conn)
+        joined <- atomically $ loginSTM gameId games ((GameModel.HumanPlayer userName), conn)
         either (throw) (pure) joined
       Create userName gameId -> do
         gen <- newStdGen
-        created <- (atomically $ createSTM gameId games (GameModel.Player userName, conn) gen)
+        created <- (atomically $ createSTM gameId games (GameModel.HumanPlayer userName, conn) gen)
         channel <- either (throw) (pure) created
         -- hier gamestate verschicken bzw in die 2. phase wechseln
         broadcastState gameId games (NetworkManagement.gameState channel)
       (GameAction id move) -> do
-        possibleAction <- atomically $ gameActionSTM id games (GameModel.Player $ whos move) move
+        possibleAction <- atomically $ gameActionSTM id games (GameModel.HumanPlayer $ whos move) move
         state <- either (throw) (pure) possibleAction
         broadcastState id games state
     -- hier alles parsen und action behandlung machen
@@ -123,8 +123,8 @@ createSTM id channels player gen = do
       )
 
 gameActionSTM ::
-  GameId
-  -> TVar(NetworkManagement.GameChannels GameId)
+  (Ord id) => id
+  -> TVar(NetworkManagement.GameChannels id)
   -> GameModel.Player
   -> GameModel.PlayerMove
   -> STM(Either NetworkManagement.GameNetworkingException GameModel.GameState)

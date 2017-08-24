@@ -23,11 +23,7 @@ wildsow = do
   lift $ print $ pile s
   return()
 
-
+main :: IO()
 main = do
-  gen <- getStdGen
-  let game =  step $ addPlayers [p1, p2]  $ initWildsowGameState gen
-  print(playeableCards p1 game)
-  print(trump game)
-
+  print("wildsow")
 
