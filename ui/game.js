@@ -85,9 +85,37 @@ $(document).ready(function(){
   })
 
   $('#createGame1').click(function () {
-
+      wildsow.gameName1 = $('#spielName1').val();
   })
 
+  $('#joinGame2').click(function () {
+    wildsow.gameName2 = $('#spielName2').val();
+  })
+
+  $('#joinGame3').click(function () {
+    wildsow.gameName3 = $('#spielName3').val();
+  })
+
+  $('#joinGame4').click(function () {
+    wildsow.gameName4 = $('#spielName4').val();
+  })
+
+
+  $('#tellTicks1').click(function () {
+    wildsow.ticks1 = $('#ticks1').val();
+  })
+
+  $('#tellTicks2').click(function () {
+    wildsow.ticks2 = $('#ticks2').val();
+  })
+
+  $('#tellTicks3').click(function () {
+    wildsow.ticks3 = $('#ticks3').val();
+  })
+
+  $('#tellTicks4').click(function () {
+    wildsow.ticks4 = $('#ticks4').val();
+  })
 
 });
 
