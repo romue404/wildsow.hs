@@ -1,6 +1,6 @@
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MultiParamTypeClasses #-} -- realtions between types
- module Types where
+{-# LANGUAGE FlexibleInstances, MultiParamTypeClasses #-}
+
+ module Model.Types where
 
 class CardEq a where
   colorEq :: a -> a -> Bool

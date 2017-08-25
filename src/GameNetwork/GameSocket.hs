@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings, TemplateHaskell, DeriveAnyClass , FlexibleContexts #-}
-module GameSocket where
+module GameNetwork.GameSocket where
 
 import Control.Concurrent (MVar, newMVar, modifyMVar_, modifyMVar, readMVar)
 import Data.Text (Text)
@@ -12,17 +12,17 @@ import Data.Aeson.TH(deriveJSON, defaultOptions)
 import Data.Aeson
 import Data.Maybe
 import Control.Applicative
-import qualified Model as GameModel
+import qualified Model.Model as GameModel
 import Control.Concurrent
 import Control.Concurrent.STM
 import qualified Data.Map.Strict as Map
-import qualified ModelUpdates as GameUpdates
+import qualified Model.Updates as GameUpdates
 import System.Random
-import qualified NetworkManagement
+import qualified GameNetwork.NetworkManagement as NetworkManagement
 import Data.Either.Combinators
 import Control.Monad.Except (MonadError, throwError)
 import Data.Typeable
-import Types
+import Model.Types
 
 
 ----------------------------------------------------- COMMUNICATION DATA -----------------------------------------------------
@@ -45,7 +45,7 @@ instance FromJSON ClientMessage where
     userName <- o.: "userName"
     gameId <- o.: "gameId"
     case kind of
-      "join"  -> do return $ GameAction gameId $ GameModel.Join (HumanPlayer userName)
+      "join"  -> do return $ GameAction gameId $ GameModel.Join (GameModel.HumanPlayer userName)
       "create"-> do return $ Create userName gameId
       "tellNumberOfTricks" -> do
         tricks <- o.: "tricks"

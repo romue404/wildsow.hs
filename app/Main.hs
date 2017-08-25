@@ -1,12 +1,11 @@
 module Main where
 
-import Lib
-import Model
+import Model.Model
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.State.Strict
-import ModelUpdates
+import Model.Updates
 import System.Random
-import GameSocket
+import GameNetwork.GameSocket
 
 type App = StateT GameState IO ()
 

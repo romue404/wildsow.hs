@@ -1,9 +1,8 @@
 {-# LANGUAGE OverloadedStrings, TemplateHaskell, DeriveAnyClass , FlexibleContexts, RecordWildCards #-}
 
-module Model where
+module Model.Model where
 
-import Types
-import Requisites
+import Model.Types
 import System.Random(StdGen, newStdGen, next, mkStdGen)
 import System.Random.Shuffle
 import Data.Aeson.TH(deriveJSON, defaultOptions)
@@ -14,6 +13,10 @@ data Color = Eichel | Gras | Herz | Schellen deriving (Read, Show, Enum, Eq, Bou
 data Value =  Six| Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Read, Show, Enum, Eq, Ord, Bounded)
 type Cards = [Card]
 data Player = HumanPlayer {playerName :: String} | Ai {playerName :: String} deriving (Read, Show, Eq)
+
+
+listAll :: (Enum a, Bounded a) => [a]
+listAll = [minBound .. maxBound]
 
 colors = listAll::[Color]
 values = listAll:: [Value]

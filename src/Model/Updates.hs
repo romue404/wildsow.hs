@@ -1,11 +1,11 @@
-module ModelUpdates where
+module Model.Updates where
 
-import Model
+import Model.Model as Model
 import Data.List
 import Data.Ord
 import Data.Maybe
 import Control.Monad
-import Types
+import Model.Types
 import System.Random.Shuffle
 import System.Random
 import Control.Applicative
