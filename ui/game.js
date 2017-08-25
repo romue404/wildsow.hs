@@ -186,7 +186,7 @@ function sendDataToServerViaSocket(dataToSend) {
     console.log('Server: ' + e.data);
     let gameState = e.data;
     let debug = JSON.stringify(gameState, null, 2); // spacing level = 2
-    
+
   };
 }
 
