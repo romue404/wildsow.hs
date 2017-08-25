@@ -5,6 +5,8 @@
   <title>Schwarze Sau</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" >
   <link rel="stylesheet" href="bower_components/materialize/dist/css/materialize.min.css">
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
   <link rel="stylesheet" href="game.css">
 </head>
 <body>
@@ -93,6 +95,16 @@
   <div class="col s2"><button  class="btn green" id="tellTicks4">Stiche angeben</button></div>
   <div class="col s2"><button class="btn green" id="played4">Karte spielen</button></div>
 
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <pre>
+      <code id="gameState">
+
+      </code>
+    </pre>
+  </div>
 </div>
 
 <div id="game-table" class="board">
@@ -240,6 +252,7 @@
 
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="bower_components/materialize/dist/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js"></script>
 <script src="game.js"></script>
 </body>
 </html>

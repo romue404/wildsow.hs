@@ -96,14 +96,12 @@ $(document).ready(function(){
    */
   $('#createGame1').click(function () {
     wildsow.gameName1 = $('#spielName1').val();
-
     let action = getAction("create", wildsow.gameName1, "Zhen");
     sendDataToServerViaSocket(action);
   });
 
   $('#joinGame2').click(function () {
     wildsow.gameName2 = $('#spielName2').val();
-
     let action = getAction("join", wildsow.gameName2, "Rob");
     sendDataToServerViaSocket(action);
   });
@@ -165,16 +163,14 @@ $(document).ready(function(){
 
 });
 
-wildsow.connection = new WebSocket("ws://localhost:8080");
+wildsow.connection = new WebSocket("ws://localhost:5000");
 
 function sendDataToServerViaSocket(dataToSend) {
 
   let connection = wildsow.connection;
 
 // When the connection is open, send some data to the server
-  connection.onopen = function () {
-    connection.send( JSON.stringify(dataToSend) ); // Send the message 'Ping' to the server
-  };
+  connection.send( JSON.stringify(dataToSend) ); // Send the message 'Ping' to the server
 
 // Log errors
   connection.onerror = function (error) {
@@ -184,9 +180,9 @@ function sendDataToServerViaSocket(dataToSend) {
 // Log messages from the server
   connection.onmessage = function (e) {
     console.log('Server: ' + e.data);
-    let gameState = e.data;
+    let gameState = JSON.parse(e.data);
     let debug = JSON.stringify(gameState, null, 2); // spacing level = 2
-
+    $('#gameState').text(debug);
   };
 }
 
