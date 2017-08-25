@@ -1,7 +1,7 @@
-module NetworkManagement where
+module GameNetwork.NetworkManagement where
 import qualified Network.WebSockets as WS
-import qualified Model as GameModel
-import qualified ModelUpdates as GameModelUpdates
+import qualified Model.Model as GameModel
+import qualified Model.Updates as GameModelUpdates
 import qualified Data.Map.Strict as Map
 import Data.Aeson hiding (Value)
 import Data.Maybe
