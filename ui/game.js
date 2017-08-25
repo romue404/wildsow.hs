@@ -79,15 +79,23 @@ $(document).ready(function(){
    */
   $('#createPlayer1Name').click(function () {
     wildsow.player1Name = $('#player1Name').val();
+    $(this).prop("disabled", true);
+    $(this).html("Spieler erstellt");
   })
   $('#createPlayer2Name').click(function () {
     wildsow.player2Name = $('#player2Name').val();
+    $(this).prop("disabled", true);
+    $(this).html("Spieler erstellt");
   })
   $('#createPlayer3Name').click(function () {
     wildsow.player3Name = $('#player3Name').val();
+    $(this).prop("disabled", true);
+    $(this).html("Spieler erstellt");
   })
   $('#createPlayer4Name').click(function () {
     wildsow.player4Name = $('#player4Name').val();
+    $(this).prop("disabled", true);
+    $(this).html("Spieler erstellt");
   })
 
   /**
@@ -96,49 +104,49 @@ $(document).ready(function(){
    */
   $('#createGame1').click(function () {
     wildsow.gameName1 = $('#spielName1').val();
-    let action = getAction("create", wildsow.gameName1, "Zhen");
+    let action = getAction("create", wildsow.gameName1,  wildsow.player1Name);
     sendDataToServerViaSocket(action);
   });
 
   $('#joinGame2').click(function () {
     wildsow.gameName2 = $('#spielName2').val();
-    let action = getAction("join", wildsow.gameName2, "Rob");
+    let action = getAction("join", wildsow.gameName2,  wildsow.player2Name);
     sendDataToServerViaSocket(action);
   });
 
   $('#joinGame3').click(function () {
     wildsow.gameName3 = $('#spielName3').val();
-    let action = getAction("join", wildsow.gameName3, "Chris");
+    let action = getAction("join", wildsow.gameName3, wildsow.player3Name);
     sendDataToServerViaSocket(action);
   })
 
   $('#joinGame4').click(function () {
     wildsow.gameName4 = $('#spielName4').val();
-    let action = getAction("join", wildsow.gameName4, "Dr Jost");
+    let action = getAction("join", wildsow.gameName4, wildsow.player4Name);
     sendDataToServerViaSocket(action);
   })
 
 
   $('#tellTicks1').click(function () {
-    let action = getAction("tellNumberOfTricks", wildsow.gameName1, "Zhen");
+    let action = getAction("tellNumberOfTricks", wildsow.gameName1,  wildsow.player1Name);
     action.tricks = $('#ticks1').val();
     sendDataToServerViaSocket(action);
   })
 
   $('#tellTicks2').click(function () {
-    let action = getAction("tellNumberOfTricks", wildsow.gameName2, "Rob");
+    let action = getAction("tellNumberOfTricks", wildsow.gameName2,  wildsow.player2Name);
     action.tricks = $('#ticks2').val();
     sendDataToServerViaSocket(action);
   })
 
   $('#tellTicks3').click(function () {
-    let action = getAction("tellNumberOfTricks", wildsow.gameName3, "Chris");
+    let action = getAction("tellNumberOfTricks", wildsow.gameName3,  wildsow.player3Name);
     action.tricks = $('#ticks3').val();
     sendDataToServerViaSocket(action);
   })
 
   $('#tellTicks4').click(function () {
-    let action = getAction("tellNumberOfTricks", wildsow.gameName4, "Dr Jost");
+    let action = getAction("tellNumberOfTricks", wildsow.gameName4,  wildsow.player4Name);
     action.tricks = $('#ticks4').val();
     sendDataToServerViaSocket(action);
   })
@@ -146,19 +154,47 @@ $(document).ready(function(){
 
 
   $('#played1').click(function () {
-    wildsow.ticks1 = $('#ticks1').val();
+
   })
 
   $('#played2').click(function () {
-    wildsow.ticks2 = $('#ticks2').val();
+
   })
 
   $('#played3').click(function () {
-    wildsow.ticks3 = $('#ticks3').val();
+
   })
 
   $('#played4').click(function () {
-    wildsow.ticks4 = $('#ticks4').val();
+
+  })
+
+  /**
+   * player1Name
+   * createPlayer1Name
+   * spielName1
+   * createGame1
+   * ticks1
+   * tellTicks1
+   * played1
+   * joinGame2
+   */
+
+  $('#generateTestData').click(function () {
+    $('#player1Name').val("Zhen");
+    $('#player2Name').val("Rob");
+    $('#player3Name').val("Chris");
+    $('#player4Name').val("Dr Jost");
+
+    $('#spielName1').val('Party');
+    $('#spielName2').val('Party');
+    $('#spielName3').val('Party');
+    $('#spielName4').val('Party');
+
+    $('#ticks1').val('3');
+    $('#ticks2').val('5');
+    $('#ticks3').val('3');
+    $('#ticks4').val('3');
   })
 
 });
