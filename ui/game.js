@@ -129,25 +129,25 @@ $(document).ready(function(){
 
   $('#tellTicks1').click(function () {
     let action = getAction("tellNumberOfTricks", wildsow.gameName1,  wildsow.player1Name);
-    action.tricks = $('#ticks1').val();
+    action.tricks = Number($('#ticks1').val());
     sendDataToServerViaSocket(action);
   })
 
   $('#tellTicks2').click(function () {
     let action = getAction("tellNumberOfTricks", wildsow.gameName2,  wildsow.player2Name);
-    action.tricks = $('#ticks2').val();
+    action.tricks = Number($('#ticks2').val());
     sendDataToServerViaSocket(action);
   })
 
   $('#tellTicks3').click(function () {
     let action = getAction("tellNumberOfTricks", wildsow.gameName3,  wildsow.player3Name);
-    action.tricks = $('#ticks3').val();
+    action.tricks = Number($('#ticks3').val());
     sendDataToServerViaSocket(action);
   })
 
   $('#tellTicks4').click(function () {
     let action = getAction("tellNumberOfTricks", wildsow.gameName4,  wildsow.player4Name);
-    action.tricks = $('#ticks4').val();
+    action.tricks = Number($('#ticks4').val());
     sendDataToServerViaSocket(action);
   })
 
