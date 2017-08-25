@@ -1,8 +1,11 @@
+var wildsow = wildsow || {};
+
+
 $(document).ready(function(){
   // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
   $('.modal').modal();
 
-  var wildsow = wildsow || {};
+
   wildsow.x1 = 0;
   wildsow.x2 = 0;
   wildsow.x3 = 0;
@@ -70,7 +73,10 @@ $(document).ready(function(){
    * played1
    * joinGame2
    */
-  
+
+  /**
+   * set player names locally, these will be sended every time when a game action is executed
+   */
   $('#createPlayer1Name').click(function () {
     wildsow.player1Name = $('#player1Name').val();
   })
@@ -84,32 +90,113 @@ $(document).ready(function(){
     wildsow.player4Name = $('#player4Name').val();
   })
 
+  /**
+   * first player creates a game giving a game name,
+   * remaining players joins the game by entering the game name
+   */
   $('#createGame1').click(function () {
+    wildsow.gameName1 = $('#spielName1').val();
+    sendDataToServerViaSocket({
+      kind: "create",
+      gameId: wildsow.gameName1,
+      userName: "zhen"
+    })
+  })
 
+  $('#joinGame2').click(function () {
+    wildsow.gameName2 = $('#spielName2').val();
+    sendDataToServerViaSocket({
+      kind: "join",
+      gameId: wildsow.gameName2,
+      userName: "rob"
+    })
+  })
+
+  $('#joinGame3').click(function () {
+    wildsow.gameName3 = $('#spielName3').val();
+    sendDataToServerViaSocket({
+      kind: "join",
+      gameId: wildsow.gameName3,
+      userName: "chris"
+    })
+  })
+
+  $('#joinGame4').click(function () {
+    wildsow.gameName4 = $('#spielName4').val();
+    sendDataToServerViaSocket({
+      kind: "join",
+      gameId: wildsow.gameName4,
+      userName: "dr. jost"
+    })
   })
 
 
+  $('#tellTicks1').click(function () {
+    wildsow.ticks1 = $('#ticks1').val();
+    sendDataToServerViaSocket({
+      kind: "tellTricks",
+      gameId: wildsow.gameName1,
+      userName: "zhen",
+      tricks: "???"
+    })
+  })
+
+  $('#tellTicks2').click(function () {
+    wildsow.ticks2 = $('#ticks2').val();
+  })
+
+  $('#tellTicks3').click(function () {
+    wildsow.ticks3 = $('#ticks3').val();
+  })
+
+  $('#tellTicks4').click(function () {
+    wildsow.ticks4 = $('#ticks4').val();
+  })
+
+
+
+  $('#played1').click(function () {
+    wildsow.ticks1 = $('#ticks1').val();
+  })
+
+  $('#played2').click(function () {
+    wildsow.ticks2 = $('#ticks2').val();
+  })
+
+  $('#played3').click(function () {
+    wildsow.ticks3 = $('#ticks3').val();
+  })
+
+  $('#played4').click(function () {
+    wildsow.ticks4 = $('#ticks4').val();
+  })
+
 });
 
-var connection = new WebSocket("ws://localhost:8080");
+wildsow.connection = new WebSocket("ws://localhost:8080");
 
-let firstStep = {
-  kind: "create",
-  gameId: "hackers",
-  userName: "zhen"
-}
+function sendDataToServerViaSocket(dataToSend) {
+
+  let firstStep = {
+    kind: "create",
+    gameId: "hackers",
+    userName: "zhen"
+  }
+
+  let connection = wildsow.connection;
 
 // When the connection is open, send some data to the server
-connection.onopen = function () {
-  connection.send( JSON.stringify(firstStep) ); // Send the message 'Ping' to the server
-};
+  connection.onopen = function () {
+    connection.send( JSON.stringify(dataToSend) ); // Send the message 'Ping' to the server
+  };
 
 // Log errors
-connection.onerror = function (error) {
-  console.log('WebSocket Error ' + error);
-};
+  connection.onerror = function (error) {
+    console.log('WebSocket Error ' + error);
+  };
 
 // Log messages from the server
-connection.onmessage = function (e) {
-  console.log('Server: ' + e.data);
-};
+  connection.onmessage = function (e) {
+    console.log('Server: ' + e.data);
+  };
+}
