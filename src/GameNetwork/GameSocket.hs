@@ -23,6 +23,7 @@ import Data.Either.Combinators
 import Control.Monad.Except (MonadError, throwError)
 import Data.Typeable
 import Model.Types
+import Model.Step
 
 
 ----------------------------------------------------- COMMUNICATION DATA -----------------------------------------------------
@@ -131,7 +132,7 @@ gameActionSTM gameId channels player move = do
   games <- readTVar channels
   let eihterNewState = do
             (NetworkManagement.GameChannel players state) <- NetworkManagement.getChannel' gameId games
-            mapEitherR (\r -> NetworkManagement.GameError r) (GameUpdates.moveValidataion move state)
+            mapEitherR (\r -> NetworkManagement.GameError r) (Model.Step.stepGame move state)
   case eihterNewState of
     Left err -> return $ Left err
     Right newState -> do
