@@ -96,61 +96,53 @@ $(document).ready(function(){
    */
   $('#createGame1').click(function () {
     wildsow.gameName1 = $('#spielName1').val();
-    sendDataToServerViaSocket({
-      kind: "create",
-      gameId: wildsow.gameName1,
-      userName: "zhen"
-    })
-  })
+
+    let action = getAction("create", wildsow.gameName1, "Zhen");
+    sendDataToServerViaSocket(action);
+  });
 
   $('#joinGame2').click(function () {
     wildsow.gameName2 = $('#spielName2').val();
-    sendDataToServerViaSocket({
-      kind: "join",
-      gameId: wildsow.gameName2,
-      userName: "rob"
-    })
-  })
+
+    let action = getAction("join", wildsow.gameName2, "Rob");
+    sendDataToServerViaSocket(action);
+  });
 
   $('#joinGame3').click(function () {
     wildsow.gameName3 = $('#spielName3').val();
-    sendDataToServerViaSocket({
-      kind: "join",
-      gameId: wildsow.gameName3,
-      userName: "chris"
-    })
+    let action = getAction("join", wildsow.gameName3, "Chris");
+    sendDataToServerViaSocket(action);
   })
 
   $('#joinGame4').click(function () {
     wildsow.gameName4 = $('#spielName4').val();
-    sendDataToServerViaSocket({
-      kind: "join",
-      gameId: wildsow.gameName4,
-      userName: "dr. jost"
-    })
+    let action = getAction("join", wildsow.gameName4, "Dr Jost");
+    sendDataToServerViaSocket(action);
   })
 
 
   $('#tellTicks1').click(function () {
-    wildsow.ticks1 = $('#ticks1').val();
-    sendDataToServerViaSocket({
-      kind: "tellTricks",
-      gameId: wildsow.gameName1,
-      userName: "zhen",
-      tricks: "???"
-    })
+    let action = getAction("tellNumberOfTricks", wildsow.gameName1, "Zhen");
+    action.tricks = $('#ticks1').val();
+    sendDataToServerViaSocket(action);
   })
 
   $('#tellTicks2').click(function () {
-    wildsow.ticks2 = $('#ticks2').val();
+    let action = getAction("tellNumberOfTricks", wildsow.gameName2, "Rob");
+    action.tricks = $('#ticks2').val();
+    sendDataToServerViaSocket(action);
   })
 
   $('#tellTicks3').click(function () {
-    wildsow.ticks3 = $('#ticks3').val();
+    let action = getAction("tellNumberOfTricks", wildsow.gameName3, "Chris");
+    action.tricks = $('#ticks3').val();
+    sendDataToServerViaSocket(action);
   })
 
   $('#tellTicks4').click(function () {
-    wildsow.ticks4 = $('#ticks4').val();
+    let action = getAction("tellNumberOfTricks", wildsow.gameName4, "Dr Jost");
+    action.tricks = $('#ticks4').val();
+    sendDataToServerViaSocket(action);
   })
 
 
@@ -177,12 +169,6 @@ wildsow.connection = new WebSocket("ws://localhost:8080");
 
 function sendDataToServerViaSocket(dataToSend) {
 
-  let firstStep = {
-    kind: "create",
-    gameId: "hackers",
-    userName: "zhen"
-  }
-
   let connection = wildsow.connection;
 
 // When the connection is open, send some data to the server
@@ -198,5 +184,16 @@ function sendDataToServerViaSocket(dataToSend) {
 // Log messages from the server
   connection.onmessage = function (e) {
     console.log('Server: ' + e.data);
+    let gameState = e.data;
+    let debug = JSON.stringify(gameState, null, 2); // spacing level = 2
+    
   };
+}
+
+function getAction(action, gameId, username) {
+  return {
+    kind: action,
+    gameId: gameId,
+    userName: username,
+  }
 }
