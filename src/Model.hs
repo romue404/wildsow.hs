@@ -13,7 +13,7 @@ data Card = Card {value :: Value, color :: Color} deriving (Read, Show, Eq)
 data Color = Eichel | Gras | Herz | Schellen deriving (Read, Show, Enum, Eq, Bounded)
 data Value =  Six| Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Read, Show, Enum, Eq, Ord, Bounded)
 type Cards = [Card]
-data Player = HumanPlayer {name :: String} | Ai {name :: String} deriving (Read, Show, Eq)
+data Player = HumanPlayer {playerName :: String} | Ai {playerName :: String} deriving (Read, Show, Eq)
 
 colors = listAll::[Color]
 values = listAll:: [Value]
@@ -31,14 +31,14 @@ data PlayerMove =
     PlayCard String Card
   | TellNumberOfTricks String Int
   | TellColor String Color
-  | Join String
+  | Join Player
   | Leave Player deriving (Read, Show, Eq)
 
 data GamePhase = Idle | GameOver | WaitingForTricks Player | WaitingForColor Player | WaitingForCard Player  | Evaluation deriving (Read)
 
 data PlayerState = PlayerState {player :: Player, playedCard :: Maybe Card, hand :: Cards, tricks :: [Int], score :: [Int], tricksSubround::[(Int,Int)]} deriving (Read, Show)
 
-data PlayerMoveError = NotPlayersTurn | MoveAgainstRules String | UnexpectedMove | NotEnoughPlayers | GameFull deriving (Show)
+data PlayerMoveError = NotPlayersTurn | MoveAgainstRules String | UnexpectedMove | NotEnoughPlayers | GameFull | NameTaken deriving (Show)
 
 data GameState = GameState {
   phase :: GamePhase,
@@ -62,9 +62,9 @@ instance PlayerAction PlayerMove where
 instance Show GamePhase where
   show (Idle) = "Idle"
   show  (GameOver) = "Game Over"
-  show (WaitingForTricks player) = "Waiting for player " `mappend` show (name player) `mappend` " to tell his tricks"
-  show (WaitingForColor player) = "Waiting for player " `mappend` show (name player) `mappend` " to tell the color"
-  show (WaitingForCard player) = "Waiting for player " `mappend` show (name player) `mappend` " to play a card"
+  show (WaitingForTricks player) = "Waiting for player " `mappend` show (playerName player) `mappend` " to tell his tricks"
+  show (WaitingForColor player) = "Waiting for player " `mappend` show (playerName player) `mappend` " to tell the color"
+  show (WaitingForCard player) = "Waiting for player " `mappend` show (playerName player) `mappend` " to play a card"
   show (Evaluation) = "Evaluation"
 
 deriveJSON defaultOptions ''PlayerState

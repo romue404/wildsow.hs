@@ -11,26 +11,7 @@ import System.Random
 import Control.Applicative
 
 ----------------------------------- STEPPING THE GAME FORWARD -----------------------------------
-step :: GameState -> GameState
-step gs@GameState {phase = Idle} = (waitForColor . setNewTrump . dealCards) gs
-step gs@GameState {phase = WaitingForTricks p}
-  |allTricksSet gs = waitForNextCard gs
-  |otherwise = waitForNextTricks gs
-step gs@GameState {phase = WaitingForCard p}
-  |everyPlayerPlayed gs = step gs{phase=Evaluation}
-  |otherwise = waitForNextCard gs
-step gs@GameState {phase=WaitingForColor p} =
-  case currentColor gs of
-    Nothing -> gs
-    Just c -> gs{phase = WaitingForTricks p}
-step gs@GameState {phase = Evaluation, currentRound=round}
-  |not $ allHandsPlayed gs = (clearPlayedCards . setNewTrump . waitForNextCard . evaluateSubRound) gs
-  |round+1 >= length  (cardsPerRound Model.deck $ length $ players gs) = (evaluateRound. evaluateSubRound) gs{phase=GameOver}
-  |otherwise = (waitForColor . clearPlayedCards . setNewTrump . dealCards . evaluateRound. evaluateSubRound) gs{players = nextPlayer $ players gs}
-  --  new round means we have to change the player twice
-step gs@GameState {phase = GameOver} = gs
-
-
+----------------------------------- PATTERN: VALIDATION -> PROCESS -> STEP ----------------------
 moveValidataion :: PlayerMove -> Model.GameState -> Either Model.PlayerMoveError Model.GameState
 moveValidation move@(PlayCard name card) gs@GameState{phase=p,  players=players} =
   checkMove [(enoughPlayers players, NotEnoughPlayers),
@@ -51,15 +32,37 @@ moveValidataion move@(TellColor name color) gs@GameState{phase=p, players=player
             (isWaitingForColor p, UnexpectedMove),
             (isPlayersTurn name p, NotPlayersTurn)] move gs
 
-moveValidataion move@(Join name) gs@GameState{phase=p, players=players} = checkMove [(isIdle p || mayJoin players, GameFull)] move gs
-moveValidataion move@(Leave p) gs= checkMove [] move gs -- pass through
+moveValidataion move@(Join p) gs@GameState{phase=phase, players=players} =
+  checkMove [(isIdle phase || mayJoin players, GameFull),
+    (playerNameIsFree (playerName p) players, NameTaken)] move gs
+
+moveValidataion move@(Leave p) gs= loginLogic p gs -- pass through
 
 processMove :: PlayerMove -> GameState-> GameState
 processMove (PlayCard name card) gs = gs{players = cardPlayedUpdate card (HumanPlayer name) $ Model.players gs}
 processMove (TellNumberOfTricks name tricks) gs =  gs{players = tricksPlayerUpdate tricks (HumanPlayer name) $ Model.players gs}
 processMove (TellColor _ color) gs = gs{currentColor=Just color}
-processMove (Join name) gs = addPlayers [(HumanPlayer name)] gs
-processMove (Leave p) gs@Model.GameState{players=ps} =  gs{players= (replacePlayerWithBot p Model.ai1 ps)} --TODO!
+processMove (Join player) gs = addPlayers [player] gs
+processMove (Leave p) gs@Model.GameState{players=ps} = gs{players= (replaceHumanPlayerWithBot p Model.ai1 ps)} --TODO add random bot
+
+step :: GameState -> GameState
+step gs@GameState {phase = Idle} = (waitForColor . setNewTrump . dealCards) gs
+step gs@GameState {phase = WaitingForTricks p}
+  |allTricksSet gs = waitForNextCard gs
+  |otherwise = waitForNextTricks gs
+step gs@GameState {phase = WaitingForCard p}
+  |everyPlayerPlayed gs = step gs{phase=Evaluation}
+  |otherwise = waitForNextCard gs
+step gs@GameState {phase=WaitingForColor p} =
+  case currentColor gs of
+    Nothing -> gs
+    Just c -> gs{phase = WaitingForTricks p}
+step gs@GameState {phase = Evaluation, currentRound=round}
+  |not $ allHandsPlayed gs = (clearPlayedCards . setNewTrump . waitForNextCard . evaluateSubRound) gs
+  |round+1 >= length  (cardsPerRound Model.deck $ length $ players gs) = (evaluateRound. evaluateSubRound) gs{phase=GameOver}
+  |otherwise = (waitForColor . clearPlayedCards . setNewTrump . dealCards . evaluateRound. evaluateSubRound) gs{players = nextPlayer $ players gs}
+  --  new round means we have to change the player twice
+step gs@GameState {phase = GameOver} = gs
 
 checkMove :: [(Bool, Model.PlayerMoveError)] -> Model.PlayerMove -> Model.GameState -> Either Model.PlayerMoveError Model.GameState
 checkMove preds move  gs = gameStateOrError
@@ -104,19 +107,20 @@ orElseList :: [a] -> [a] -> [a]
 orElseList (x:xs) fallback = (x:xs)
 orElseList [] fallback = fallback
 
+-- could be done with Maybe type as well
 playeableCards :: String -> GameState -> Cards
 playeableCards player gs@GameState{players=players, trump=trump, currentColor=currentColor} =
   fromMaybe [] $ do
     currentColor' <- currentColor
-    player' <- find (\p -> player ==  Model.name (Model.player p)) players
+    player' <- find (\p -> player ==  Model.playerName (Model.player p)) players
     let table = cardsOnTable players
     let playersHand = hand player'
     let trumpsOnTable = cardsWithColor table trump
     let playersTrumps = cardsWithColor playersHand trump
     let playersCardsWithColor = cardsWithColor playersHand currentColor'
     case trumpsOnTable of
-      (c:cs) -> Just $ orElseList playersTrumps (orElseList playersCardsWithColor playersHand)
-      [] -> Just $ orElseList playersCardsWithColor playersHand
+      (c:cs) -> Just $  playersCardsWithColor `orElseList` (playersTrumps `orElseList` playersHand)
+      [] -> Just $  playersCardsWithColor `orElseList` playersHand
 
 -- show this in presentation
 dealCards :: GameState -> GameState
@@ -188,14 +192,25 @@ cardPlayedUpdate card = updatePlayer $ playCard card
 playCard :: Card -> PlayerState -> PlayerState
 playCard card playerState = playerState{playedCard=Just(card), hand= delete card (Model.hand playerState)}
 
-replacePlayerWithBot :: Player -> Player -> [PlayerState] -> [PlayerState]
-replacePlayerWithBot player bot ps = updatePlayer (\p -> p{player=bot}) player ps
-
 updatePlayer :: (PlayerState->PlayerState) -> Player -> [PlayerState] -> [PlayerState]
 updatePlayer f p ps = map (\x -> if player x == p then f(x) else x) ps
 
 addPlayers :: [Player] -> GameState -> GameState
 addPlayers newPlayers gs@GameState{players=players} = gs{players= players ++ (map initPlayerState newPlayers) }
+
+countBots :: [PlayerState] -> [Int]
+countBots ps = map (\PlayerState{player=p} -> case p of
+                                                Ai _ -> 1
+                                                otherwise -> 0) ps
+
+amountOfBots :: [PlayerState] -> Int
+amountOfBots ps = foldl (+) 0 (countBots ps)
+------------------------------------------- PREDICATES -------------------------------------------
+
+
+
+playerNameIsFree :: String -> [PlayerState] -> Bool
+playerNameIsFree name ps = null $ filter (\PlayerState{player=p} -> (Model.playerName p) == name) ps
 
 everyPlayerPlayed :: GameState -> Bool
 everyPlayerPlayed gameState = all (\p-> isNothing $ playedCard p) $  players gameState
@@ -225,9 +240,9 @@ mayJoin :: [PlayerState] -> Bool
 mayJoin ps = length ps < Model.maxAmountOfPlayers
 
 isPlayersTurn :: String -> GamePhase -> Bool
-isPlayersTurn player (WaitingForCard player')   = player == name player'
-isPlayersTurn player (WaitingForTricks player') = player == name player'
-isPlayersTurn player (WaitingForColor player')  = player == name player'
+isPlayersTurn player (WaitingForCard player')   = player == playerName player'
+isPlayersTurn player (WaitingForTricks player') = player == playerName player'
+isPlayersTurn player (WaitingForColor player')  = player == playerName player'
 
 isWaitingForCards :: GamePhase -> Bool
 isWaitingForCards (WaitingForCard _) = True
@@ -245,3 +260,37 @@ isIdle :: GamePhase -> Bool
 isIdle Idle = True
 isIdle _ = False
 
+isBot :: Player -> Bool
+isBot (HumanPlayer _) = False
+isBot (Ai _) = True
+
+isHuman :: Player -> Bool
+isHuman = not . isBot
+
+
+----------------- LOGIN ------------------------- TODO rename waiting for state
+
+replacePlayer :: Player -> PlayerState -> PlayerState
+replacePlayer newPlayer ps@PlayerState{player=p} = ps{player=newPlayer}
+
+replaceBotWithPlayer :: Player -> [PlayerState] -> [PlayerState]
+replaceBotWithPlayer newPlayer [] = []
+replaceBotWithPlayer newPlayer (p@PlayerState{player=plr}:ps)
+  |isHuman plr = p: (replaceBotWithPlayer newPlayer ps)
+  |isBot plr = p{player=newPlayer}: ps
+
+replaceHumanPlayerWithBot :: Player -> Player -> [PlayerState] -> [PlayerState]
+replaceHumanPlayerWithBot player bot ps = updatePlayer (\p -> p{player=bot}) player ps
+
+loginLogic :: Player -> GameState ->  Either Model.PlayerMoveError Model.GameState
+loginLogic p gs@GameState{phase=Idle, players=ps}
+  |length ps < maxAmountOfPlayers = Right (processMove (Join p) gs)
+  |amountOfBots ps > 0 = Right (gs{players= (p `replaceBotWithPlayer` ps)})
+  |otherwise = Left GameFull
+loginLogic p gs@GameState{players=ps}
+  |amountOfBots ps > 0 = Right (gs{players= (p `replaceBotWithPlayer` ps)})
+  |otherwise = Left GameFull
+
+
+--playerReplacement :: Player -> Player -> GameState -> GameState
+--playerReplacement oldPlayer newPlayer gameState 

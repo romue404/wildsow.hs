@@ -45,7 +45,7 @@ instance FromJSON ClientMessage where
     userName <- o.: "userName"
     gameId <- o.: "gameId"
     case kind of
-      "join"  -> do return $ GameAction gameId $ GameModel.Join userName
+      "join"  -> do return $ GameAction gameId $ GameModel.Join (HumanPlayer userName)
       "create"-> do return $ Create userName gameId
       "tellNumberOfTricks" -> do
         tricks <- o.: "tricks"
@@ -89,7 +89,6 @@ app games pending = do
     -- hier alles parsen und action behandlung machen
     --WS.sendTextData conn ("Parsed:" `mappend` (T.pack(show $ action))::Text)
     return res)
-
 
 ----------------------------------------------------- PERSIST ACTIONS VIA STM -----------------------------------------------------
 
