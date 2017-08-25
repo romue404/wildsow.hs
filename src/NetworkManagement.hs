@@ -62,8 +62,8 @@ checkChannelLimit limit channel
   | otherwise = Right channel
 
 createChannel ::  Ord id =>  (GameModel.Player, WS.Connection) -> id -> StdGen-> GameChannels id ->  (GameChannels id, GameChannel)
-createChannel  player id gen channels  =
-  let newChannel = (GameChannel [player] $ GameModelUpdates.addPlayers [fst player] $ GameModel.initWildsowGameState gen)
+createChannel  pc@(player, conn) id gen channels  =
+  let newChannel = (GameChannel [pc] $ GameModelUpdates.processMove (GameModel.Join player) $ GameModel.initWildsowGameState gen)
   in (Map.insert id newChannel channels, newChannel)
 
 stepGameInChannel ::  Ord id => GameModel.GameState -> id -> GameChannels id ->  GameChannels id
