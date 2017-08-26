@@ -267,9 +267,9 @@ function sendDataToServerViaSocket(dataToSend) {
     $('#phase').text(gameState.phase);
     $('#color').text(gameState.color);
     $('#trump').text(gameState.trump);
-    
+
     let players = gameState.playerState;
-    
+
     players.forEach(function (player, playerId) {
       playerId = playerId + 1; //due to html naming
       $('#score-player' + playerId).text(player.score);
@@ -281,15 +281,29 @@ function sendDataToServerViaSocket(dataToSend) {
       $('#hand-player' + playerId).empty();
       player.hand.forEach(function (card) {
         $('#hand-player' + playerId).append(`
-       <div class="game-card">
+       <div class="game-card player${playerId}-card">
          <p class="center">
-         ${card.color}<br>
-         ${card.value}
+         <span>${card.color}</span><br>
+         <span>${card.value}</span>
          </p> 
        </div>
       `)
       });
     })
+
+    $('.player1-card').click(function () {
+      let action = getAction("playCard", wildsow.gameName1,  players[0].player.playerName);
+      action.card = {
+        color: $(this).children().first().children().first().text(),
+        value: $(this).children().first().children().eq(2).text()
+      }
+
+      console.log(action.card)
+
+      sendDataToServerViaSocket(action);
+    })
+
+
 
 
 
