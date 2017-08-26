@@ -1,16 +1,15 @@
 var wildsow = wildsow || {};
 
-
 $(document).ready(function(){
   // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
   $('.modal').modal();
-
 
   wildsow.x1 = 0;
   wildsow.x2 = 0;
   wildsow.x3 = 0;
   wildsow.x4 = 0;
   wildsow.x5 = 0;
+
   $('.player1 .gamecards').children().each(function () {
     $(this).css("left", 220 + 90*wildsow.x1 + "px");
     wildsow.x1++;
@@ -38,6 +37,7 @@ $(document).ready(function(){
   wildsow.y2 = 0;
   wildsow.y3 = 0;
   wildsow.y4 = 0;
+
   $('#played1').click(function () {
     var playerCard =  $('.player1 .gamecards .gamecard:eq(' + wildsow.y1 + ')');
     var pxToRight = (wildsow.y1 <= 1) ? "60px" : "-60px";
@@ -127,6 +127,38 @@ $(document).ready(function(){
   })
 
 
+  /**
+   * tell color
+   */
+  $('#tell-color1').click(function () {
+    let action = getAction("tellColor", wildsow.gameName1,  wildsow.player1Name);
+    action.color = $('#color1').val();
+    sendDataToServerViaSocket(action);
+  });
+
+  $('#tell-color2').click(function () {
+    let action = getAction("tellColor", wildsow.gameName2,  wildsow.player2Name);
+    action.color = $('#color2').val();
+    sendDataToServerViaSocket(action);
+  });
+
+  $('#tell-color3').click(function () {
+    let action = getAction("tellColor", wildsow.gameName3,  wildsow.player3Name);
+    action.color = $('#color3').val();
+    sendDataToServerViaSocket(action);
+  });
+
+  $('#tell-color4').click(function () {
+    let action = getAction("tellColor", wildsow.gameName4,  wildsow.player4Name);
+    action.color = $('#color4').val();
+    sendDataToServerViaSocket(action);
+  });
+
+
+
+  /**
+   * tell tricks
+   */
   $('#tellTicks1').click(function () {
     let action = getAction("tellNumberOfTricks", wildsow.gameName1,  wildsow.player1Name);
     action.tricks = Number($('#ticks1').val());
@@ -180,21 +212,31 @@ $(document).ready(function(){
    * joinGame2
    */
 
+  let gameId = 0;
   $('#generateTestData').click(function () {
     $('#player1Name').val("Zhen");
     $('#player2Name').val("Rob");
     $('#player3Name').val("Chris");
     $('#player4Name').val("Dr Jost");
 
-    $('#spielName1').val('Party');
-    $('#spielName2').val('Party');
-    $('#spielName3').val('Party');
-    $('#spielName4').val('Party');
+    $('#spielName1').val('Party' + ++gameId);
+    $('#spielName2').val('Party' + gameId);
+    $('#spielName3').val('Party' + gameId);
+    $('#spielName4').val('Party' + gameId);
 
     $('#ticks1').val('3');
     $('#ticks2').val('5');
     $('#ticks3').val('3');
     $('#ticks4').val('3');
+
+    /**
+     *  Eichel | Gras | Herz | Schellen
+     */
+
+    $('#color1').val('Eichel');
+    $('#color2').val('Gras');
+    $('#color3').val('Herz');
+    $('#color4').val('Schellen');
   })
 
 });
@@ -217,8 +259,34 @@ function sendDataToServerViaSocket(dataToSend) {
   connection.onmessage = function (e) {
     console.log('Server: ' + e.data);
     let gameState = JSON.parse(e.data);
+
     let debug = JSON.stringify(gameState, null, 2); // spacing level = 2
     $('#gameState').text(debug);
+
+    $('#round').text(gameState.round);
+    $('#phase').text(gameState.phase);
+    $('#color').text(gameState.color);
+    $('#trump').text(gameState.trump);
+
+    $('#player1-score').text(gameState.playerState[0].score);
+    $('#player1-tricks').text(gameState.playerState[0].tricks);
+    $('#player1-tricksSubround').text(gameState.playerState[0].tricksSubround);
+    $('#player1-name').text(gameState.playerState[0].player.playerName);
+    $('#player1-type').text(gameState.playerState[0].player.tag);
+
+    $('#player1-hand').empty();
+    gameState.playerState[0].hand.forEach(function (card) {
+      $('#player1-hand').append(`
+       <div class="game-card">
+         <p class="center">
+         ${card.color}<br>
+         ${card.value}
+         </p> 
+       </div>
+      `)
+    });
+
+
   };
 }
 

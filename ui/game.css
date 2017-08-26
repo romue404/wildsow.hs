@@ -66,3 +66,13 @@
 .green-hover {
     background-color: greenyellow;
 }
+
+.game-card {
+  height: 100px;
+  width: 150px;
+  border: 1px solid black;
+  float: left;
+  cursor: pointer;
+  margin-left: 5px;
+  margin-top: 5px;
+}
