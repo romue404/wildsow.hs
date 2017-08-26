@@ -217,12 +217,34 @@ function sendDataToServerViaSocket(dataToSend) {
   connection.onmessage = function (e) {
     console.log('Server: ' + e.data);
     let gameState = JSON.parse(e.data);
+
     let debug = JSON.stringify(gameState, null, 2); // spacing level = 2
     $('#gameState').text(debug);
+
     $('#round').text(gameState.round);
     $('#phase').text(gameState.phase);
     $('#color').text(gameState.color);
     $('#trump').text(gameState.trump);
+
+    $('#player1-score').text(gameState.playerState[0].score);
+    $('#player1-tricks').text(gameState.playerState[0].tricks);
+    $('#player1-tricksSubround').text(gameState.playerState[0].tricksSubround);
+    $('#player1-name').text(gameState.playerState[0].player.playerName);
+    $('#player1-type').text(gameState.playerState[0].player.tag);
+
+    $('#player1-hand').empty();
+    gameState.playerState[0].hand.forEach(function (card) {
+      $('#player1-hand').append(`
+       <div class="game-card">
+         <p class="center">
+         ${card.color}<br>
+         ${card.value}
+         </p> 
+       </div>
+      `)
+    });
+
+
   };
 }
 
