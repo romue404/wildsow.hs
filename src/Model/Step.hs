@@ -45,7 +45,7 @@ update move gs@GameState{phase=p,  players=players} =
 
 step :: GameState -> GameState
 step gs@GameState {phase = Idle, players=players}
-  |enoughPlayers players = (waitForColor . setNewTrump . dealCards) gs
+  |enoughPlayers players = (waitForNextTricks . setNewTrump . dealCards) gs
   |otherwise = gs
 step gs@GameState {phase = WaitingForTricks p}
   |allTricksSet gs = waitForNextCard gs
