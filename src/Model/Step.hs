@@ -9,6 +9,7 @@ import Data.Maybe (fromMaybe)
 import Data.List (find)
 import Model.Model as Model
 import Data.Maybe (isNothing)
+import Control.Applicative
 
 ---------- SINGLE FUNCTION TO CALL ----------
 stepGame :: PlayerMove -> GameState -> Either PlayerMoveError GameState
@@ -23,18 +24,19 @@ update move gs@GameState{phase=p,  players=players} =
       (isWaitingForCards p) `mustHoldOr` UnexpectedMove
       (isPlayersTurn name p) `mustHoldOr` NotPlayersTurn
       (card `elem` playeableCards name gs) `mustHoldOr` MoveAgainstRules "You are not allowed to play this card"
-      Right gs{players = cardPlayedUpdate card (HumanPlayer name) $ Model.players gs}
+      let color' = (Model.currentColor gs) <|> Just(Model.color card)
+      Right gs{players = cardPlayedUpdate card (HumanPlayer name) $ Model.players gs, currentColor=color'}
     (TellNumberOfTricks name tricks) -> do
       (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
       (isWaitingForTricks p) `mustHoldOr` UnexpectedMove
       (isPlayersTurn name p) `mustHoldOr` NotPlayersTurn
       (tricks >= 0) `mustHoldOr` (MoveAgainstRules "Tricks must be >= 0")
       Right $ gs{players = tricksPlayerUpdate tricks (HumanPlayer name) $ Model.players gs}
-    (TellColor name color) -> do
+    {--(TellColor name color) -> do
       (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
       (isWaitingForColor p) `mustHoldOr` UnexpectedMove
       (isPlayersTurn name p) `mustHoldOr` NotPlayersTurn
-      Right $ gs{currentColor=Just color}
+      Right $ gs{currentColor=Just color}--}
     (Join player) -> do
       (playerNameIsFree (playerName player) players) `mustHoldOr` NameTaken
       (loginLogic player gs)
@@ -53,10 +55,10 @@ step gs@GameState {phase = WaitingForTricks p}
 step gs@GameState {phase = WaitingForCard p}
   |everyPlayerPlayed gs = step gs{phase=Evaluation}
   |otherwise = waitForNextCard gs
-step gs@GameState {phase=WaitingForColor p} =
+{--step gs@GameState {phase=WaitingForColor p} =
   case currentColor gs of
     Nothing -> gs
-    Just c -> gs{phase = WaitingForTricks p}
+    Just c -> gs{phase = WaitingForTricks p}--}
 step gs@GameState {phase = Evaluation, currentRound=round}
   |not $ allHandsPlayed gs = (clearPlayedCards . setNewTrump . waitForNextCard . evaluateSubRound) gs
   |round+1 >= length  (cardsPerRound Model.deck $ length $ players gs) = (evaluateRound. evaluateSubRound) gs{phase=GameOver}
