@@ -1,16 +1,15 @@
 var wildsow = wildsow || {};
 
-
 $(document).ready(function(){
   // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
   $('.modal').modal();
-
 
   wildsow.x1 = 0;
   wildsow.x2 = 0;
   wildsow.x3 = 0;
   wildsow.x4 = 0;
   wildsow.x5 = 0;
+
   $('.player1 .gamecards').children().each(function () {
     $(this).css("left", 220 + 90*wildsow.x1 + "px");
     wildsow.x1++;
@@ -38,6 +37,7 @@ $(document).ready(function(){
   wildsow.y2 = 0;
   wildsow.y3 = 0;
   wildsow.y4 = 0;
+
   $('#played1').click(function () {
     var playerCard =  $('.player1 .gamecards .gamecard:eq(' + wildsow.y1 + ')');
     var pxToRight = (wildsow.y1 <= 1) ? "60px" : "-60px";
@@ -219,6 +219,10 @@ function sendDataToServerViaSocket(dataToSend) {
     let gameState = JSON.parse(e.data);
     let debug = JSON.stringify(gameState, null, 2); // spacing level = 2
     $('#gameState').text(debug);
+    $('#round').text(gameState.round);
+    $('#phase').text(gameState.phase);
+    $('#color').text(gameState.color);
+    $('#trump').text(gameState.trump);
   };
 }
 

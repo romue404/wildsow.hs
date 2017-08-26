@@ -103,6 +103,44 @@
   </div>
 </div>
 
+<!-- basic game state info -->
+<div class="row">
+  <div class="col s12">
+    <p>
+      <strong>Round: </strong><span id="round"></span> <br>
+      <strong>Phase: </strong><span id="phase"></span> <br>
+      <strong>Color: </strong><span id="color"></span> <br>
+      <strong>Trumpf: </strong><span id="trump"></span> <br>
+    </p>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col s12">
+    <div id="player1">
+      <h5>Player 1</h5>
+      <strong>Score: </strong><span id="player1-score"></span><br>
+      <strong>Tricks: </strong><span id="player1-tricks"></span><br>
+      <strong>TricksSubround: </strong><span id="player1-tricksSubround"></span><br>
+      <strong>Player Name: </strong><span id="player1-name"></span><br>
+      <strong>Player Type: </strong><span id="player1-type"></span><br>
+
+      <div id="player1-hand">
+        <div style="width:100px; height: 150px; border: 1px solid black; float: left "></div>
+        <div style="width:100px; height: 150px; border: 1px solid black; float: left "></div>
+        <div style="width:100px; height: 150px; border: 1px solid black; float: left "></div>
+        <div style="width:100px; height: 150px; border: 1px solid black; float: left "></div>
+        <div style="width:100px; height: 150px; border: 1px solid black; float: left "></div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- debug -->
 <div class="row">
   <div class="col s12">
     <pre>
@@ -113,6 +151,8 @@
   </div>
 </div>
 
+
+<!--
 <div id="game-table" class="board">
 
   <div class="heap" id="heap">
@@ -195,6 +235,7 @@
   </div>
 
 </div>
+-->
 <!-- Modal Structure -->
 <div id="score-board" class="modal">
   <div class="modal-content">
