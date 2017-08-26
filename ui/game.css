@@ -73,4 +73,6 @@
   border: 1px solid black;
   float: left;
   cursor: pointer;
+  margin-left: 5px;
+  margin-top: 5px;
 }
