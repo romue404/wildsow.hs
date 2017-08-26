@@ -180,16 +180,17 @@ $(document).ready(function(){
    * joinGame2
    */
 
+  let gameId = 0;
   $('#generateTestData').click(function () {
     $('#player1Name').val("Zhen");
     $('#player2Name').val("Rob");
     $('#player3Name').val("Chris");
     $('#player4Name').val("Dr Jost");
 
-    $('#spielName1').val('Party');
-    $('#spielName2').val('Party');
-    $('#spielName3').val('Party');
-    $('#spielName4').val('Party');
+    $('#spielName1').val('Party' + ++gameId);
+    $('#spielName2').val('Party' + gameId);
+    $('#spielName3').val('Party' + gameId);
+    $('#spielName4').val('Party' + gameId);
 
     $('#ticks1').val('3');
     $('#ticks2').val('5');
