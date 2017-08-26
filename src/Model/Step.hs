@@ -4,7 +4,7 @@ import Model.Evaluation (evaluateSubRound, evaluateRound)
 import Model.Updates(cardPlayedUpdate, tricksPlayerUpdate, updatePlayer,
   addPlayers, waitForColor,dealCards, waitForNextCard, waitForNextTricks,
   setNewTrump, clearPlayedCards, cardsPerRound,nextPlayer, reevaluatePlayersTurn,
-  replaceBotWithPlayer, replaceHumanPlayerWithBot)
+  replaceBotWithPlayer, replaceHumanPlayerWithBot,clearCurrentColor)
 import Data.Maybe (fromMaybe)
 import Data.List (find)
 import Model.Model as Model
@@ -55,14 +55,10 @@ step gs@GameState {phase = WaitingForTricks p}
 step gs@GameState {phase = WaitingForCard p}
   |everyPlayerPlayed gs = step gs{phase=Evaluation}
   |otherwise = waitForNextCard gs
-{--step gs@GameState {phase=WaitingForColor p} =
-  case currentColor gs of
-    Nothing -> gs
-    Just c -> gs{phase = WaitingForTricks p}--}
 step gs@GameState {phase = Evaluation, currentRound=round}
-  |not $ allHandsPlayed gs = (clearPlayedCards . setNewTrump . waitForNextCard . evaluateSubRound) gs
+  |not $ allHandsPlayed gs = (clearCurrentColor . clearPlayedCards . setNewTrump . waitForNextCard . evaluateSubRound) gs -- TODO winner should start
   |round >= length  (cardsPerRound Model.deck $ length $ players gs) = (evaluateRound. evaluateSubRound) gs{phase=GameOver}
-  |otherwise = (waitForNextCard . clearPlayedCards . setNewTrump . dealCards . evaluateRound. evaluateSubRound) gs{players = nextPlayer $ players gs}
+  |otherwise = (clearCurrentColor . waitForNextCard . clearPlayedCards . setNewTrump . dealCards . evaluateRound . evaluateSubRound) gs{players = nextPlayer $ players gs}
   --  new round means we have to change the player twice
 step gs@GameState {phase = GameOver} = gs
 

@@ -10,7 +10,7 @@ import Data.Aeson as Aeson hiding (Value)
 
 data Card = Card {value :: Value, color :: Color} deriving (Read, Show, Eq)
 data Color = Eichel | Gras | Herz | Schellen deriving (Read, Show, Enum, Eq, Bounded)
-data Value =  Six| Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Read, Show, Enum, Eq, Ord, Bounded)
+data Value =   Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Read, Show, Enum, Eq, Ord, Bounded)
 type Cards = [Card]
 data Player = HumanPlayer {playerName :: String} | Ai {playerName :: String} deriving (Read, Show, Eq)
 
@@ -33,7 +33,6 @@ deck = [Card v c | c <- colors, v <- values]
 data PlayerMove =
     PlayCard String Card
   | TellNumberOfTricks String Int
-  | TellColor String Color
   | Join Player
   | Leave Player deriving (Read, Show, Eq)
 
@@ -60,7 +59,8 @@ instance CardEq Card where
 instance PlayerAction PlayerMove where
   whos (TellNumberOfTricks name _) = name
   whos (PlayCard name _) = name
-  whos (TellColor name _) = name
+  whos (Join p) = playerName p
+  whos (Leave p) = playerName p
 
 instance Show GamePhase where
   show (Idle) = "Idle"

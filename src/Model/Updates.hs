@@ -91,6 +91,9 @@ clearPlayedCards gameState =
       players' = map (\ps -> ps{playedCard=Nothing}) players
   in gameState {players = players'}
 
+clearCurrentColor :: GameState -> GameState
+clearCurrentColor gs = gs{currentColor=Nothing}
+
 setNewTrump :: GameState -> GameState
 setNewTrump gameState = gameState {trump= trump, pile = rest}
   where (trump, rest) = case pile gameState of

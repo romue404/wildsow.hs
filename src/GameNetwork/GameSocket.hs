@@ -54,9 +54,6 @@ instance FromJSON ClientMessage where
       "playCard" -> do
         card <- o.: "card"
         return $ GameAction gameId $ GameModel.PlayCard userName card
-      "tellColor" -> do
-        color <-  o.: "color"
-        return $ GameAction gameId $ GameModel.TellColor userName color
       _        -> fail ("unknown kind: " ++ kind)
 
 ----------------------------------------------------- GAME SOCKET -----------------------------------------------------
@@ -69,7 +66,7 @@ gameSocket = do
 app :: TVar (NetworkManagement.GameChannels GameId) -> WS.PendingConnection ->  IO ()
 app games pending = do
   conn <- WS.acceptRequest pending
-  WS.forkPingThread conn 30 -- ensure the connection stays alive
+  WS.forkPingThread conn 10 -- ensure the connection stays alive
   forever $ handle (errorHandler conn) (do
     msg <- WS.receiveData conn
     action <- maybe (throw NetworkManagement.ParseError) pure (decode(msg)::Maybe ClientMessage)
