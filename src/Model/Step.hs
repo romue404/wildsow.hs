@@ -23,9 +23,9 @@ update move gs@GameState{phase=p,  players=players} =
       (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
       (isWaitingForCards p) `mustHoldOr` UnexpectedMove
       (isPlayersTurn name p) `mustHoldOr` NotPlayersTurn
-      (card `elem` playeableCards name gs) `mustHoldOr` MoveAgainstRules "You are not allowed to play this card"
-      let color' = (Model.currentColor gs) <|> Just(Model.color card)
-      Right gs{players = cardPlayedUpdate card (HumanPlayer name) $ Model.players gs, currentColor=color'}
+      let gs' = gs{currentColor=(Model.currentColor gs) <|> Just(Model.color card)}
+      (card `elem` playeableCards name gs') `mustHoldOr` MoveAgainstRules "You are not allowed to play this card"
+      Right gs'{players = cardPlayedUpdate card (HumanPlayer name) $ Model.players gs}
     (TellNumberOfTricks name tricks) -> do
       (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
       (isWaitingForTricks p) `mustHoldOr` UnexpectedMove
