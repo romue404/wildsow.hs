@@ -3,7 +3,7 @@ import Model.Evaluation (cardsWithColor, cardsOnTable, orElseList)
 import Data.Maybe (fromMaybe)
 import Data.List (find)
 import Model.Model
-import Data.Maybe (isNothing)
+import Data.Maybe (isJust)
 
 
 
@@ -41,13 +41,10 @@ playerNameIsFree :: String -> [PlayerState] -> Bool
 playerNameIsFree name ps = null $ filter (\PlayerState{player=p} -> (playerName p) == name) ps
 
 everyPlayerPlayed :: GameState -> Bool
-everyPlayerPlayed gameState = all (\p-> isNothing $ playedCard p) $  players gameState
+everyPlayerPlayed gameState = all (\p-> isJust $ playedCard p) $  players gameState
 
 allHandsPlayed :: GameState -> Bool
 allHandsPlayed gs = all (\p -> null $ hand p) $ players gs
-
-isRoundStarter :: Player -> GameState -> Bool
-isRoundStarter p gameState =  p == (player $ head $ players gameState) &&  (all (\p -> isNothing $ playedCard p) $ players gameState)
 
 allTricksSet :: GameState -> Bool
 allTricksSet gameState =  flip(all) players' haveEnoughEntries

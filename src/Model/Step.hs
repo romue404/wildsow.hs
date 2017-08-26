@@ -61,8 +61,8 @@ step gs@GameState {phase = WaitingForCard p}
     Just c -> gs{phase = WaitingForTricks p}--}
 step gs@GameState {phase = Evaluation, currentRound=round}
   |not $ allHandsPlayed gs = (clearPlayedCards . setNewTrump . waitForNextCard . evaluateSubRound) gs
-  |round+1 >= length  (cardsPerRound Model.deck $ length $ players gs) = (evaluateRound. evaluateSubRound) gs{phase=GameOver}
-  |otherwise = (waitForColor . clearPlayedCards . setNewTrump . dealCards . evaluateRound. evaluateSubRound) gs{players = nextPlayer $ players gs}
+  |round >= length  (cardsPerRound Model.deck $ length $ players gs) = (evaluateRound. evaluateSubRound) gs{phase=GameOver}
+  |otherwise = (waitForNextCard . clearPlayedCards . setNewTrump . dealCards . evaluateRound. evaluateSubRound) gs{players = nextPlayer $ players gs}
   --  new round means we have to change the player twice
 step gs@GameState {phase = GameOver} = gs
 
