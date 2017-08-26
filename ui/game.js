@@ -267,16 +267,20 @@ function sendDataToServerViaSocket(dataToSend) {
     $('#phase').text(gameState.phase);
     $('#color').text(gameState.color);
     $('#trump').text(gameState.trump);
+    
+    let players = gameState.playerState;
+    
+    players.forEach(function (player, playerId) {
+      playerId = playerId + 1; //due to html naming
+      $('#score-player' + playerId).text(player.score);
+      $('#tricks-player' + playerId).text(player.tricks);
+      $('#tricksSubround-player' + playerId).text(player.tricksSubround);
+      $('#name-player' + playerId).text(player.player.playerName);
+      $('#type-player' + playerId).text(player.player.tag);
 
-    $('#player1-score').text(gameState.playerState[0].score);
-    $('#player1-tricks').text(gameState.playerState[0].tricks);
-    $('#player1-tricksSubround').text(gameState.playerState[0].tricksSubround);
-    $('#player1-name').text(gameState.playerState[0].player.playerName);
-    $('#player1-type').text(gameState.playerState[0].player.tag);
-
-    $('#player1-hand').empty();
-    gameState.playerState[0].hand.forEach(function (card) {
-      $('#player1-hand').append(`
+      $('#hand-player' + playerId).empty();
+      player.hand.forEach(function (card) {
+        $('#hand-player' + playerId).append(`
        <div class="game-card">
          <p class="center">
          ${card.color}<br>
@@ -284,7 +288,10 @@ function sendDataToServerViaSocket(dataToSend) {
          </p> 
        </div>
       `)
-    });
+      });
+    })
+
+
 
 
   };
