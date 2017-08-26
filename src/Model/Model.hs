@@ -93,7 +93,7 @@ instance ToJSON GameState where
 initWildsowGameState :: StdGen -> GameState
 initWildsowGameState gen =  GameState{
   phase = Idle,
-  currentRound = 0,
+  currentRound = 1,
   currentColor = Nothing,
   pile = [],
   trump = Gras,

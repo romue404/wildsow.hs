@@ -14,7 +14,7 @@ import Data.Maybe (isNothing)
 stepGame :: PlayerMove -> GameState -> Either PlayerMoveError GameState
 stepGame move gameState = step <$> (update move gameState)
 
--- TODO check if player is in game
+-- TODO check if player is in game,
 update :: PlayerMove -> GameState -> Either PlayerMoveError GameState
 update move gs@GameState{phase=p,  players=players} =
   case move of
