@@ -111,12 +111,14 @@ $(document).ready(function(){
   $('#joinGame2').click(function () {
     wildsow.gameName2 = $('#spielName2').val();
     let action = getAction("join", wildsow.gameName2,  wildsow.player2Name);
+   action.botType = 'random';
     sendDataToServerViaSocket(action);
   });
 
   $('#joinGame3').click(function () {
     wildsow.gameName3 = $('#spielName3').val();
     let action = getAction("join", wildsow.gameName3, wildsow.player3Name);
+    action.botType = 'random';
     sendDataToServerViaSocket(action);
   })
 
@@ -180,6 +182,11 @@ $(document).ready(function(){
   $('#tellTicks4').click(function () {
     let action = getAction("tellNumberOfTricks", wildsow.gameName4,  wildsow.player4Name);
     action.tricks = Number($('#ticks4').val());
+    sendDataToServerViaSocket(action);
+  })
+
+  $('#start').click(function () {
+    let action = getAction("start", wildsow.gameName1,  wildsow.player1Name);
     sendDataToServerViaSocket(action);
   })
 
