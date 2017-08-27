@@ -258,7 +258,7 @@ function sendDataToServerViaSocket(dataToSend) {
 
 // Log messages from the server
   connection.onmessage = function (e) {
-    console.log('Server: ' + e.data);
+    //console.log('Server: ' + e.data);
     let gameState = JSON.parse(e.data);
 
     let debug = JSON.stringify(gameState, null, 2); // spacing level = 2
@@ -284,13 +284,17 @@ function sendDataToServerViaSocket(dataToSend) {
         let heapCard = player.playedCard;
         if(heapCard) {
           $('#heap-cards').append(`
-        <div class="game-card">
+        <div class="game-card heap-card">
          <p class="center">
          <span>${heapCard.color}</span><br>
          <span>${heapCard.value}</span>
          </p> 
        </div>
       `)
+          let cardImgName = mapCardToImgName(heapCard);
+
+          let cardImgPath = `images/cards/${cardImgName}.svg`;
+          $('.heap-card').last().css("background-image", `url(${cardImgPath})`);
         }
 
         $('#hand-player' + playerId).empty();
@@ -303,6 +307,11 @@ function sendDataToServerViaSocket(dataToSend) {
          </p> 
        </div>
       `)
+          let cardImgName = mapCardToImgName(card);
+
+          let cardImgPath = `images/cards/${cardImgName}.svg`;
+          $('.player1-card').last().css("background-image", `url(${cardImgPath})`);
+
         });
       })
 
@@ -329,4 +338,21 @@ function getAction(action, gameId, username) {
     gameId: gameId,
     userName: username,
   }
+}
+
+function mapCardToImgName(card) {
+  let cardColor = card.color.toLowerCase();
+  if(cardColor === 'schellen') cardColor = 'schelln';
+  let cardValueMapper = {
+    Seven: '7er',
+    Eight: '8er',
+    Nine: '9er',
+    Ten: '10er',
+    Jack: 'Unter',
+    Queen: 'Ober',
+    King: 'König',
+    Ace: 'Sau'
+  }
+  let cardValue = cardValueMapper[card.value];
+  return cardColor + cardValue;
 }

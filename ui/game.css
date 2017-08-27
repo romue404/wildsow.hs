@@ -68,11 +68,14 @@
 }
 
 .game-card {
-  height: 100px;
-  width: 150px;
-  border: 1px solid black;
+  height: 200px;
+  width: 114px;
+
   float: left;
   cursor: pointer;
   margin-left: 5px;
   margin-top: 5px;
+    background-image: url("images/cards/deck bavaria2.svg");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
