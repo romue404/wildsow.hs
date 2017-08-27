@@ -26,7 +26,7 @@ randomBotMove me gs@GameState {phase = (WaitingForCard p), players = players, tr
 
 randomBotTricksToMake :: PlayerState -> int -> StdGen -> PlayerMove
 randomBotTricksToMake PlayerState{hand=hand, player=me} amountOfPlayers gen = let (rand, _) = randomR (0,length hand) gen
-                                                                     in TellNumberOfTricks me rand
+                                                                     in TellNumberOfTricks me 0
 
 randomBotCardToPlay :: GameState -> PlayerState  -> StdGen -> PlayerMove
 randomBotCardToPlay gs PlayerState{hand=hand, player=me} gen = PlayCard me (randomCard (playeableCards me gs) gen)
@@ -37,4 +37,4 @@ randomBotCardToPlay gs PlayerState{hand=hand, player=me} gen = PlayCard me (rand
 -- Helpers
 randomCard :: Cards -> StdGen -> Card
 randomCard cards gen = let (rand, _) = randomR (0,length cards) gen
-                       in cards!!rand
+                       in cards!!0
