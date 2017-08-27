@@ -18,10 +18,7 @@ tricksToMake PlayerState{hand=hand, player=me} amountOfPlayers gen = let (rand, 
                                                                      in TellNumberOfTricks (Model.playerName me) rand
 
 cardToPlay :: GameState -> PlayerState -> Color -> Color -> StdGen -> PlayerMove
-cardToPlay gs PlayerState{hand=hand, player=me} trump currentColor gen = let myNextCard
-                                                                          | myNextCard <= randomCard (Validation.playeableCards (name me) gs) gen
-                                                                          | myNextCard <= randomCard hand gen
-                                                                         in PlayCard (name me) myNextCard
+cardToPlay gs PlayerState{hand=hand, player=me} trump currentColor gen = PlayCard (name me) (randomCard (Validation.playeableCards (name me) gs) gen)
 
 randomCard :: Cards -> StdGen -> Card
 randomCard cards gen = let (rand, _) = randomR (0,length cards) gen
