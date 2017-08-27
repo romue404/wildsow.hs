@@ -10,13 +10,13 @@ import Model.Validation
 -- am beste wir haben ein bots file aus dem man dann die verschiedenen bts aufrufen kann
 
 -- check if its a turn for a bot and do it
-botMove :: GameState -> Either PlayerMoveError PlayerMove
+botMove :: GameState -> Maybe PlayerMove
 botMove gs@GameState {players = playersStates} = let
   currentPlayerState = head playersStates
   currentPlayer = player currentPlayerState
   in case currentPlayer of
-      RandomBot _ -> Right $ randomBotMove currentPlayerState gs
-      HumanPlayer _ -> Left NotPlayersTurn
+      RandomBot _ -> Just $ randomBotMove currentPlayerState gs
+      HumanPlayer _ -> Nothing
 
 
 -- RandomBot
@@ -26,10 +26,10 @@ randomBotMove me gs@GameState {phase = (WaitingForCard p), players = players, tr
 
 tricksToMake :: PlayerState -> int -> StdGen -> PlayerMove
 tricksToMake PlayerState{hand=hand, player=me} amountOfPlayers gen = let (rand, _) = randomR (0,length hand) gen
-                                                                     in TellNumberOfTricks (Model.playerName me) rand
+                                                                     in TellNumberOfTricks me rand
 
 cardToPlay :: GameState -> PlayerState  -> StdGen -> PlayerMove
-cardToPlay gs PlayerState{hand=hand, player=me} gen = PlayCard (playerName me) (randomCard (playeableCards (playerName me) gs) gen)
+cardToPlay gs PlayerState{hand=hand, player=me} gen = PlayCard me (randomCard (playeableCards me gs) gen)
 
 
 -- Helpers

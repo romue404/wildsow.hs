@@ -53,10 +53,10 @@ instance FromJSON ClientMessage where
       "create"-> do return $ Create userName gameId
       "tellNumberOfTricks" -> do
         tricks <- o.: "tricks"
-        return $ GameAction gameId $ GameModel.TellNumberOfTricks userName tricks
+        return $ GameAction gameId $ GameModel.TellNumberOfTricks (GameModel.HumanPlayer userName) tricks
       "playCard" -> do
         card <- o.: "card"
-        return $ GameAction gameId $ GameModel.PlayCard userName card
+        return $ GameAction gameId $ GameModel.PlayCard (GameModel.HumanPlayer userName) card
       "start" -> do return $ GameAction gameId $ GameModel.Begin
       _        -> fail ("unknown kind: " ++ kind)
 

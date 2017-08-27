@@ -31,8 +31,8 @@ deck :: Cards
 deck = [Card v c | c <- colors, v <- values]
 
 data PlayerMove =
-    PlayCard String Card
-  | TellNumberOfTricks String Int
+    PlayCard Player Card
+  | TellNumberOfTricks Player Int
   | Join Player
   | Leave Player
   | Begin deriving (Read, Show, Eq)
@@ -58,8 +58,8 @@ instance CardEq Card where
    valueEq (Card v _) (Card v' _) =  v == v'
 
 instance PlayerAction PlayerMove where
-  whos (TellNumberOfTricks name _) = name
-  whos (PlayCard name _) = name
+  whos (TellNumberOfTricks player _ ) = playerName player
+  whos (PlayCard player _) = playerName player
   whos (Join p) = playerName p
   whos (Leave p) = playerName p
 

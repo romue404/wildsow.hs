@@ -8,11 +8,11 @@ import Data.Maybe (isJust)
 
 
 -- might use maybe alternative
-playeableCards :: String -> GameState -> Cards
+playeableCards :: Player -> GameState -> Cards
 playeableCards player gs@GameState{players=players, trump=trump, currentColor=currentColor} =
   fromMaybe [] $ do
     currentColor' <- currentColor
-    player' <- find (\p -> player ==  Model.Model.playerName (Model.Model.player p)) players
+    player' <- find (\p -> player ==  (Model.Model.player p)) players
     let table = cardsOnTable players
     let playersHand = hand player'
     let trumpsOnTable = cardsWithColor table trump
@@ -58,10 +58,10 @@ enoughPlayers ps = length ps >= minAmountOfPlayers
 mayJoin :: [PlayerState] -> Bool
 mayJoin ps = length ps < maxAmountOfPlayers
 
-isPlayersTurn :: String -> GamePhase -> Bool
-isPlayersTurn player (WaitingForCard player')   = player == playerName player'
-isPlayersTurn player (WaitingForTricks player') = player == playerName player'
-isPlayersTurn player (WaitingForColor player')  = player == playerName player'
+isPlayersTurn :: Player -> GamePhase -> Bool
+isPlayersTurn player (WaitingForCard player')   = player ==  player'
+isPlayersTurn player (WaitingForTricks player') = player ==  player'
+isPlayersTurn player (WaitingForColor player')  = player ==  player'
 
 isWaitingForCards :: GamePhase -> Bool
 isWaitingForCards (WaitingForCard _) = True

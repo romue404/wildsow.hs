@@ -5,6 +5,7 @@ import Model.Updates(cardPlayedUpdate, tricksPlayerUpdate, updatePlayer,
   addPlayers, waitForColor,dealCards, waitForNextCard, waitForNextTricks,
   setNewTrump, clearPlayedCards, cardsPerRound,nextPlayer, reevaluatePlayersTurn,
   replaceBotWithPlayer, replaceHumanPlayerWithBot,clearCurrentColor, waitForWinnerToPlayCard)
+import Model.Bots(botMove)
 import Data.Maybe (fromMaybe)
 import Data.List (find)
 import Model.Model as Model
@@ -13,25 +14,25 @@ import Control.Applicative
 
 ---------- SINGLE FUNCTION TO CALL ----------
 stepGame :: PlayerMove -> GameState -> Either PlayerMoveError GameState
-stepGame move gameState = step' move gameState
+stepGame move gameState = stepWhileBot $ step' move gameState -- bot hier ueberpruefen
 
 -- TODO check if player is in game,
 update :: PlayerMove -> GameState -> Either PlayerMoveError GameState
 update move gs@GameState{phase=p,  players=players} =
   case move of
-    (PlayCard name card) -> do
+    (PlayCard plr card) -> do
       (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
       (isWaitingForCards p) `mustHoldOr` UnexpectedMove
-      (isPlayersTurn name p) `mustHoldOr` NotPlayersTurn
+      (isPlayersTurn plr p) `mustHoldOr` NotPlayersTurn
       let gs' = gs{currentColor=(Model.currentColor gs) <|> Just(Model.color card)}
-      (card `elem` playeableCards name gs') `mustHoldOr` MoveAgainstRules "You are not allowed to play this card"
-      Right gs'{players = cardPlayedUpdate card (HumanPlayer name) $ Model.players gs}
-    (TellNumberOfTricks name tricks) -> do
+      (card `elem` playeableCards plr gs') `mustHoldOr` MoveAgainstRules "You are not allowed to play this card"
+      Right gs'{players = cardPlayedUpdate card plr $ Model.players gs}
+    (TellNumberOfTricks plr tricks) -> do
       (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
       (isWaitingForTricks p) `mustHoldOr` UnexpectedMove
-      (isPlayersTurn name p) `mustHoldOr` NotPlayersTurn
+      (isPlayersTurn plr p) `mustHoldOr` NotPlayersTurn
       (tricks >= 0) `mustHoldOr` (MoveAgainstRules "Tricks must be >= 0")
-      Right $ gs{players = tricksPlayerUpdate tricks (HumanPlayer name) $ Model.players gs}
+      Right $ gs{players = tricksPlayerUpdate tricks plr $ Model.players gs}
     (Join player) -> do
       (playerNameIsFree (playerName player) players) `mustHoldOr` NameTaken
       (loginLogic player gs)
@@ -59,25 +60,32 @@ step gs@GameState {phase = Evaluation, currentRound=round}
 step gs@GameState {phase = GameOver} = gs
 
 
+stepWhileBot :: Either PlayerMoveError GameState -> Either PlayerMoveError GameState
+stepWhileBot rgs@(Right gs) = case botMove gs of
+                          Nothing -> rgs
+                          Just m -> stepWhileBot (step' m gs)
+stepWhileBot err@(Left e) = err
+
+
 step' :: PlayerMove -> GameState -> Either PlayerMoveError GameState
 step' (PlayCard player card) gs@GameState{phase = phase@(WaitingForCard player'),players=players} = do
       (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
       (isPlayersTurn player phase) `mustHoldOr` NotPlayersTurn
       let gs' = gs{currentColor=(Model.currentColor gs) <|> Just(Model.color card)}
       (card `elem` playeableCards player gs') `mustHoldOr` MoveAgainstRules "You are not allowed to play this card"
-      let state = gs'{players = cardPlayedUpdate card (HumanPlayer player) $ Model.players gs}
+      let state = gs'{players = cardPlayedUpdate card player $ Model.players gs}
       if everyPlayerPlayed state then Right (eval state) else Right (waitForNextCard state)
 step' (TellNumberOfTricks player tricks) gs@GameState{phase= phase@(WaitingForTricks player'), players=players} = do
       (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
       (isPlayersTurn player phase) `mustHoldOr` NotPlayersTurn
       (tricks >= 0) `mustHoldOr` (MoveAgainstRules "Tricks must be >= 0")
-      let state =  gs{players = tricksPlayerUpdate tricks (HumanPlayer player) $ Model.players gs}
+      let state =  gs{players = tricksPlayerUpdate tricks player $ Model.players gs}
       if allTricksSet state then Right $ waitForNextCard state else Right $ waitForNextTricks state
 step' (Join player) gs = do
       (playerNameIsFree (playerName player) (players gs)) `mustHoldOr` NameTaken
       (loginLogic player gs)
 step' (Leave player) gs = Right $ reevaluatePlayersTurn $ gs{players= (replaceHumanPlayerWithBot player (Model.RandomBot $ Model.playerName player) (players gs))}
-step' (Begin) gs@GameState{phase = Idle, players=players}
+step' Begin gs@GameState{phase = Idle, players=players}
       |enoughPlayers players = Right $ (waitForNextTricks . setNewTrump . dealCards) gs
       |otherwise = Left NotEnoughPlayers
 step' _ gs@GameState {phase = GameOver} = Right gs
