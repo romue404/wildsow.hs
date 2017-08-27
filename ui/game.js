@@ -212,14 +212,15 @@ $(document).ready(function(){
    * joinGame2
    */
 
-  let gameId = 0;
+
   $('#generateTestData').click(function () {
+    let gameId = Math.random();
     $('#player1Name').val("Zhen");
     $('#player2Name').val("Rob");
     $('#player3Name').val("Chris");
     $('#player4Name').val("Dr Jost");
 
-    $('#spielName1').val('Party' + ++gameId);
+    $('#spielName1').val('Party' + gameId);
     $('#spielName2').val('Party' + gameId);
     $('#spielName3').val('Party' + gameId);
     $('#spielName4').val('Party' + gameId);
@@ -269,7 +270,7 @@ function sendDataToServerViaSocket(dataToSend) {
     $('#trump').text(gameState.trump);
 
     let players = gameState.playerState;
-
+    $('#heap-cards').empty();
     players.forEach(function (player, playerId) {
       playerId = playerId + 1; //due to html naming
       $('#score-player' + playerId).text(player.score);
@@ -277,6 +278,18 @@ function sendDataToServerViaSocket(dataToSend) {
       $('#tricksSubround-player' + playerId).text(player.tricksSubround);
       $('#name-player' + playerId).text(player.player.playerName);
       $('#type-player' + playerId).text(player.player.tag);
+
+      let heapCard = player.playedCard;
+      if(heapCard) {
+        $('#heap-cards').append(`
+        <div class="game-card">
+         <p class="center">
+         <span>${heapCard.color}</span><br>
+         <span>${heapCard.value}</span>
+         </p> 
+       </div>
+      `)
+      }
 
       $('#hand-player' + playerId).empty();
       player.hand.forEach(function (card) {
