@@ -258,7 +258,7 @@ function sendDataToServerViaSocket(dataToSend) {
 
 // Log messages from the server
   connection.onmessage = function (e) {
-    console.log('Server: ' + e.data);
+    //console.log('Server: ' + e.data);
     let gameState = JSON.parse(e.data);
 
     let debug = JSON.stringify(gameState, null, 2); // spacing level = 2
