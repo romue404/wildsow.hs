@@ -8,6 +8,7 @@ import Model.Types
 import Model.Model
 import GameNetwork.GameSocket
 import GameNetwork.NetworkManagement
+import Model.Bots
 
 
 main :: IO()

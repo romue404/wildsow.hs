@@ -68,6 +68,11 @@ sublist n ls
 highestCard :: [(Player, Card)] -> Player
 highestCard pcs = fst$ maximumBy (comparing(value . snd)) pcs
 
+waitForWinnerToPlayCard :: Player -> GameState -> GameState
+waitForWinnerToPlayCard winner gs@GameState{players=players} =
+  let players' = dropWhile (\ps -> player ps /= winner) (cycle players)
+  in gs{players=take (length players) players', phase = WaitingForCard winner}
+
 -- TODO avoid duplication
 waitForColor :: GameState -> GameState
 waitForColor gameState =  gameState{players = playerQueue, phase = WaitingForColor nextInLine, currentColor = Nothing}
