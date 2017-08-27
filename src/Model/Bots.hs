@@ -1,4 +1,4 @@
-module Bots where
+module Model.Bots where
 
 import Model.Model as Model
 import Model.Updates
