@@ -32,11 +32,6 @@ update move gs@GameState{phase=p,  players=players} =
       (isPlayersTurn name p) `mustHoldOr` NotPlayersTurn
       (tricks >= 0) `mustHoldOr` (MoveAgainstRules "Tricks must be >= 0")
       Right $ gs{players = tricksPlayerUpdate tricks (HumanPlayer name) $ Model.players gs}
-    {--(TellColor name color) -> do
-      (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
-      (isWaitingForColor p) `mustHoldOr` UnexpectedMove
-      (isPlayersTurn name p) `mustHoldOr` NotPlayersTurn
-      Right $ gs{currentColor=Just color}--}
     (Join player) -> do
       (playerNameIsFree (playerName player) players) `mustHoldOr` NameTaken
       (loginLogic player gs)
@@ -63,6 +58,38 @@ step gs@GameState {phase = Evaluation, currentRound=round}
   --  new round means we have to change the player twice
 step gs@GameState {phase = GameOver} = gs
 
+
+step' :: PlayerMove -> GameState -> Either PlayerMoveError GameState
+step' (PlayCard player card) gs@GameState{phase = phase@(WaitingForCard player'),players=players} = do
+      (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
+      (isPlayersTurn player phase) `mustHoldOr` NotPlayersTurn
+      let gs' = gs{currentColor=(Model.currentColor gs) <|> Just(Model.color card)}
+      (card `elem` playeableCards player gs') `mustHoldOr` MoveAgainstRules "You are not allowed to play this card"
+      let state' = gs'{players = cardPlayedUpdate card (HumanPlayer player) $ Model.players gs}
+      if everyPlayerPlayed gs then Right (eval state') else Right (waitForNextCard state')
+step' (TellNumberOfTricks player tricks) gs@GameState{phase= phase@(WaitingForTricks player'), players=players} = do
+      (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
+      (isPlayersTurn player phase) `mustHoldOr` NotPlayersTurn
+      (tricks >= 0) `mustHoldOr` (MoveAgainstRules "Tricks must be >= 0")
+      let state =  gs{players = tricksPlayerUpdate tricks (HumanPlayer player) $ Model.players gs}
+      if allTricksSet gs then Right $ waitForNextCard state else Right $ waitForNextTricks state
+step' (Join player) gs = do
+      (playerNameIsFree (playerName player) (players gs)) `mustHoldOr` NameTaken
+      (loginLogic player gs)
+step' (Leave player) gs = Right $ reevaluatePlayersTurn $ gs{players= (replaceHumanPlayerWithBot player (Model.Ai $ Model.playerName player) (players gs))}
+step' (Begin) gs@GameState{phase = Idle, players=players}
+      |enoughPlayers players = Right $ (waitForNextTricks . setNewTrump . dealCards) gs
+      |otherwise = Left NotEnoughPlayers
+step' _ gs@GameState {phase = GameOver} = Right gs
+step' move gs = Left UnexpectedMove
+
+
+
+eval gs@GameState {currentRound=round}
+  |not $ allHandsPlayed gs = (clearCurrentColor . clearPlayedCards . setNewTrump . waitForWinnerToPlayCard winner) subroundEvaluatedGame -- TODO winner should start
+  |round >= length  (cardsPerRound Model.deck $ length $ players gs) = evaluateRound subroundEvaluatedGame{phase=GameOver}
+  |otherwise = (waitForNextTricks . clearCurrentColor . clearPlayedCards . setNewTrump . dealCards . evaluateRound) subroundEvaluatedGame
+  where (subroundEvaluatedGame, winner) = evaluateSubRound gs
 
 
 loginLogic :: Player -> GameState ->  Either Model.PlayerMoveError Model.GameState

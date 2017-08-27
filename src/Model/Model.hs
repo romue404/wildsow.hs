@@ -34,13 +34,14 @@ data PlayerMove =
     PlayCard String Card
   | TellNumberOfTricks String Int
   | Join Player
-  | Leave Player deriving (Read, Show, Eq)
+  | Leave Player
+  | Begin deriving (Read, Show, Eq)
 
-data GamePhase = Idle | GameOver | WaitingForTricks Player | WaitingForColor Player | WaitingForCard Player  | Evaluation deriving (Read)
+data GamePhase = Idle | GameOver | WaitingForTricks Player | WaitingForColor Player | WaitingForCard Player  | Evaluation  deriving (Read)
 
 data PlayerState = PlayerState {player :: Player, playedCard :: Maybe Card, hand :: Cards, tricks :: [Int], score :: [Int], tricksSubround::[(Int,Int)]} deriving (Read, Show)
 
-data PlayerMoveError = NotPlayersTurn | MoveAgainstRules String | UnexpectedMove | NotEnoughPlayers | GameFull | NameTaken deriving (Show)
+data PlayerMoveError = NotPlayersTurn | MoveAgainstRules String | UnexpectedMove | NotEnoughPlayers | GameFull | NameTaken  deriving (Show)
 
 data GameState = GameState {
   phase :: GamePhase,
