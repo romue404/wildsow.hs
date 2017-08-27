@@ -72,7 +72,7 @@ step' (TellNumberOfTricks player tricks) gs@GameState{phase= phase@(WaitingForTr
       (isPlayersTurn player phase) `mustHoldOr` NotPlayersTurn
       (tricks >= 0) `mustHoldOr` (MoveAgainstRules "Tricks must be >= 0")
       let state =  gs{players = tricksPlayerUpdate tricks (HumanPlayer player) $ Model.players gs}
-      if allTricksSet gs then Right $ waitForNextCard state else Right $ waitForNextTricks state
+      if allTricksSet state then Right $ waitForNextCard state else Right $ waitForNextTricks state
 step' (Join player) gs = do
       (playerNameIsFree (playerName player) (players gs)) `mustHoldOr` NameTaken
       (loginLogic player gs)
