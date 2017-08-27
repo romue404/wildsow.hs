@@ -46,7 +46,10 @@ instance FromJSON ClientMessage where
     userName <- o.: "userName"
     gameId <- o.: "gameId"
     case kind of
-      "join"  -> do return $ GameAction gameId $ GameModel.Join (GameModel.HumanPlayer userName)
+      "join"  -> do
+          botType <- o .: "botType"
+          return $ if T.pack(botType) == "random" then GameAction gameId $ GameModel.Join (GameModel.RandomBot userName)
+             else  GameAction gameId $ GameModel.Join (GameModel.HumanPlayer userName)
       "create"-> do return $ Create userName gameId
       "tellNumberOfTricks" -> do
         tricks <- o.: "tricks"
