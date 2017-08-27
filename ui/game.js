@@ -284,13 +284,17 @@ function sendDataToServerViaSocket(dataToSend) {
         let heapCard = player.playedCard;
         if(heapCard) {
           $('#heap-cards').append(`
-        <div class="game-card">
+        <div class="game-card heap-card">
          <p class="center">
          <span>${heapCard.color}</span><br>
          <span>${heapCard.value}</span>
          </p> 
        </div>
       `)
+          let cardImgName = mapCardToImgName(heapCard);
+
+          let cardImgPath = `images/cards/${cardImgName}.svg`;
+          $('.heap-card').last().css("background-image", `url(${cardImgPath})`);
         }
 
         $('#hand-player' + playerId).empty();
