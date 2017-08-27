@@ -18,7 +18,7 @@ evaluateRound gameState = gameState{players = playersWithScore, currentRound = r
               score = if tricksInThisRound == toldTricksThisRound then (if tricksInThisRound == 0 then 5 else tricksInThisRound + 10) else tricksInThisRound
           in p{score = [score] ++ currentScore}) players'
 
-evaluateSubRound :: GameState -> GameState
+evaluateSubRound :: GameState -> (GameState, Player)
 evaluateSubRound gameState =
   let round = Model.currentRound gameState
       trump = Model.trump $ gameState
@@ -31,7 +31,7 @@ evaluateSubRound gameState =
       -- wenn keinen gespielten trumpf gibt dann evaluiere die karten mit der angesagten farbe, die hoechste gewinnt
       -- wenn mindestens ein tumpf gespielt wurdde dann evaluiere diese, der hoehere gewinnt
       winner = if (not . null) candidatesTrump then highestCard candidatesTrump else highestCard candidatesColor
-  in gameState{players = updatePlayer (\p -> p{tricksSubround = [(round, 1)] ++ tricksSubround p}) winner players}
+  in (gameState{players = updatePlayer (\p -> p{tricksSubround = [(round, 1)] ++ tricksSubround p}) winner players}, winner)
 
 
 cardsOnTable :: [PlayerState] -> Cards
