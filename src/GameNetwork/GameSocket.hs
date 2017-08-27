@@ -54,7 +54,9 @@ instance FromJSON ClientMessage where
       "playCard" -> do
         card <- o.: "card"
         return $ GameAction gameId $ GameModel.PlayCard userName card
+      "start" -> do return $ GameAction gameId $ GameModel.Begin
       _        -> fail ("unknown kind: " ++ kind)
+
 
 ----------------------------------------------------- GAME SOCKET -----------------------------------------------------
 
