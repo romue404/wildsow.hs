@@ -13,7 +13,7 @@ import Control.Applicative
 
 ---------- SINGLE FUNCTION TO CALL ----------
 stepGame :: PlayerMove -> GameState -> Either PlayerMoveError GameState
-stepGame move gameState = step <$> (update move gameState)
+stepGame move gameState = step' move gameState
 
 -- TODO check if player is in game,
 update :: PlayerMove -> GameState -> Either PlayerMoveError GameState
