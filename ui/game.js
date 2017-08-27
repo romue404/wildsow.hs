@@ -303,6 +303,11 @@ function sendDataToServerViaSocket(dataToSend) {
          </p> 
        </div>
       `)
+          let cardImgName = mapCardToImgName(card);
+
+          let cardImgPath = `images/cards/${cardImgName}.svg`;
+          $('.player1-card').last().css("background-image", `url(${cardImgPath})`);
+
         });
       })
 
@@ -329,4 +334,21 @@ function getAction(action, gameId, username) {
     gameId: gameId,
     userName: username,
   }
+}
+
+function mapCardToImgName(card) {
+  let cardColor = card.color.toLowerCase();
+  if(cardColor === 'schellen') cardColor = 'schelln';
+  let cardValueMapper = {
+    Seven: '7er',
+    Eight: '8er',
+    Nine: '9er',
+    Ten: '10er',
+    Jack: 'Unter',
+    Queen: 'Ober',
+    King: 'König',
+    Ace: 'Sau'
+  }
+  let cardValue = cardValueMapper[card.value];
+  return cardColor + cardValue;
 }
