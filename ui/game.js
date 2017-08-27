@@ -264,24 +264,26 @@ function sendDataToServerViaSocket(dataToSend) {
     let debug = JSON.stringify(gameState, null, 2); // spacing level = 2
     $('#gameState').text(debug);
 
-    $('#round').text(gameState.round);
-    $('#phase').text(gameState.phase);
-    $('#color').text(gameState.color);
-    $('#trump').text(gameState.trump);
+    if(gameState.playerState) {
+      $('#round').text(gameState.round);
+      $('#phase').text(gameState.phase);
+      $('#color').text(gameState.color);
+      $('#trump').text(gameState.trump);
 
-    let players = gameState.playerState;
-    $('#heap-cards').empty();
-    players.forEach(function (player, playerId) {
-      playerId = playerId + 1; //due to html naming
-      $('#score-player' + playerId).text(player.score);
-      $('#tricks-player' + playerId).text(player.tricks);
-      $('#tricksSubround-player' + playerId).text(player.tricksSubround);
-      $('#name-player' + playerId).text(player.player.playerName);
-      $('#type-player' + playerId).text(player.player.tag);
+      let players = gameState.playerState;
 
-      let heapCard = player.playedCard;
-      if(heapCard) {
-        $('#heap-cards').append(`
+      $('#heap-cards').empty();
+      players.forEach(function (player, playerId) {
+        playerId = playerId + 1; //due to html naming
+        $('#score-player' + playerId).text(player.score);
+        $('#tricks-player' + playerId).text(player.tricks);
+        $('#tricksSubround-player' + playerId).text(player.tricksSubround);
+        $('#name-player' + playerId).text(player.player.playerName);
+        $('#type-player' + playerId).text(player.player.tag);
+
+        let heapCard = player.playedCard;
+        if(heapCard) {
+          $('#heap-cards').append(`
         <div class="game-card">
          <p class="center">
          <span>${heapCard.color}</span><br>
@@ -289,11 +291,11 @@ function sendDataToServerViaSocket(dataToSend) {
          </p> 
        </div>
       `)
-      }
+        }
 
-      $('#hand-player' + playerId).empty();
-      player.hand.forEach(function (card) {
-        $('#hand-player' + playerId).append(`
+        $('#hand-player' + playerId).empty();
+        player.hand.forEach(function (card) {
+          $('#hand-player' + playerId).append(`
        <div class="game-card player${playerId}-card">
          <p class="center">
          <span>${card.color}</span><br>
@@ -301,25 +303,22 @@ function sendDataToServerViaSocket(dataToSend) {
          </p> 
        </div>
       `)
-      });
-    })
+        });
+      })
 
-    $('.player1-card').click(function () {
-      let action = getAction("playCard", wildsow.gameName1,  players[0].player.playerName);
-      action.card = {
-        color: $(this).children().first().children().first().text(),
-        value: $(this).children().first().children().eq(2).text()
-      }
+      $('.player1-card').click(function () {
+        let action = getAction("playCard", wildsow.gameName1,  players[0].player.playerName);
+        action.card = {
+          color: $(this).children().first().children().first().text(),
+          value: $(this).children().first().children().eq(2).text()
+        }
 
-      console.log(action.card)
+        console.log(action.card)
 
-      sendDataToServerViaSocket(action);
-    })
+        sendDataToServerViaSocket(action);
+      })
 
-
-
-
-
+    }
 
   };
 }
