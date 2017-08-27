@@ -76,7 +76,7 @@ step' (TellNumberOfTricks player tricks) gs@GameState{phase= phase@(WaitingForTr
 step' (Join player) gs = do
       (playerNameIsFree (playerName player) (players gs)) `mustHoldOr` NameTaken
       (loginLogic player gs)
-step' (Leave player) gs = Right $ reevaluatePlayersTurn $ gs{players= (replaceHumanPlayerWithBot player (Model.Ai $ Model.playerName player) (players gs))}
+step' (Leave player) gs = Right $ reevaluatePlayersTurn $ gs{players= (replaceHumanPlayerWithBot player (Model.RandomBot $ Model.playerName player) (players gs))}
 step' (Begin) gs@GameState{phase = Idle, players=players}
       |enoughPlayers players = Right $ (waitForNextTricks . setNewTrump . dealCards) gs
       |otherwise = Left NotEnoughPlayers
