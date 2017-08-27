@@ -21,15 +21,17 @@ botMove gs@GameState {players = playersStates} = let
 
 -- RandomBot
 randomBotMove :: PlayerState -> GameState -> PlayerMove
-randomBotMove me gs@GameState {phase = WaitingForTricks p, players = players, stdGen=gen} = tricksToMake me (length players) gen
-randomBotMove me gs@GameState {phase = (WaitingForCard p), players = players, trump=trump, currentColor=currentColor, stdGen=gen} = cardToPlay gs me gen
+randomBotMove me gs@GameState {phase = WaitingForTricks p, players = players, stdGen=gen} = randomBotTricksToMake me (length players) gen
+randomBotMove me gs@GameState {phase = (WaitingForCard p), players = players, trump=trump, currentColor=currentColor, stdGen=gen} = randomBotCardToPlay gs me gen
 
-tricksToMake :: PlayerState -> int -> StdGen -> PlayerMove
-tricksToMake PlayerState{hand=hand, player=me} amountOfPlayers gen = let (rand, _) = randomR (0,length hand) gen
+randomBotTricksToMake :: PlayerState -> int -> StdGen -> PlayerMove
+randomBotTricksToMake PlayerState{hand=hand, player=me} amountOfPlayers gen = let (rand, _) = randomR (0,length hand) gen
                                                                      in TellNumberOfTricks me rand
 
-cardToPlay :: GameState -> PlayerState  -> StdGen -> PlayerMove
-cardToPlay gs PlayerState{hand=hand, player=me} gen = PlayCard me (randomCard (playeableCards me gs) gen)
+randomBotCardToPlay :: GameState -> PlayerState  -> StdGen -> PlayerMove
+randomBotCardToPlay gs PlayerState{hand=hand, player=me} gen = PlayCard me (randomCard (playeableCards me gs) gen)
+
+
 
 
 -- Helpers
