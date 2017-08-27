@@ -30,7 +30,7 @@ mustHoldOr False e = Left e
 ------------------------------------------- BOT INFO -------------------------------------------
 countBots :: [PlayerState] -> [Int]
 countBots ps = map (\PlayerState{player=p} -> case p of
-                                                Ai _ -> 1
+                                                RandomBot _ -> 1
                                                 otherwise -> 0) ps
 amountOfBots :: [PlayerState] -> Int
 amountOfBots ps = foldl (+) 0 (countBots ps)
@@ -81,7 +81,7 @@ isIdle _ = False
 
 isBot :: Player -> Bool
 isBot (HumanPlayer _) = False
-isBot (Ai _) = True
+isBot (RandomBot _) = True
 
 isHuman :: Player -> Bool
 isHuman = not . isBot

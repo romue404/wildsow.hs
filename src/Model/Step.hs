@@ -37,7 +37,7 @@ update move gs@GameState{phase=p,  players=players} =
       (loginLogic player gs)
     (Leave player) -> do
       Right $ reevaluatePlayersTurn $
-        gs{players= (replaceHumanPlayerWithBot player (Model.Ai $ Model.playerName player) players)} -- Adds a bot with the same name
+        gs{players= (replaceHumanPlayerWithBot player (Model.RandomBot $ Model.playerName player) players)} -- Adds a bot with the same name
 
 
 step :: GameState -> GameState

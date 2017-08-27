@@ -30,7 +30,7 @@ replaceBotWithPlayer :: Player -> [PlayerState] -> [PlayerState]
 replaceBotWithPlayer newPlayer [] = []
 replaceBotWithPlayer newPlayer (p@PlayerState{player=plr}:ps) = case plr of
     (HumanPlayer _) -> p: (replaceBotWithPlayer newPlayer ps)
-    (Ai _) -> p{player=newPlayer}: ps
+    (RandomBot _) -> p{player=newPlayer}: ps
 
 replaceHumanPlayerWithBot :: Player -> Player -> [PlayerState] -> [PlayerState]
 replaceHumanPlayerWithBot player bot ps = updatePlayer (\p -> p{player=bot}) player ps

@@ -12,7 +12,7 @@ data Card = Card {value :: Value, color :: Color} deriving (Read, Show, Eq)
 data Color = Eichel | Gras | Herz | Schellen deriving (Read, Show, Enum, Eq, Bounded)
 data Value =   Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Read, Show, Enum, Eq, Ord, Bounded)
 type Cards = [Card]
-data Player = HumanPlayer {playerName :: String} | Ai {playerName :: String} deriving (Read, Show, Eq)
+data Player = HumanPlayer {playerName :: String} | RandomBot {playerName :: String} deriving (Read, Show, Eq)
 
 
 listAll :: (Enum a, Bounded a) => [a]
@@ -102,7 +102,7 @@ initWildsowGameState gen =  GameState{
   stdGen=gen
 }
 
-ai1 = Ai "Thomas Mueller"
-ai2 = Ai "James Roriguez"
-ai3 = Ai "Arjen Robben"
-ai4 = Ai "Frank Ribery"
+bot1 = RandomBot "Thomas Mueller"
+bot2 = RandomBot "James Roriguez"
+bot3 = RandomBot "Arjen Robben"
+bot4 = RandomBot "Frank Ribery"
