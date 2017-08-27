@@ -65,8 +65,8 @@ step' (PlayCard player card) gs@GameState{phase = phase@(WaitingForCard player')
       (isPlayersTurn player phase) `mustHoldOr` NotPlayersTurn
       let gs' = gs{currentColor=(Model.currentColor gs) <|> Just(Model.color card)}
       (card `elem` playeableCards player gs') `mustHoldOr` MoveAgainstRules "You are not allowed to play this card"
-      let state' = gs'{players = cardPlayedUpdate card (HumanPlayer player) $ Model.players gs}
-      if everyPlayerPlayed gs then Right (eval state') else Right (waitForNextCard state')
+      let state = gs'{players = cardPlayedUpdate card (HumanPlayer player) $ Model.players gs}
+      if everyPlayerPlayed state then Right (eval state) else Right (waitForNextCard state)
 step' (TellNumberOfTricks player tricks) gs@GameState{phase= phase@(WaitingForTricks player'), players=players} = do
       (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
       (isPlayersTurn player phase) `mustHoldOr` NotPlayersTurn
