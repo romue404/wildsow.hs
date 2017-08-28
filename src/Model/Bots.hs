@@ -7,6 +7,16 @@ import System.Random
 import System.Random.Shuffle
 import Model.Validation
 
+
+-- Spieltheorie
+-- bei Poker um ein dynamisches Spiel mit unvollkommener Informationen und Zufallsereignissen. Poker ist dabei ein
+-- strikt kompetatives Nullsummenspiel (einer gewinnt, alle anderen verlieren) und nicht symmetrisch,
+-- da die zu w¨ahlenden Handlungsalternativen von der Position am Tisch abh¨angen.
+
+--Pokerspiel um ein unvollkommenes dynamisches Nullsummenspiel mit Zufallseinfluß
+-- Rückwärrtsinduktion
+
+
 -- am beste wir haben ein bots file aus dem man dann die verschiedenen bts aufrufen kann
 
 -- check if its a turn for a bot and do it
@@ -15,26 +25,38 @@ botMove gs@GameState {players = playersStates} = let
   currentPlayerState = head playersStates
   currentPlayer = player currentPlayerState
   in case currentPlayer of
-      RandomBot _ -> Just $ randomBotMove currentPlayerState gs
+      RandomBot _ -> Just $ randomBotMove gs currentPlayerState
       HumanPlayer _ -> Nothing
 
 
 -- RandomBot
-randomBotMove :: PlayerState -> GameState -> PlayerMove
-randomBotMove me gs@GameState {phase = WaitingForTricks p, players = players, stdGen=gen} = randomBotTricksToMake me (length players) gen
-randomBotMove me gs@GameState {phase = (WaitingForCard p), players = players, trump=trump, currentColor=currentColor, stdGen=gen} = randomBotCardToPlay gs me gen
+randomBotMove :: GameState -> PlayerState -> PlayerMove
+randomBotMove gs@GameState {phase = WaitingForTricks p} me = randomBotTricksToMake gs me
+randomBotMove gs@GameState {phase = (WaitingForCard p)} me = randomBotCardToPlay gs me
 
-randomBotTricksToMake :: PlayerState -> int -> StdGen -> PlayerMove
-randomBotTricksToMake PlayerState{hand=hand, player=me} amountOfPlayers gen = let (rand, _) = randomR (0,length hand) gen
-                                                                     in TellNumberOfTricks me 0
+randomBotTricksToMake :: GameState -> PlayerState -> PlayerMove
+randomBotTricksToMake gs@GameState{players = players, stdGen=gen} PlayerState{hand=hand, player=me} =
+    let (rand, _) = randomR (0,length hand) gen
+        amountOfPlayers = length players
+    in TellNumberOfTricks me rand
 
-randomBotCardToPlay :: GameState -> PlayerState  -> StdGen -> PlayerMove
-randomBotCardToPlay gs PlayerState{hand=hand, player=me} gen = PlayCard me (randomCard (playeableCards me gs) gen)
-
-
+randomBotCardToPlay :: GameState -> PlayerState -> PlayerMove
+randomBotCardToPlay gs@GameState { trump=trump, currentColor=currentColor, stdGen=gen} PlayerState{hand=hand, player=me} =
+    case currentColor of
+        Nothing -> PlayCard me (randomCard (playeableCards2 trump Gras hand) gen)
+        Just currentColor -> PlayCard me (randomCard (playeableCards2 trump currentColor hand) gen)
 
 
 -- Helpers
+playeableCards2 :: Color -> Color -> Cards -> Cards
+playeableCards2 trump currentColor hand
+    | length cardsFitsCurrentColor > 0 = cardsFitsCurrentColor
+    | length cardsFitsTrump > 0 = cardsFitsTrump
+    | otherwise = hand
+    where
+        cardsFitsCurrentColor = cardsWithColor hand currentColor
+        cardsFitsTrump = cardsWithColor hand trump
+
 randomCard :: Cards -> StdGen -> Card
 randomCard cards gen = let (rand, _) = randomR (0,length cards) gen
-                       in cards!!0
+    in cards!!rand
