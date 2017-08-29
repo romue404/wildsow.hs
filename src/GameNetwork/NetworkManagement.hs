@@ -10,6 +10,7 @@ import Data.Typeable
 import Control.Exception
 import System.Random
 import qualified Data.Text as T
+import Model.Step
 
 
 data GameChannel = GameChannel {connectedPlayers:: [(GameModel.Player, WS.Connection)], gameState :: GameModel.GameState}
