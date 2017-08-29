@@ -34,16 +34,18 @@ randomBotMove :: GameState -> PlayerState -> PlayerMove
 randomBotMove gs@GameState {phase = WaitingForTricks p} me = randomBotTricksToMake gs me
 randomBotMove gs@GameState {phase = (WaitingForCard p)} me = randomBotCardToPlay gs me
 
+
 randomBotTricksToMake :: GameState -> PlayerState -> PlayerMove
 randomBotTricksToMake gs@GameState{players = players, stdGen=gen} PlayerState{hand=hand, player=me} =
     let (rand, _) = randomR (0,length hand) gen
         amountOfPlayers = length players
     in TellNumberOfTricks me rand
 
+
 randomBotCardToPlay :: GameState -> PlayerState -> PlayerMove
 randomBotCardToPlay gs@GameState { trump=trump, currentColor=currentColor, stdGen=gen} PlayerState{hand=hand, player=me} =
     case currentColor of
-        Nothing -> PlayCard me (randomCard (playeableCards2 trump Gras hand) gen)
+        Nothing -> PlayCard me (randomCard hand gen)
         Just currentColor -> PlayCard me (randomCard (playeableCards2 trump currentColor hand) gen)
 
 
