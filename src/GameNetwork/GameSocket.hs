@@ -76,22 +76,38 @@ app games pending = do
     msg <- WS.receiveData conn
     action <- maybe (throw NetworkManagement.ParseError) pure (decode(msg)::Maybe ClientMessage)
     res <- case action of
-      Join userName gameId -> do
-        joined <- atomically $ loginSTM gameId games ((GameModel.HumanPlayer userName), conn)
-        either (throw) (pure) joined
+      (GameAction gameId move@(GameModel.Join player)) -> do
+        joined <- atomically $ do
+          chans <- readTVar games
+          loggedIn <- gameActionSTM gameId games player move
+          case loggedIn of
+            Left e -> return $ Left e
+            Right gs -> (writeTVar games $ (NetworkManagement.joinChannel (player, conn) gameId chans)) >> (return $ Right ())
+        either (throw) (\_ -> gameLoop (conn, player) games gameId) joined -- joind change for gameloop
       Create userName gameId -> do
         gen <- newStdGen
-        created <- (atomically $ createSTM gameId games (GameModel.HumanPlayer userName, conn) gen)
-        channel <- either (throw) (pure) created
-        -- hier gamestate verschicken bzw in die 2. phase wechseln
-        broadcastState gameId games (NetworkManagement.gameState channel)
-      (GameAction id move) -> do
-        possibleAction <- atomically $ gameActionSTM id games (GameModel.HumanPlayer $ whos move) move
-        state <- either (throw) (pure) possibleAction
-        broadcastState id games state
+        let player = GameModel.HumanPlayer userName
+        created <- atomically $ createSTM gameId games (player, conn) gen
+        either (throw) (\_ -> gameLoop (conn, player) games gameId) created
     -- hier alles parsen und action behandlung machen
     --WS.sendTextData conn ("Parsed:" `mappend` (T.pack(show $ action))::Text)
     return res)
+
+
+gameLoop :: ( WS.Connection, GameModel.Player) -> TVar (NetworkManagement.GameChannels GameId) -> GameId -> IO ()
+gameLoop (conn, player) games gameId = forever $ flip finally (disconnectHandler gameId games player) $
+    do -- TODO handle should make the player leave
+      b <- broadcastState gameId games
+      msg <- WS.receiveData conn
+      action <- pure (decode(msg)::Maybe ClientMessage)
+      case action of
+        Just (GameAction id  (GameModel.Join (GameModel.HumanPlayer p))) -> unicast conn GameModel.UnexpectedMove -- do nothing TODO check if player = player
+        Just (GameAction id move) -> do
+          possibleAction <- atomically $ gameActionSTM id games (GameModel.HumanPlayer $ whos move) move
+          case possibleAction of
+            Left e -> unicast conn e
+            Right state ->  broadcastState id games
+        Nothing -> unicast conn NetworkManagement.ParseError
 
 ----------------------------------------------------- PERSIST ACTIONS VIA STM -----------------------------------------------------
 
@@ -102,8 +118,7 @@ loginSTM ::
   -> STM(Either NetworkManagement.GameNetworkingException ())
 loginSTM id channels player = do
   games <- readTVar channels
-  let checks = (NetworkManagement.getChannel' id games) >>= NetworkManagement.checkChannelLimit GameModel.maxAmountOfPlayers
-  case checks of
+  case(NetworkManagement.getChannel' id games) of
     Left error -> return $ Left error
     Right channel -> (writeTVar channels $ (NetworkManagement.joinChannel player id games)) >> (return $ Right ())
 
@@ -134,28 +149,43 @@ gameActionSTM gameId channels player move = do
   games <- readTVar channels
   let eihterNewState = do
             (NetworkManagement.GameChannel players state) <- NetworkManagement.getChannel' gameId games
-            mapEitherR (\r -> NetworkManagement.GameError r) (Model.Step.stepGame move state)
+            mapEitherR NetworkManagement.GameError (Model.Step.stepGame move state)
   case eihterNewState of
     Left err -> return $ Left err
     Right newState -> do
       writeTVar channels $ NetworkManagement.stepGameInChannel newState gameId games
       return $ Right (newState)
 
--- TODO fetch gamestate inside stm
-broadcastState id channels state =
-  do
-    recieivers <- atomically $ do
-        game <- readTVar channels
-        let receiver = fromMaybe [] $ (fmap snd) <$> NetworkManagement.connectedPlayers <$> NetworkManagement.getChannel id game
-        return receiver
-    cast <- forM_ recieivers (\conn -> WS.sendTextData conn (Data.Aeson.encode(state)))
-    return ()
+
+disconnectSTM id games player = do
+  action <- gameActionSTM id games player (GameModel.Leave player)
+  channel <- readTVar games
+  writeTVar games $ NetworkManagement.leaveChannel player id channel
+
 
 ----------------------------------------------------- COMMUNICATE MESSAGES TO CLIENTS -----------------------------------------------------
+disconnectHandler :: GameId -> TVar (NetworkManagement.GameChannels GameId) ->GameModel.Player -> IO ()
+disconnectHandler id games player = do
+  _ <- atomically $ disconnectSTM id games player
+  broadcastState id games
+
+unicast conn msg =  WS.sendTextData conn (Data.Aeson.encode(msg))
 
 errorHandler :: WS.Connection -> NetworkManagement.GameNetworkingException -> IO ()
 errorHandler conn e = WS.sendTextData conn (Data.Aeson.encode(e))
 
+broadcastState :: (Ord id) => id -> TVar(NetworkManagement.GameChannels id) -> IO ()
+broadcastState id channels =
+  do
+    stateReceivers <- atomically $ do
+        game <- readTVar channels
+        let sr = do
+            NetworkManagement.GameChannel{NetworkManagement.connectedPlayers=receivers, NetworkManagement.gameState=state} <- NetworkManagement.getChannel id game
+            return (state, map snd receivers)
+        return sr
+    case stateReceivers of
+      Just (state, receivers) -> forM_ (receivers) (\conn -> WS.sendTextData conn (Data.Aeson.encode(state)))
+      Nothing -> return ()
 
 ----------------------------------------------------- HELPER -----------------------------------------------------
 mapEitherR f (Left error) = Left(f error)

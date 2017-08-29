@@ -94,7 +94,7 @@ step' move gs = Left UnexpectedMove
 
 
 eval gs@GameState {currentRound=round}
-  |not $ allHandsPlayed gs = (clearCurrentColor . clearPlayedCards . setNewTrump . waitForWinnerToPlayCard winner) subroundEvaluatedGame -- TODO winner should start
+  |not $ allHandsPlayed gs = (clearCurrentColor . clearPlayedCards . waitForWinnerToPlayCard winner) subroundEvaluatedGame -- TODO winner should start
   |round >= length  (cardsPerRound Model.deck $ length $ players gs) = evaluateRound subroundEvaluatedGame{phase=GameOver}
   |otherwise = (waitForNextTricks . clearCurrentColor . clearPlayedCards . setNewTrump . dealCards . evaluateRound) subroundEvaluatedGame
   where (subroundEvaluatedGame, winner) = evaluateSubRound gs
