@@ -8,8 +8,7 @@
   LoginCtrl.$inject = ['$scope', '$rootScope', '$state'];
 
   function LoginCtrl($scope, $rootScope, $state) {
-    $scope.title = "About";
-    $scope.about = "Login Page";
+    $scope.about = "Wildsow!";
 
     $scope.createPlayer = createPlayer;
 

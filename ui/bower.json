@@ -18,6 +18,7 @@
     "materialize": "^0.100.1",
     "angular": "1.6.4",
     "angular-websocket": "^2.0.0",
-    "angular-ui-router": "^1.0.6"
+    "angular-ui-router": "^1.0.6",
+    "normalize-css": "^7.0.0"
   }
 }

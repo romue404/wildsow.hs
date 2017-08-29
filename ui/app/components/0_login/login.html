@@ -1,5 +1,14 @@
+<div id="login">
+  <div class="container">
+    <div class="row">
+      <div class="col m6 offset-m3" id="login-form">
+        <h1>{{about}}</h1>
+        <h4 class="light">Das Kartenspiel</h4>
+        <img src="images/wildsow.png" alt="" class="circle responsive-img" style="height: 50%; width: 50%">
+        <input ng-model="username" ng-keyup="$event.keyCode == 13 && createPlayer()" placeholder="Spieler Name eingeben" id="input-username">
+        <button ng-click="createPlayer()" id="button-username" class="btn waves-effect waves-light">Spieler erstellen</button>
+      </div>
 
-<h1>{{about}}</h1>
-
-<input ng-model="username" placeholder="Spieler Name eingeben">
-<button ng-click="createPlayer()">Spieler erstellen</button>
+    </div>
+  </div>
+</div>

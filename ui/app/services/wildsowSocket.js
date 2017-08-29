@@ -29,6 +29,7 @@
 
     dataStream.onMessage(function(message) {
       states.push(JSON.parse(message.data));
+      console.log(states.reverse())
     });
 
     var methods = {

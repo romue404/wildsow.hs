@@ -2,26 +2,35 @@
 <html lang="en" ng-app="wildsow" ng-controller="MainCtrl">
 <head>
   <meta charset="UTF-8">
-  <title>Schwarze Sau | Das Kartenspiel</title>
+  <title>Wildsow | Das Kartenspiel</title>
+  <link rel="stylesheet" href="bower_components/materialize/dist/css/materialize.min.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
+<!--
 <a ui-sref="login">Login</a>
 <a ui-sref="overview">Overview</a>
 <a ui-sref="lobby">Lobby</a>
 <a ui-sref="game">Game</a>
+-->
 
 <div ui-view></div>
 
+<!--
 <pre>
   <code>
     {{ gameState.states.reverse() }}
   </code>
 </pre>
+-->
 
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="bower_components/angular/angular.min.js"></script>
 <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
 <script src="bower_components/angular-websocket/dist/angular-websocket.min.js"></script>
+
+<script type="text/javascript" src="bower_components/materialize/dist/js/materialize.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-materialize/0.2.2/angular-materialize.min.js"></script>
 
 <script src="app/app.module.js"></script>
 <script src="app/app.routes.js"></script>
