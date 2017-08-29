@@ -21,11 +21,13 @@
     function createGame() {
       let action = GameState.createActionRequest('create', $scope.gameId, $rootScope.username);
       GameState.sendActionRequest(action);
+      $state.go('lobby');
     }
 
     function joinGame() {
       let action = GameState.createActionRequest('join', $scope.gameId, $rootScope.username);
       GameState.sendActionRequest(action);
+      $state.go('lobby');
     }
 
     function logout() {
