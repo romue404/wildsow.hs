@@ -14,9 +14,9 @@
 
     // variables
     $scope.about = "Game Page";
-    
+
     $scope.$on('gameStateUpdated', function(event, currentGameState) {
-      $scope.currentGameState = currentGameState;
+      $scope.currentGameState = JSON.stringify(currentGameState, null, 2);
     });
 
     // apis

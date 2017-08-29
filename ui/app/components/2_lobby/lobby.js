@@ -16,7 +16,7 @@
     $scope.currentGameState = GameState.current.state;
 
     $scope.$on('gameStateUpdated', function(event, currentGameState) {
-      $scope.currentGameState = currentGameState;
+      $scope.currentGameState = JSON.stringify(currentGameState, null, 2);
     });
 
 
