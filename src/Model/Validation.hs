@@ -10,7 +10,7 @@ import Data.Maybe (isJust)
 -- might use maybe alternative
 playeableCards :: Player -> GameState -> Cards
 playeableCards player gs@GameState{players=players, trump=trump, currentColor=currentColor} =
-  fromMaybe [] $ do
+  fromMaybe [] $ do -- TODO default this to hand
     currentColor' <- currentColor
     player' <- find (\p -> player ==  (Model.Model.player p)) players
     let table = cardsOnTable players

@@ -60,5 +60,5 @@ playeableCards2 trump currentColor hand
         cardsFitsTrump = cardsWithColor hand trump
 
 randomCard :: Cards -> StdGen -> Card
-randomCard cards gen = let (rand, _) = randomR (0,length cards) gen
+randomCard cards gen = let (rand, _) = randomR (0, (length cards)-1) gen
     in cards!!rand
