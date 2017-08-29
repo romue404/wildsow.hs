@@ -10,9 +10,9 @@ import Data.Aeson as Aeson hiding (Value)
 
 data Card = Card {value :: Value, color :: Color} deriving (Read, Show, Eq)
 data Color = Eichel | Gras | Herz | Schellen deriving (Read, Show, Enum, Eq, Bounded)
-data Value =   Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Read, Show, Enum, Eq, Ord, Bounded)
+data Value =   Seven | Eight | Nine | Jack | Queen | King | Ten | Ace deriving (Read, Show, Enum, Eq, Ord, Bounded)
 type Cards = [Card]
-data Player = HumanPlayer {playerName :: String} | RandomBot {playerName :: String} deriving (Read, Show, Eq)
+data Player = HumanPlayer {playerName :: String} | RandomBot {playerName :: String} | SmartBot {playerName :: String} deriving (Read, Show, Eq)
 
 
 listAll :: (Enum a, Bounded a) => [a]
