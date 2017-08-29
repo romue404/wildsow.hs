@@ -31,6 +31,7 @@
     dataStream.onMessage(function(message) {
       current.state = JSON.parse(message.data);
       states.push(JSON.parse(message.data));
+      console.log('Current State: ' + JSON.stringify(current, null, 2));
     });
 
     var methods = {
