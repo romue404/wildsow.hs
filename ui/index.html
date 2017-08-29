@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="wildsow" ng-controller="MainCtrl">
+<head>
+  <meta charset="UTF-8">
+  <title>Schwarze Sau | Das Kartenspiel</title>
+</head>
+<body>
+
+<a ui-sref="login">Login</a>
+<a ui-sref="overview">Overview</a>
+<a ui-sref="lobby">Lobby</a>
+<a ui-sref="game">Game</a>
+
+<div ui-view></div>
+
+<pre>
+  <code>
+    {{ gameState.states.reverse() }}
+  </code>
+</pre>
+
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="bower_components/angular-websocket/dist/angular-websocket.min.js"></script>
+
+<script src="app/app.module.js"></script>
+<script src="app/app.routes.js"></script>
+
+<script src="app/services/wildsowSocket.js"></script>
+
+<script src="index.js"></script>
+<script src="app/components/0_login/login.js"></script>
+<script src="app/components/1_overview/overview.js"></script>
+<script src="app/components/2_lobby/lobby.js"></script>
+<script src="app/components/3_game/game.js"></script>
+
+</body>
+</html>

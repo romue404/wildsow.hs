@@ -15,6 +15,9 @@
     "tests"
   ],
   "dependencies": {
-    "materialize": "^0.100.1"
+    "materialize": "^0.100.1",
+    "angular": "1.6.4",
+    "angular-websocket": "^2.0.0",
+    "angular-ui-router": "^1.0.6"
   }
 }
