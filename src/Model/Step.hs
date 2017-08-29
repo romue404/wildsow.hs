@@ -81,9 +81,7 @@ step' (TellNumberOfTricks player tricks) gs@GameState{phase= phase@(WaitingForTr
       (tricks >= 0) `mustHoldOr` (MoveAgainstRules "Tricks must be >= 0")
       let state =  gs{players = tricksPlayerUpdate tricks player $ Model.players gs}
       if allTricksSet state then Right $ waitForNextCard state else Right $ waitForNextTricks state
-step' (Join player) gs = do
-      (playerNameIsFree (playerName player) (players gs)) `mustHoldOr` NameTaken
-      (loginLogic player gs)
+step' (Join player) gs = (loginLogic player gs)
 step' (Leave player) gs = Right $ reevaluatePlayersTurn $ gs{players= (replaceHumanPlayerWithBot player (Model.RandomBot $ Model.playerName player) (players gs))}
 step' Begin gs@GameState{phase = Idle, players=players}
       |enoughPlayers players = Right $ (waitForNextTricks . setNewTrump . dealCards) gs

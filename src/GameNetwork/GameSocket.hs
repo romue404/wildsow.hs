@@ -95,8 +95,9 @@ app games pending = do
 
 
 gameLoop :: ( WS.Connection, GameModel.Player) -> TVar (NetworkManagement.GameChannels GameId) -> GameId -> IO ()
-gameLoop (conn, player) games gameId = forever $ flip finally (disconnectHandler gameId games player) $
-    do -- TODO handle should make the player leave
+gameLoop (conn, player) games gameId = flip finally(disconnectHandler gameId games player) $ forever $ do
+      WS.forkPingThread conn 10
+      print("listening for " `mappend` show player)
       b <- broadcastState gameId games
       msg <- WS.receiveData conn
       action <- pure (decode(msg)::Maybe ClientMessage)
@@ -107,7 +108,8 @@ gameLoop (conn, player) games gameId = forever $ flip finally (disconnectHandler
           case possibleAction of
             Left e -> unicast conn e
             Right state ->  broadcastState id games
-        Nothing -> unicast conn NetworkManagement.ParseError
+        Just e -> unicast conn GameModel.UnexpectedMove
+        Nothing -> unicast conn GameModel.UnexpectedMove
 
 ----------------------------------------------------- PERSIST ACTIONS VIA STM -----------------------------------------------------
 
@@ -167,12 +169,18 @@ disconnectSTM id games player = do
 disconnectHandler :: GameId -> TVar (NetworkManagement.GameChannels GameId) ->GameModel.Player -> IO ()
 disconnectHandler id games player = do
   _ <- atomically $ disconnectSTM id games player
+  print("DISCONNECTED: " `mappend` show player)
   broadcastState id games
+
+discTest :: SomeException -> IO ()
+discTest e = print(show e)
 
 unicast conn msg =  WS.sendTextData conn (Data.Aeson.encode(msg))
 
 errorHandler :: WS.Connection -> NetworkManagement.GameNetworkingException -> IO ()
-errorHandler conn e = WS.sendTextData conn (Data.Aeson.encode(e))
+errorHandler conn e = do
+  print("handling error in main loop")
+  WS.sendTextData conn (Data.Aeson.encode(e))
 
 broadcastState :: (Ord id) => id -> TVar(NetworkManagement.GameChannels id) -> IO ()
 broadcastState id channels =
