@@ -5,11 +5,19 @@
     .module('wildsow')
     .controller('LobbyCtrl', LobbyCtrl);
 
-  LobbyCtrl.$inject = ['$scope'];
+  LobbyCtrl.$inject = ['$scope', '$rootScope', '$state', 'GameState'];
 
-  function LobbyCtrl($scope) {
-    $scope.title = "About";
-    $scope.about = "Lobby Page"
+  function LobbyCtrl($scope, $rootScope, $state, GameState) {
+
+    if(!$rootScope.username) $state.go('login');
+
+    $scope.about = "Lobby Page";
+
+    $scope.startGame = startGame;
+
+    function startGame() {
+
+    }
   }
 
 })();

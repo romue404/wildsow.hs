@@ -127,7 +127,7 @@ $(document).ready(function(){
     let action = getAction("join", wildsow.gameName4, wildsow.player4Name);
     sendDataToServerViaSocket(action);
   })
-  
+
   /**
    * tell tricks
    */

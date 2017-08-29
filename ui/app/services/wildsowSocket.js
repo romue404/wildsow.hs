@@ -13,6 +13,18 @@
 // Open a WebSocket connection
     var dataStream = $websocket(baseUrl);
 
+    dataStream.onError(function(error) {
+      console.log(error)
+    });
+
+    dataStream.onOpen(function() {
+      console.log('Socket opened');
+    });
+
+    dataStream.onClose(function() {
+      console.log('Socket closed');
+    });
+
     var states = [];
 
     dataStream.onMessage(function(message) {
@@ -21,8 +33,15 @@
 
     var methods = {
       states: states,
-      get: function() {
-        dataStream.send(JSON.stringify({ action: 'get' }));
+      createActionRequest: function (action, gameId, username) {
+        return {
+          kind: action,
+          gameId: gameId,
+          userName: username,
+        }
+      },
+      sendActionRequest: function(action) {
+        dataStream.send(JSON.stringify(action));
       }
     };
 

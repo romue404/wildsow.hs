@@ -5,25 +5,21 @@
     .module('wildsow')
     .controller('GameCtrl', GameCtrl);
 
-  GameCtrl.$inject = ['$scope', 'GameState'];
+  GameCtrl.$inject = ['$scope', '$rootScope', '$state', 'GameState'];
 
-  function GameCtrl($scope, GameState) {
+  function GameCtrl($scope, $rootScope, $state, GameState) {
+
+    if(!$rootScope.username) $state.go('login');
 
     // variables
-    $scope.title = "About";
     $scope.about = "Game Page";
-    $scope.gameState = GameState;
 
     // apis
-    $scope.createGame = createGame;
-    $scope.joinGame = joinGame;
-    $scope.startGame = startGame;
-    
     $scope.tellTricks = tellTricks;
     $scope.playCard = playCard;
     
     function tellTricks() {
-      
+      var action = GameState.createActionRequest("tellTricks", )
     }
 
     // functions

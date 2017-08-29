@@ -5,11 +5,18 @@
     .module('wildsow')
     .controller('LoginCtrl', LoginCtrl);
 
-  LoginCtrl.$inject = ['$scope'];
+  LoginCtrl.$inject = ['$scope', '$rootScope', '$state'];
 
-  function LoginCtrl($scope) {
+  function LoginCtrl($scope, $rootScope, $state) {
     $scope.title = "About";
-    $scope.about = "Login Page"
+    $scope.about = "Login Page";
+
+    $scope.createPlayer = createPlayer;
+
+    function createPlayer() {
+      $rootScope.username = $scope.username;
+      $state.go('overview');
+    }
   }
 
 })();
