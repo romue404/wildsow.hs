@@ -13,6 +13,9 @@
     if(!$rootScope.username) $state.go('login');
 
     $scope.about = "Lobby Page";
+    $scope.gameStates = GameState.states;
+
+    console.log($scope.gameStates)
 
     $scope.startGame = startGame;
 

@@ -3,26 +3,37 @@
   <div id="overview-content" class="container">
 
     <div class="row" class="center">
-      <div class="col s12">
+      <div class="col s6">
         <h1>Welcome {{ username }}!</h1>
+      </div>
+      <div class="col s6">
+        <button ng-click="logout()"  class="btn waves-effect waves-light wildsow-button right" style="margin-top:50px">Ausloggen</button>
       </div>
     </div>
 
-
     <div id="games" class="row">
 
-      <div class="label">Filter:</div><input ng-model="filterGameId" placeholder="Nach Spiel Name filtern" id="input-filter">
+      <div class="col s12">
+        <div class="label">Filter:</div><input ng-model="filterGameId" placeholder="Nach Spiel Name filtern" id="input-filter">
 
-      Verfügbare Spiele:
-      <ul id="game-list">
-        <li ng-repeat="game in games | filter:filterGameId"  ng-click="selectGame(game)" ng-class="{selected: game === selectedGame}">
-          {{ game }}
-        </li>
-      </ul>
+        Verfügbare Spiele:
+        <ul id="game-list">
+          <li ng-repeat="game in games | filter:filterGameId"  ng-click="selectGame(game)" ng-class="{selected: game === selectedGame}">
+            {{ game }}
+          </li>
+        </ul>
 
-      Spiel Name:
-      <input ng-model="gameId" placeholder="Name des Spiels eingeben">
-      <button ng-click="joinGame()"  class="btn waves-effect waves-light wildsow-button">Spiel beitreten</button>
+        Spiel Name:
+        <div class="row">
+          <div class="col s6">
+            <input ng-model="gameId" placeholder="Name des Spiels eingeben">
+          </div>
+          <div class="col s6">
+            <button ng-click="joinGame()"  class="btn waves-effect waves-light wildsow-button">Spiel beitreten</button>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <div class="row">
@@ -33,13 +44,6 @@
         <button ng-click="createGame()"  class="btn waves-effect waves-light wildsow-button">Spiel erstellen</button>
       </div>
     </div>
-
-<div class="row">
-  <div class="col s12">
-    <button ng-click="logout()"  class="btn waves-effect waves-light wildsow-button">Ausloggen</button>
-  </div>
-
-</div>
 
   </div>
 </div>

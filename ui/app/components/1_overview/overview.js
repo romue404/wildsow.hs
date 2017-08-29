@@ -12,6 +12,7 @@
     $rootScope.username = localStorageService.get("username");
     if(!$rootScope.username) $state.go('login');
 
+    $scope.state = GameState.current;
     $scope.about = "Overview Page";
     $scope.games = [
       'Party',

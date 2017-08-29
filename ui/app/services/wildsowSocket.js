@@ -26,10 +26,10 @@
     });
 
     var states = [];
+    var current;
 
     dataStream.onMessage(function(message) {
       states.push(JSON.parse(message.data));
-      console.log(JSON.stringify(states.reverse()))
     });
 
     var methods = {
