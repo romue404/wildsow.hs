@@ -7,9 +7,9 @@
     .module('wildsow')
     .factory('GameState', GameState);
 
-  GameState.$inject = ['$websocket'];
+  GameState.$inject = ['$websocket', '$rootScope'];
 
-  function GameState($websocket) {
+  function GameState($websocket, $rootScope) {
 // Open a WebSocket connection
     var dataStream = $websocket(baseUrl);
 
@@ -32,6 +32,7 @@
       current.state = JSON.parse(message.data);
       states.push(JSON.parse(message.data));
       console.log('Current State: ' + JSON.stringify(current, null, 2));
+      $rootScope.$broadcast('gameStateUpdated', JSON.parse(message.data));
     });
 
     var methods = {

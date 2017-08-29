@@ -15,6 +15,11 @@
     $scope.about = "Lobby Page";
     $scope.currentGameState = GameState.current.state;
 
+    $scope.$on('gameStateUpdated', function(event, currentGameState) {
+      $scope.currentGameState = currentGameState;
+    });
+
+
     $scope.startGame = startGame;
 
     function startGame() {
