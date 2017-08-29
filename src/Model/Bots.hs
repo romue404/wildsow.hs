@@ -6,6 +6,7 @@ import Data.List
 import System.Random
 import System.Random.Shuffle
 import Model.Validation
+import System.Random.Shuffle
 
 
 -- Spieltheorie
@@ -60,5 +61,7 @@ playeableCards2 trump currentColor hand
         cardsFitsTrump = cardsWithColor hand trump
 
 randomCard :: Cards -> StdGen -> Card
-randomCard cards gen = let (rand, _) = randomR (0, (length cards)-1) gen
-    in cards!!rand
+randomCard cards gen =
+    let (rand, _) = randomR (0, (length cards)-1) gen
+        shuffled = shuffle' cards (length cards) gen
+    in head shuffled

@@ -83,30 +83,32 @@ app games pending = do
           case loggedIn of
             Left e -> return $ Left e
             Right gs -> (writeTVar games $ (NetworkManagement.joinChannel (player, conn) gameId chans)) >> (return $ Right ())
-        either (throw) (\_ -> gameLoop conn games gameId) joined -- joind change for gameloop
+        either (throw) (\_ -> gameLoop (conn, player) games gameId) joined -- joind change for gameloop
       Create userName gameId -> do
         gen <- newStdGen
-        created <- (atomically $ createSTM gameId games (GameModel.HumanPlayer userName, conn) gen)
-        either (throw) (\_ -> gameLoop conn games gameId) created
+        let player = GameModel.HumanPlayer userName
+        created <- atomically $ createSTM gameId games (player, conn) gen
+        either (throw) (\_ -> gameLoop (conn, player) games gameId) created
     -- hier alles parsen und action behandlung machen
     --WS.sendTextData conn ("Parsed:" `mappend` (T.pack(show $ action))::Text)
     return res)
 
 
-gameLoop ::  WS.Connection -> TVar (NetworkManagement.GameChannels GameId) -> GameId -> IO ()
-gameLoop conn games gameId = forever $ handle (errorHandler conn) (do -- TODO handle should make the player leave
-    b <- broadcastState gameId games
-    msg <- WS.receiveData conn
-    action <- pure (decode(msg)::Maybe ClientMessage)
-    case action of
-      Just (GameAction id  (GameModel.Join (GameModel.HumanPlayer p))) -> unicast conn GameModel.UnexpectedMove -- do nothing TODO check if player = player
-      Just (GameAction id move) -> do
-        possibleAction <- atomically $ gameActionSTM id games (GameModel.HumanPlayer $ whos move) move
-        case possibleAction of
-          Left e -> unicast conn e
-          Right state ->  broadcastState id games
-      Nothing -> unicast conn NetworkManagement.ParseError
-  )
+gameLoop :: ( WS.Connection, GameModel.Player) -> TVar (NetworkManagement.GameChannels GameId) -> GameId -> IO ()
+gameLoop (conn, player) games gameId = forever $ flip finally (disconnectHandler gameId games player) $
+    do -- TODO handle should make the player leave
+      b <- broadcastState gameId games
+      msg <- WS.receiveData conn
+      action <- pure (decode(msg)::Maybe ClientMessage)
+      case action of
+        Just (GameAction id  (GameModel.Join (GameModel.HumanPlayer p))) -> unicast conn GameModel.UnexpectedMove -- do nothing TODO check if player = player
+        Just (GameAction id move) -> do
+          possibleAction <- atomically $ gameActionSTM id games (GameModel.HumanPlayer $ whos move) move
+          case possibleAction of
+            Left e -> unicast conn e
+            Right state ->  broadcastState id games
+        Nothing -> unicast conn NetworkManagement.ParseError
+
 ----------------------------------------------------- PERSIST ACTIONS VIA STM -----------------------------------------------------
 
 loginSTM ::
@@ -147,7 +149,7 @@ gameActionSTM gameId channels player move = do
   games <- readTVar channels
   let eihterNewState = do
             (NetworkManagement.GameChannel players state) <- NetworkManagement.getChannel' gameId games
-            mapEitherR (\r -> NetworkManagement.GameError r) (Model.Step.stepGame move state)
+            mapEitherR NetworkManagement.GameError (Model.Step.stepGame move state)
   case eihterNewState of
     Left err -> return $ Left err
     Right newState -> do
@@ -155,9 +157,17 @@ gameActionSTM gameId channels player move = do
       return $ Right (newState)
 
 
+disconnectSTM id games player = do
+  action <- gameActionSTM id games player (GameModel.Leave player)
+  channel <- readTVar games
+  writeTVar games $ NetworkManagement.leaveChannel player id channel
 
 
 ----------------------------------------------------- COMMUNICATE MESSAGES TO CLIENTS -----------------------------------------------------
+disconnectHandler :: GameId -> TVar (NetworkManagement.GameChannels GameId) ->GameModel.Player -> IO ()
+disconnectHandler id games player = do
+  _ <- atomically $ disconnectSTM id games player
+  broadcastState id games
 
 unicast conn msg =  WS.sendTextData conn (Data.Aeson.encode(msg))
 
