@@ -35,6 +35,8 @@
     $scope.joinGame = joinGame;
     $scope.logout = logout;
 
+    $scope.selectGame = selectGame;
+
     function createGame() {
       createOrJoinGame("create");
     }
@@ -47,6 +49,11 @@
       $rootScope.username = null;
       localStorageService.set("username", null);
       $state.go('login');
+    }
+
+    function selectGame(game) {
+      $scope.selectedGame = game;
+      $scope.gameId = game;
     }
 
     function createOrJoinGame(type) {

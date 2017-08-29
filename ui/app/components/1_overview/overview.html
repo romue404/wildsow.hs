@@ -15,7 +15,7 @@
 
       Verfügbare Spiele:
       <ul id="game-list">
-        <li ng-repeat="game in games | filter:filterGameId"  ng-click="selectGame(transaction)">
+        <li ng-repeat="game in games | filter:filterGameId"  ng-click="selectGame(game)" ng-class="{selected: game === selectedGame}">
           {{ game }}
         </li>
       </ul>

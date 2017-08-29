@@ -53,3 +53,7 @@
     width: 100%;
     background-color: darkblue;
 }
+
+.selected {
+    background-color: darkblue;
+}
