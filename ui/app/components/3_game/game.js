@@ -14,7 +14,7 @@
 
     // variables
     $scope.about = "Game Page";
-    $scope.gameStates = GameState.states;
+    $scope.currentGameState = GameState.current.state;
 
     // apis
     $scope.tellTricks = tellTricks;

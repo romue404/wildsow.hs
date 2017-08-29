@@ -26,13 +26,15 @@
     });
 
     var states = [];
-    var current;
+    var current = {};
 
     dataStream.onMessage(function(message) {
+      current.state = JSON.parse(message.data);
       states.push(JSON.parse(message.data));
     });
 
     var methods = {
+      current: current,
       states: states,
       createActionRequest: function (action, gameId, username) {
         return {
