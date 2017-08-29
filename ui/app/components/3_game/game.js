@@ -5,11 +5,22 @@
     .module('wildsow')
     .controller('GameCtrl', GameCtrl);
 
-  GameCtrl.$inject = ['$scope'];
+  GameCtrl.$inject = ['$scope', 'GameState'];
 
-  function GameCtrl($scope) {
+  function GameCtrl($scope, GameState) {
+
+    // variables
     $scope.title = "About";
-    $scope.about = "Game Page"
+    $scope.about = "Game Page";
+    $scope.gameState = GameState;
+
+    // apis
+    $scope.playCard = playCard;
+
+    // functions
+    function playCard() {
+      GameState.get();
+    }
   }
 
 })();
