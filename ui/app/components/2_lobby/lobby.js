@@ -5,10 +5,11 @@
     .module('wildsow')
     .controller('LobbyCtrl', LobbyCtrl);
 
-  LobbyCtrl.$inject = ['$scope', '$rootScope', '$state', 'GameState'];
+  LobbyCtrl.$inject = ['$scope', '$rootScope', '$state', 'localStorageService', 'GameState'];
 
-  function LobbyCtrl($scope, $rootScope, $state, GameState) {
+  function LobbyCtrl($scope, $rootScope, $state, localStorageService, GameState) {
 
+    $rootScope.username = localStorageService.get("username");
     if(!$rootScope.username) $state.go('login');
 
     $scope.about = "Lobby Page";

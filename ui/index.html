@@ -5,6 +5,8 @@
   <title>Wildsow | Das Kartenspiel</title>
   <link rel="stylesheet" href="bower_components/materialize/dist/css/materialize.min.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="app/components/0_login/login.css">
+  <link rel="stylesheet" href="app/components/1_overview/overview.css">
 </head>
 <body>
 <!--
@@ -28,11 +30,13 @@
 <script src="bower_components/angular/angular.min.js"></script>
 <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
 <script src="bower_components/angular-websocket/dist/angular-websocket.min.js"></script>
+<script src="bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
 
 <script type="text/javascript" src="bower_components/materialize/dist/js/materialize.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-materialize/0.2.2/angular-materialize.min.js"></script>
 
 <script src="app/app.module.js"></script>
+<script src="app/app.config.js"></script>
 <script src="app/app.routes.js"></script>
 
 <script src="app/services/wildsowSocket.js"></script>

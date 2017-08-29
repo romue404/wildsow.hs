@@ -1,0 +1,47 @@
+#login {
+    text-align: center;
+    height:100vh;
+    overflow: hidden;
+    background: url(../../../images/login-bg.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */;
+}
+
+#login-form {
+    border: 1px solid black;
+    border-radius: 25px;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 0 20px 30px 20px;
+}
+
+#input-username {
+    color: gold;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size:24px;
+    height: 60px;
+}
+
+#input-username:focus {
+    border: 1px solid darkblue;
+    box-shadow: none;
+    color: gold;
+}
+
+#input-username:focus + label {
+    color: gold;
+}
+
+#button-username {
+    color: gold;
+    width: 100%;
+    background-color: darkblue;
+    font-size:24px;
+    height: 60px;
+}

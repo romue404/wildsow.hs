@@ -5,7 +5,8 @@
     .module('wildsow', [
       'ui.materialize',
       'ui.router',
-      'ngWebSocket'
+      'ngWebSocket',
+      'LocalStorageModule'
     ]);
 
 })();

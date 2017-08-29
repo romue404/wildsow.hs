@@ -5,10 +5,11 @@
     .module('wildsow')
     .controller('GameCtrl', GameCtrl);
 
-  GameCtrl.$inject = ['$scope', '$rootScope', '$state', 'GameState'];
+  GameCtrl.$inject = ['$scope', '$rootScope', '$state', 'localStorageService', 'GameState'];
 
-  function GameCtrl($scope, $rootScope, $state, GameState) {
+  function GameCtrl($scope, $rootScope, $state, localStorageService, GameState) {
 
+    $rootScope.username = localStorageService.get("username");
     if(!$rootScope.username) $state.go('login');
 
     // variables
