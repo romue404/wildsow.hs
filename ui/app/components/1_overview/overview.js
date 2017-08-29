@@ -23,8 +23,8 @@
       GameState.sendActionRequest(action);
     }
 
-    function joinGame(gameId) {
-      let action = GameState.createActionRequest('join', gameId, $rootScope.username);
+    function joinGame() {
+      let action = GameState.createActionRequest('join', $scope.gameId, $rootScope.username);
       GameState.sendActionRequest(action);
     }
 
