@@ -15,7 +15,7 @@ import Control.Applicative
 dealCards :: GameState -> GameState
 dealCards gs@GameState{currentRound=round, pile=pile, players=players, stdGen = gen} =
   gs{pile=undealtCards, players=playersWithDealtCards, stdGen=gen'}
-    where numberOfCards = (cardsPerRound Model.deck $ length players) !! round
+    where numberOfCards = cycle(cardsPerRound Model.deck $ length players) !! round
           (shuffledDeck, gen') = (shuffle' Model.deck (length Model.deck) gen, snd $ next gen)
           chunked = sublist numberOfCards shuffledDeck
           playersWithDealtCards = map (\(chunk, player) -> player{hand=chunk, playedCard=Nothing}) (zip chunked players)
@@ -102,7 +102,7 @@ clearCurrentColor gs = gs{currentColor=Nothing}
 setNewTrump :: GameState -> GameState
 setNewTrump gameState = gameState {trump= trump, pile = rest}
   where (trump, rest) = case pile gameState of
-                        [] -> ((shuffle' Model.colors (length Model.colors) $ Model.stdGen gameState) !! 0, [])
+                        [] -> (head(shuffle' Model.colors (length Model.colors) $ Model.stdGen gameState), [])
                         (x:xs) -> (Model.color x, xs)
 
 tricksPlayerUpdate :: Int -> Player -> [PlayerState] -> [PlayerState]
