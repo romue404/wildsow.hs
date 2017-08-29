@@ -13,6 +13,23 @@
     if(!$rootScope.username) $state.go('login');
 
     $scope.about = "Overview Page";
+    $scope.games = [
+      'Party',
+      'Hacken',
+      'Feiern',
+      'Saufen',
+      'Essen',
+      'Party2',
+      'Hacken2',
+      'Feiern2',
+      'Saufen2',
+      'Essen2',
+      'Party3',
+      'Hacken3',
+      'Feiern3',
+      'Saufen3',
+      'Essen3'
+    ];
 
     $scope.createGame = createGame;
     $scope.joinGame = joinGame;
