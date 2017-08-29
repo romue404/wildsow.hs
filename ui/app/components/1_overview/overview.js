@@ -19,21 +19,25 @@
     $scope.logout = logout;
 
     function createGame() {
-      let action = GameState.createActionRequest('create', $scope.gameId, $rootScope.username);
-      GameState.sendActionRequest(action);
-      $state.go('lobby');
+      createOrJoinGame("create");
     }
 
     function joinGame() {
-      let action = GameState.createActionRequest('join', $scope.gameId, $rootScope.username);
-      GameState.sendActionRequest(action);
-      $state.go('lobby');
+      createOrJoinGame("join");
     }
 
     function logout() {
       $rootScope.username = null;
       localStorageService.set("username", null);
       $state.go('login');
+    }
+
+    function createOrJoinGame(type) {
+      $rootScope.gameId = $scope.gameId;
+      let action = GameState.createActionRequest(type, $scope.gameId, $rootScope.username);
+      action.botType = 'none';
+      GameState.sendActionRequest(action);
+      $state.go('lobby');
     }
 
   }

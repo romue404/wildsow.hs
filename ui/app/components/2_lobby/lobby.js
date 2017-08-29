@@ -17,7 +17,9 @@
     $scope.startGame = startGame;
 
     function startGame() {
-
+      let action = GameState.createActionRequest('start', $rootScope.gameId, $rootScope.username);
+      GameState.sendActionRequest(action);
+      $state.go('game');
     }
   }
 
