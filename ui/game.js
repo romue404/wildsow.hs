@@ -127,37 +127,7 @@ $(document).ready(function(){
     let action = getAction("join", wildsow.gameName4, wildsow.player4Name);
     sendDataToServerViaSocket(action);
   })
-
-
-  /**
-   * tell color
-   */
-  $('#tell-color1').click(function () {
-    let action = getAction("tellColor", wildsow.gameName1,  wildsow.player1Name);
-    action.color = $('#color1').val();
-    sendDataToServerViaSocket(action);
-  });
-
-  $('#tell-color2').click(function () {
-    let action = getAction("tellColor", wildsow.gameName2,  wildsow.player2Name);
-    action.color = $('#color2').val();
-    sendDataToServerViaSocket(action);
-  });
-
-  $('#tell-color3').click(function () {
-    let action = getAction("tellColor", wildsow.gameName3,  wildsow.player3Name);
-    action.color = $('#color3').val();
-    sendDataToServerViaSocket(action);
-  });
-
-  $('#tell-color4').click(function () {
-    let action = getAction("tellColor", wildsow.gameName4,  wildsow.player4Name);
-    action.color = $('#color4').val();
-    sendDataToServerViaSocket(action);
-  });
-
-
-
+  
   /**
    * tell tricks
    */

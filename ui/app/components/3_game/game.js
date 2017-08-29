@@ -15,7 +15,16 @@
     $scope.gameState = GameState;
 
     // apis
+    $scope.createGame = createGame;
+    $scope.joinGame = joinGame;
+    $scope.startGame = startGame;
+    
+    $scope.tellTricks = tellTricks;
     $scope.playCard = playCard;
+    
+    function tellTricks() {
+      
+    }
 
     // functions
     function playCard() {
