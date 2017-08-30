@@ -40,14 +40,15 @@
     var methods = {
       current: current,
       states: states,
-      createActionRequest: function (action, gameId, username) {
-        return {
+      createActionRequest: function (action, gameId, username, etc) {
+        return Object.assign({
           kind: action,
           gameId: gameId,
           userName: username,
-        }
+        }, etc)
       },
       sendActionRequest: function(action) {
+        console.log(action)
         dataStream.send(JSON.stringify(action));
       }
     };

@@ -53,14 +53,13 @@
 
     function logout() {
       $scope.username = null;
-      localStorageService.set("username", null);
+      localStorageService.clearAll();
       $state.go('login');
     }
 
     function createOrJoinGame(type) {
       localStorageService.set("gameId", $scope.gameId);
-      let action = GameState.createActionRequest(type, $scope.gameId, $scope.username);
-      action.botType = 'none';
+      let action = GameState.createActionRequest(type, $scope.gameId, $scope.username, {botType: 'none'});
       GameState.sendActionRequest(action);
       $state.go('lobby');
     }

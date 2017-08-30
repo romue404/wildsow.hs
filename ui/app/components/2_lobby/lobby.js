@@ -69,9 +69,8 @@
     function addBot() {
       var botName = botNames.pop();
       localStorageService.set('botNames', botNames);
-      let action = GameState.createActionRequest('join', gameId, botName);
-      action.botType = getBotTypeByName($scope.select.value);
-      console.log(action)
+      var botType = {botType: getBotTypeByName($scope.select.value)};
+      let action = GameState.createActionRequest('join', gameId, botName, botType);
       GameState.sendActionRequest(action);
     }
 
