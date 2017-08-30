@@ -12,3 +12,13 @@
 
 ::-moz-selection { background: #ffa726; color: #fff; }
 ::selection { background: #ffa726; color: #fff; }
+
+.wildsow-button {
+  color: gold;
+  width: 100%;
+  background-color: darkblue;
+}
+
+.selected {
+  background-color: darkblue;
+}

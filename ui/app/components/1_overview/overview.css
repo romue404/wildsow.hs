@@ -47,13 +47,3 @@
 #game-list {
     cursor: pointer;
 }
-
-.wildsow-button {
-    color: gold;
-    width: 100%;
-    background-color: darkblue;
-}
-
-.selected {
-    background-color: darkblue;
-}

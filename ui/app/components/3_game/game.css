@@ -1,4 +1,4 @@
-#lobby {
+#game {
   text-align: center;
   height:100vh;
   overflow: hidden;
@@ -12,7 +12,7 @@
   align-items: center; /* align vertical */;
 }
 
-#lobby-content {
+#game-content {
   border: 1px solid black;
   border-radius: 25px;
   background-color: rgba(0, 0, 0, 0.9);

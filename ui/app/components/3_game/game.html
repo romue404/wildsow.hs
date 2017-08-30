@@ -1,13 +1,37 @@
-<div class="row" class="center">
-  <div class="col s12">
-        <pre>
-          <code>
-            {{ currentGameState }}
-          </code>
-        </pre>
+<div id="lobby">
+
+  <div id="lobby-content" class="container">
+
+    <div id="players" class="row">
+
+      <div class="col s12">
+        Game Status: {{currentGameState.phase}} <br>
+        Runde: {{currentGameState.round}} <br>
+        Trump: {{currentGameState.trump}} <br>
+        Stiche für Runde {{currentGameState.round}}
+        <div class="row">
+          <div class="col s6">
+            <input type="number" step="1">
+          </div>
+          <div class="col s6">
+            <button ng-click="tellTricks()" class="btn waves-effect waves-light wildsow-button">Stiche angeben</button>
+          </div>
+        </div>
+
+        Score: {{player.score}} <br>
+        Tricks: {{player.tricks}} <br>
+        Tricks Subround: {{player.tricksSubround}} <br>
+
+        <div class="row">
+          <div class="col s12">
+            <div ng-repeat="card in player.hand">{{card.color + ' ' + card.value}}</div>
+          </div>
+        </div>
+
+        <button ng-click="playCard()"  class="btn waves-effect waves-light wildsow-button">Play Card</button>
+      </div>
+    </div>
+
+
   </div>
 </div>
-
-<h1>{{about}}</h1>
-
-<button ng-click="playCard()">Play Card</button>
