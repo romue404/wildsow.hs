@@ -5,12 +5,12 @@
     .module('wildsow')
     .controller('OverviewCtrl', OverviewCtrl);
 
-  OverviewCtrl.$inject = ['$scope', '$rootScope', '$state', 'localStorageService', 'GameState'];
+  OverviewCtrl.$inject = ['$scope', '$state', 'localStorageService', 'GameState'];
 
-  function OverviewCtrl($scope, $rootScope, $state, localStorageService, GameState) {
+  function OverviewCtrl($scope, $state, localStorageService, GameState) {
 
-    $rootScope.username = localStorageService.get("username");
-    if(!$rootScope.username) $state.go('login');
+    $scope.username = localStorageService.get("username");
+    if(!$scope.username) $state.go('login');
 
     $scope.state = GameState.current;
     $scope.about = "Overview Page";
@@ -32,11 +32,16 @@
       'Essen3'
     ];
 
+    $scope.selectGame = selectGame;
     $scope.createGame = createGame;
     $scope.joinGame = joinGame;
     $scope.logout = logout;
 
-    $scope.selectGame = selectGame;
+
+    function selectGame(game) {
+      $scope.selectedGame = game;
+      $scope.gameId = game;
+    }
 
     function createGame() {
       createOrJoinGame("create");
@@ -47,19 +52,14 @@
     }
 
     function logout() {
-      $rootScope.username = null;
+      $scope.username = null;
       localStorageService.set("username", null);
       $state.go('login');
     }
 
-    function selectGame(game) {
-      $scope.selectedGame = game;
-      $scope.gameId = game;
-    }
-
     function createOrJoinGame(type) {
-      $rootScope.gameId = $scope.gameId;
-      let action = GameState.createActionRequest(type, $scope.gameId, $rootScope.username);
+      localStorageService.set("gameId", $scope.gameId);
+      let action = GameState.createActionRequest(type, $scope.gameId, $scope.username);
       action.botType = 'none';
       GameState.sendActionRequest(action);
       $state.go('lobby');

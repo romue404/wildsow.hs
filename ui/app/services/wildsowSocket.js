@@ -32,7 +32,7 @@
     dataStream.onMessage(function(message) {
       current.state = JSON.parse(message.data);
       states.push(JSON.parse(message.data));
-      console.log(current);
+      console.log(current.state);
       localStorageService.set("gameState", JSON.stringify(JSON.parse(message.data)));
       $rootScope.$broadcast('gameStateUpdated', JSON.parse(message.data));
     });

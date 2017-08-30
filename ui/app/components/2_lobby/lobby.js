@@ -5,12 +5,12 @@
     .module('wildsow')
     .controller('LobbyCtrl', LobbyCtrl);
 
-  LobbyCtrl.$inject = ['$scope', '$rootScope', '$state', 'localStorageService', 'GameState'];
+  LobbyCtrl.$inject = ['$scope', '$state', 'localStorageService', 'GameState'];
 
-  function LobbyCtrl($scope, $rootScope, $state, localStorageService, GameState) {
+  function LobbyCtrl($scope, $state, localStorageService, GameState) {
 
-    $rootScope.username = localStorageService.get("username");
-    if(!$rootScope.username) $state.go('login');
+    $scope.username = localStorageService.get("username");
+    if(!$scope.username) $state.go('login');
 
     $scope.about = "Lobby Page";
     $scope.currentGameState = GameState.current.state;
@@ -22,29 +22,15 @@
 
     function updateUi(currentGameState) {
       var debug = JSON.stringify(currentGameState, null, 2);
-      console.log(debug)
+    //  console.log(debug)
 
       $scope.currentGameState = currentGameState || localStorageService.get("gameState");
 
       if($scope.currentGameState && $scope.currentGameState.playerState){
         $scope.players = $scope.currentGameState.playerState.map(ps => ps.player);
-        console.log($scope.players)
       }
     }
 
-
-
-
-    /*
-
-                    <select>
-                  <option value="" disabled selected>Bot auswählen</option>
-                  <option value="1">Überraschungs Bot - Man weiß es nie!</option>
-                  <option value="2">Statistiker - I love Bayes!</option>
-                  <option value="3">Reinforcement - Learning is Living</option>
-                </select>
-
-    */
 
     var botsDescriptions = [
       "Überraschungs Bot - Man weiß es nie!",
@@ -52,28 +38,49 @@
       "Reinforcement - Learning is Living"
     ];
 
-
     $scope.select = {
       value: 'Überraschungs Bot - Man weiß es nie!',
       choices: botsDescriptions
     };
 
 
+
+    var botNames = localStorageService.get('botNames') || [
+      'Green',
+      'Blue',
+      'Red',
+      'White',
+      'Purple',
+      'Yellow'
+    ];
+
+    var gameId = localStorageService.get("gameId");
+
+
     $scope.startGame = startGame;
     $scope.addBot = addBot;
 
     function startGame() {
-      let action = GameState.createActionRequest('start', $rootScope.gameId, $rootScope.username);
+      let action = GameState.createActionRequest('start', gameId, $scope.username);
       GameState.sendActionRequest(action);
       $state.go('game');
     }
 
     function addBot() {
-      let action = GameState.createActionRequest('join', $rootScope.gameId, $rootScope.username);
-
-      //TODO based on select
-      action.botType = 'random';
+      var botName = botNames.pop();
+      localStorageService.set('botNames', botNames);
+      let action = GameState.createActionRequest('join', gameId, botName);
+      action.botType = getBotTypeByName($scope.select.value);
+      console.log(action)
       GameState.sendActionRequest(action);
+    }
+
+    function getBotTypeByName(name) {
+      if(name === botsDescriptions[0]) return "random";
+      //TODO: add future bot types when backend implemented
+      if(name === botsDescriptions[1]) return "none";
+      if(name === botsDescriptions[2]) return "none";
+      return 'none';
     }
   }
 
