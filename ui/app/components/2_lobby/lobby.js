@@ -19,6 +19,8 @@
       $scope.currentGameState = JSON.stringify(currentGameState, null, 2);
     });
 
+    $scope.currentGameState = $scope.currentGameState || localStorageService.get("gameState");
+
 
     $scope.startGame = startGame;
 
