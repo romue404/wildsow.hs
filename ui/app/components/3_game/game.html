@@ -11,7 +11,7 @@
         Stiche für Runde {{currentGameState.round}}
         <div class="row">
           <div class="col s6">
-            <input type="number" step="1">
+            <input ng-model="tricks" type="number" step="1">
           </div>
           <div class="col s6">
             <button ng-click="tellTricks()" class="btn waves-effect waves-light wildsow-button">Stiche angeben</button>
@@ -22,13 +22,16 @@
         Tricks: {{player.tricks}} <br>
         Tricks Subround: {{player.tricksSubround}} <br>
 
-        <div class="row">
+        <div class="row center">
           <div class="col s12">
-            <div ng-repeat="card in player.hand">{{card.color + ' ' + card.value}}</div>
+            <div ng-repeat="card in player.hand" class="wildsow-card">
+              <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)"> <br>
+              <span>{{card.color}}</span> <br>
+              <span>{{card.value}}</span>
+            </div>
           </div>
         </div>
 
-        <button ng-click="playCard()"  class="btn waves-effect waves-light wildsow-button">Play Card</button>
       </div>
     </div>
 
