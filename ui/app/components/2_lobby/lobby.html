@@ -1,14 +1,39 @@
-<div class="row" class="center">
-  <div class="col s12">
-        <pre>
-          <code>
-            {{ currentGameState }}
-          </code>
-        </pre>
+<div id="lobby">
+
+  <div id="lobby-content" class="container">
+
+    <div id="players" class="row">
+
+      <div class="col s12">
+
+        Spieler:
+        <ul id="player-list">
+          <li ng-repeat="player in players">
+            {{ player.playerName }} - {{ player.tag }}
+          </li>
+        </ul>
+
+        Bot hinzufügen:
+        <div class="row">
+          <div class="col s6">
+
+            <div input-field>
+              <select ng-model="select.value" material-select>
+                <option ng-repeat="value in select.choices">{{value}}</option>
+              </select>
+            </div>
+
+          </div>
+          <div class="col s6">
+            <button ng-click="addBot()"  class="btn waves-effect waves-light wildsow-button">Bot hinzufügen</button>
+          </div>
+        </div>
+
+        <button ng-click="startGame()">Spiel starten</button>
+
+      </div>
+    </div>
+
+
   </div>
 </div>
-
-<h1>{{about}}</h1>
-
-<button ng-click="startGame()">Spiel starten</button>
-
