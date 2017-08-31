@@ -29,8 +29,8 @@
             <h3>Deine Karten</h3>
             <div ng-repeat="card in player.hand track by $index" class="wildsow-card">
               <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)"> <br>
-              <span>{{card.color}}</span> <br>
-              <span>{{card.value}}</span>
+              <span>{{card ? card.color : ''}}</span> <br>
+              <span>{{card ? card.value : ''}}</span>
             </div>
           </div>
         </div>
@@ -40,8 +40,8 @@
             <h3>Heap</h3>
             <div ng-repeat="card in heap track by $index" class="wildsow-card">
               <img ng-src="{{getCardImgPath(card)}}"> <br>
-              <span>{{card.color}}</span> <br>
-              <span>{{card.value}}</span>
+              <span>{{card ? card.color : ''}}</span> <br>
+              <span>{{card ? card.value : ''}}</span>
             </div>
           </div>
         </div>
