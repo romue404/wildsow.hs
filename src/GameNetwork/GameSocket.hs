@@ -31,11 +31,10 @@ type GameId = String
 type Games = NetworkManagement.GameChannels GameId
 data Client = Client {name::String}  deriving (Eq, Show)
 data ClientMessage =
-  Join {userName::String, gameId::String} | Create {userName::String, gameId::String} |GameAction GameId GameModel.PlayerMove
+   Create {userName::String, gameId::String} |GameAction GameId GameModel.PlayerMove
   deriving (Show)
 
 instance PlayerAction ClientMessage where
-  whos (Join userName _) = userName
   whos (Create userName _) = userName
   whos (GameAction id ga) = whos ga
 
@@ -95,10 +94,12 @@ app games pending = do
 
 
 gameLoop :: ( WS.Connection, GameModel.Player) -> TVar (NetworkManagement.GameChannels GameId) -> GameId -> IO ()
-gameLoop (conn, player) games gameId = flip finally(disconnectHandler gameId games player) $ forever $ do
+gameLoop (conn, player) games gameId =
+  do
+    broadcastState gameId games
+    flip finally(disconnectHandler gameId games player) $ forever $ do
       WS.forkPingThread conn 10
       print("listening for " `mappend` show player)
-      b <- broadcastState gameId games
       msg <- WS.receiveData conn
       action <- pure (decode(msg)::Maybe ClientMessage)
       case action of
@@ -108,7 +109,7 @@ gameLoop (conn, player) games gameId = flip finally(disconnectHandler gameId gam
           case possibleAction of
             Left e -> unicast conn e
             Right state ->  broadcastState id games
-        Just e -> unicast conn $ GameModel.UnexpectedMove "Only gameactions are allowed"
+        Just e -> unicast conn $ GameModel.UnexpectedMove "Only game-actions are allowed"
         Nothing -> unicast conn $ NetworkManagement.ParseError
 
 ----------------------------------------------------- PERSIST ACTIONS VIA STM -----------------------------------------------------
