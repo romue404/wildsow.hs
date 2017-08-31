@@ -151,3 +151,6 @@ randomCard cards gen =
     let (rand, _) = randomR (0, (length cards)-1) gen
         shuffled = shuffle' cards (length cards) gen
     in head shuffled
+
+aTest :: Int -> Int
+aTest a = a + 1

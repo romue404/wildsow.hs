@@ -1,15 +1,19 @@
-module Model.BotsSpec where
+module Model.BotsSpec (main, spec) where
 
-import Test.HUnit
+import Test.Hspec
+import Test.QuickCheck
 
+import Model.Bots
+
+-- `main` is here so that this module can be run from GHCi on its own.  It is
+-- not needed for automatic spec discovery.
 main :: IO ()
 main = hspec spec
 
-test1 = TestCase (assertEqual "for (foo 3)," (1,2) (foo 3))
-test2 = TestCase (do
-                  (x,y) <- partA 3
-                  assertEqual "for the first result of partA," 5 x
-                  b <- partB y
-                  assertBool ("(partB " ++ show y ++ ") failed") b)
-
-tests = TestList [TestLabel "test1" test1, TestLabel "test2" test2]
+spec :: Spec
+spec = do
+  describe "aTest" $ do
+    it "add one" $ do
+      aTest 41 `shouldBe` 42
+--    it "is idempotent" $ property $
+--      \a -> aTest a === aTest (aTest a)
