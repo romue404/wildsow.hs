@@ -58,6 +58,7 @@
     }
 
     function getCardImgPath(card) {
+      if(!card) return;
       let cardColor = card.color.toLowerCase();
       if(cardColor === 'schellen') cardColor = 'schelln';
       let cardValueMapper = {
