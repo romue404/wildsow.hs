@@ -98,7 +98,7 @@ cardWinningChance :: GameState -> Card -> Double
 cardWinningChance gs@GameState{pile=pile, playerStates=playersStates, currentColor=currentColor, trump=trump} card =
     let playersState = head playersStates
         possibleHigerCards = possibleHigherCards gs playersState card
-    in  1.0 - (genericLength possibleHigerCards) / genericLength (unknownCards gs playersState) - genericLength pile -- check unknownCards or deck
+    in  1.0 - (genericLength possibleHigerCards) / (genericLength (unknownCards gs playersState) - genericLength pile) -- check unknownCards or deck
 
 -- only if the bot has to tell the color
 possibleHigherCards :: GameState -> PlayerState -> Card -> Cards
