@@ -35,6 +35,9 @@ replaceBotWithPlayer newPlayer (p@PlayerState{player=plr}:ps) = case plr of
 replaceHumanPlayerWithBot :: Player -> Player -> [PlayerState] -> [PlayerState]
 replaceHumanPlayerWithBot player bot ps = updatePlayer (\p -> p{player=bot}) player ps
 
+removePlayer :: Player -> GameState -> GameState
+removePlayer p gs@GameState{playerStates = ps} = gs{playerStates=withoutPlayer}
+  where withoutPlayer =  filter (\PlayerState{player=plr} -> p /= plr) ps
 
 reevaluatePlayersTurn :: GameState -> GameState
 reevaluatePlayersTurn gs@GameState{phase = (WaitingForTricks p), playerStates=players} = gs{phase = (WaitingForTricks $ player $ head players)}

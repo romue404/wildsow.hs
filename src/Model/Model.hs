@@ -41,7 +41,7 @@ data GamePhase = Idle | GameOver | WaitingForTricks Player | WaitingForColor Pla
 
 data PlayerState = PlayerState {player :: Player, playedCard :: Maybe Card, hand :: Cards, tricks :: [Int], score :: [Int], tricksSubround::[(Int,Int)]} deriving (Read, Show)
 
-data PlayerMoveError = NotPlayersTurn | MoveAgainstRules String | UnexpectedMove | NotEnoughPlayers | GameFull | NameTaken  deriving (Show)
+data PlayerMoveError = NotPlayersTurn | MoveAgainstRules String | UnexpectedMove String | NotEnoughPlayers | GameFull | NameTaken  deriving (Show)
 
 data GameState = GameState {
   phase :: GamePhase,
