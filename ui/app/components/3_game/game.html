@@ -24,6 +24,7 @@
 
         <div class="row center">
           <div class="col s12">
+            <h3>Deine Karten</h3>
             <div ng-repeat="card in player.hand" class="wildsow-card">
               <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)"> <br>
               <span>{{card.color}}</span> <br>
@@ -31,6 +32,18 @@
             </div>
           </div>
         </div>
+
+        <div class="row center">
+          <div class="col s12">
+            <h3>Heap</h3>
+            <div ng-repeat="card in heap" class="wildsow-card">
+              <img ng-src="{{getCardImgPath(card)}}"> <br>
+              <span>{{card.color}}</span> <br>
+              <span>{{card.value}}</span>
+            </div>
+          </div>
+        </div>
+
 
       </div>
     </div>
