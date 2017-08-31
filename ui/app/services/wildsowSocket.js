@@ -10,7 +10,7 @@
   GameState.$inject = ['$websocket', '$rootScope', 'localStorageService'];
 
   function GameState($websocket, $rootScope, localStorageService) {
-// Open a WebSocket connection
+
     var dataStream = $websocket(baseUrl);
 
     dataStream.onError(function(error) {
@@ -30,15 +30,27 @@
     var current = {};
 
     dataStream.onMessage(function(message) {
+
       current.state = JSON.parse(message.data);
+
+      let gameState = current.state && current.state.phase;
+      let error = current.state && current.state.error;
+
       states.push(JSON.parse(message.data));
+      console.log("Received following response...");
       console.log(current.state);
       localStorageService.set("gameState", JSON.stringify(JSON.parse(message.data)));
-      $rootScope.$broadcast('gameStateUpdated', JSON.parse(message.data));
-      if(current.state && current.state.phase){
-        if(current.state.phase.startsWith("Waiting for player")){
+
+      if(gameState){
+        let phase = current.state.phase;
+        $rootScope.$broadcast('gameStateUpdated', JSON.parse(message.data));
+        if(phase.startsWith("Waiting for player")){
           $rootScope.$broadcast('gameStarted', JSON.parse(message.data));
+        } else if(phase.includes("Idle")) {
+          $rootScope.$broadcast('inLobby', JSON.parse(message.data));
         }
+      } else if(error) {
+        $rootScope.$broadcast('badAction', JSON.parse(message.data));
       }
     });
 
@@ -53,7 +65,8 @@
         }, etc)
       },
       sendActionRequest: function(action) {
-        console.log(action)
+        console.log("Sending follow action...");
+        console.log(action);
         dataStream.send(JSON.stringify(action));
       }
     };
