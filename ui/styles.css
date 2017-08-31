@@ -34,6 +34,10 @@
   height: 35%;
 }
 
+.heap-wildsow-card {
+    margin-right: 0;
+}
+
 .error {
     color: red;
 }
