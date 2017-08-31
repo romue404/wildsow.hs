@@ -90,6 +90,7 @@ app games pending = do
         let player = GameModel.HumanPlayer userName
         created <- atomically $ createSTM gameId games (player, conn) gen
         either (throw) (\_ -> gameLoop (conn, player) games gameId) created
+      _ -> throw NetworkManagement.MessageNotAllowed
     -- hier alles parsen und action behandlung machen
     --WS.sendTextData conn ("Parsed:" `mappend` (T.pack(show $ action))::Text)
     return res)

@@ -16,7 +16,7 @@ import Model.Step
 data GameChannel = GameChannel {connectedPlayers:: [(GameModel.Player, WS.Connection)], gameState :: GameModel.GameState}
 type GameChannels id = Map.Map id GameChannel
 
-data GameNetworkingException = EntityDoesNotExist | EntityAlreadyExists | ChannelFull | NotAMember | ParseError | GameError GameModel.PlayerMoveError deriving (Typeable)
+data GameNetworkingException =  MessageNotAllowed | EntityDoesNotExist | EntityAlreadyExists | ChannelFull | NotAMember | ParseError | GameError GameModel.PlayerMoveError deriving (Typeable)
 instance Exception GameNetworkingException
 
 instance Show GameNetworkingException where
@@ -25,6 +25,7 @@ instance Show GameNetworkingException where
   show ChannelFull = "The channel you are trying to access is full"
   show NotAMember = "You are not a member of this channel"
   show ParseError = "The message you sent could not be parsed"
+  show MessageNotAllowed = "The message is not allowed"
   show (GameError ge) = show ge
 
 instance ToJSON GameNetworkingException where
