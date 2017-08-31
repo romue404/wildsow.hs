@@ -14,6 +14,7 @@
 
     $scope.about = "Lobby Page";
     $scope.currentGameState = GameState.current.state || localStorageService.get("gameState");
+    updateUi($scope.currentGameState);
 
     $scope.$on('gameStateUpdated', function(event, currentGameState) {
       updateUi(currentGameState);
