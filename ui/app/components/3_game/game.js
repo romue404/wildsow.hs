@@ -35,7 +35,9 @@
         $scope.player = $scope.currentGameState.playerState.filter(
           ps => ps.player.playerName === $scope.username
         )[0];
-        $scope.heap = $scope.currentGameState.playerState.map(ps => ps.playedCard);
+        $scope.heap = $scope.currentGameState.playerState.map(function(ps) {
+          return {heapCard: ps.playedCard, cardPlayer: ps.player.playerName};
+        });
         console.log($scope.player);
       }
     }
@@ -58,7 +60,7 @@
     }
 
     function getCardImgPath(card) {
-      if(!card) return;
+      if(!card) return `images/cards/deck bavaria2.svg`;
       let cardColor = card.color.toLowerCase();
       if(cardColor === 'schellen') cardColor = 'schelln';
       let cardValueMapper = {
