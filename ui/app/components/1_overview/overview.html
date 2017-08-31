@@ -26,10 +26,11 @@
         Spiel Name:
         <div class="row">
           <div class="col s6">
-            <input ng-model="gameId" placeholder="Name des Spiels eingeben">
+            <input ng-model="gameId" placeholder="Name des Spiels eingeben" ng-change="removeErrorMessage()">
           </div>
           <div class="col s6">
             <button ng-click="joinGame()"  class="btn waves-effect waves-light wildsow-button">Spiel beitreten</button>
+            <p class="error">{{gameNotExists}}</p>
           </div>
         </div>
 
@@ -38,12 +39,14 @@
 
     <div class="row">
       <div class="col s6">
-        <input ng-model="gameId" placeholder="Name des Spiels eingeben">
+        <input ng-model="gameId" placeholder="Name des Spiels eingeben" ng-change="removeErrorMessage()">
       </div>
       <div class="col s6">
         <button ng-click="createGame()"  class="btn waves-effect waves-light wildsow-button">Spiel erstellen</button>
+        <p class="error">{{gameAlreadyExists}}</p>
       </div>
     </div>
+
 
   </div>
 </div>
