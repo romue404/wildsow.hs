@@ -13,11 +13,15 @@
     if(!$scope.username) $state.go('login');
 
     $scope.about = "Lobby Page";
-    $scope.currentGameState = GameState.current.state;
+    $scope.currentGameState = GameState.current.state || localStorageService.get("gameState");
 
     $scope.$on('gameStateUpdated', function(event, currentGameState) {
       updateUi(currentGameState);
       $scope.$apply();
+    });
+
+    $scope.$on('gameStarted', function(event, currentGameState) {
+      $state.go('game');
     });
 
     function updateUi(currentGameState) {

@@ -35,6 +35,11 @@
       console.log(current.state);
       localStorageService.set("gameState", JSON.stringify(JSON.parse(message.data)));
       $rootScope.$broadcast('gameStateUpdated', JSON.parse(message.data));
+      if(current.state && current.state.phase){
+        if(current.state.phase.startsWith("Waiting for player")){
+          $rootScope.$broadcast('gameStarted', JSON.parse(message.data));
+        }
+      }
     });
 
     var methods = {

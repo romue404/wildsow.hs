@@ -17,7 +17,7 @@
 
     // variables
     $scope.about = "Game Page";
-    $scope.currentGameState = GameState.current.state;
+    $scope.currentGameState = GameState.current.state || localStorageService.get("gameState");
 
     $scope.$on('gameStateUpdated', function(event, currentGameState) {
       updateUi(currentGameState);
@@ -45,7 +45,7 @@
 
     function tellTricks() {
       localStorageService.set("tricks", $scope.tricks);
-      var action = GameState.createActionRequest("tellTricks", $scope.gameId, $scope.username, {tricks: $scope.tricks});
+      var action = GameState.createActionRequest("tellNumberOfTricks", $scope.gameId, $scope.username, {tricks: $scope.tricks});
       GameState.sendActionRequest(action);
     }
 
