@@ -188,8 +188,9 @@ broadcastState id channels =
     stateReceivers <- atomically $ do
         game <- readTVar channels
         let sr = do
-            NetworkManagement.GameChannel{NetworkManagement.connectedPlayers=receivers, NetworkManagement.gameState=state} <- NetworkManagement.getChannel id game
-            return (state, map snd receivers)
+                    NetworkManagement.GameChannel{NetworkManagement.connectedPlayers=receivers,
+                    NetworkManagement.gameState=state} <- NetworkManagement.getChannel id game
+                    return (state, map snd receivers)
         return sr
     case stateReceivers of
       Just (state, receivers) -> forM_ (receivers) (\conn -> WS.sendTextData conn (Data.Aeson.encode(state)))
