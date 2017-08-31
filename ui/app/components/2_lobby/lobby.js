@@ -51,12 +51,12 @@
 
 
     var botNames = localStorageService.get('botNames') || [
-      'Green',
-      'Blue',
-      'Red',
-      'White',
-      'Purple',
-      'Yellow'
+      'Thomas Müller',
+      'Prizessin Leia',
+      'Luke Skywalker',
+      'Arjen Robenn',
+      'Christiano Ronaldo',
+      'Han Solo'
     ];
 
     var gameId = localStorageService.get("gameId");

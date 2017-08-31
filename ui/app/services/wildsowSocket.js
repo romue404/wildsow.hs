@@ -26,6 +26,11 @@
       console.log('Socket closed');
     });
 
+    dataStream.onError(function() {
+      console.log('Socket Error');
+      $rootScope.$broadcast('socketError');
+    });
+
     var states = [];
     var current = {};
 

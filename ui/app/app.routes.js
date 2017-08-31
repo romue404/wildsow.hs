@@ -29,6 +29,11 @@
         templateUrl: 'app/components/3_game/game.html',
         controller: 'GameCtrl'
       })
+      .state('error', {
+        url: '/error',
+        templateUrl: 'app/components/4_error/error.html',
+        controller: 'ErrorCtrl'
+      })
 
     ;
 
