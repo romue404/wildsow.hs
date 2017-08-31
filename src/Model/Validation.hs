@@ -9,7 +9,7 @@ import Data.Maybe (isJust)
 
 -- might use maybe alternative
 playeableCards :: Player -> GameState -> Cards
-playeableCards player gs@GameState{players=players, trump=trump, currentColor=currentColor} =
+playeableCards player gs@GameState{playerStates=players, trump=trump, currentColor=currentColor} =
   fromMaybe [] $ do -- TODO default this to hand
     currentColor' <- currentColor
     player' <- find (\p -> player ==  (Model.Model.player p)) players
@@ -41,14 +41,14 @@ playerNameIsFree :: String -> [PlayerState] -> Bool
 playerNameIsFree name ps = null $ filter (\PlayerState{player=p} -> (playerName p) == name) ps
 
 everyPlayerPlayed :: GameState -> Bool
-everyPlayerPlayed gameState = all (\p-> isJust $ playedCard p) $  players gameState
+everyPlayerPlayed gameState = all (\p-> isJust $ playedCard p) $  playerStates gameState
 
 allHandsPlayed :: GameState -> Bool
-allHandsPlayed gs = all (\p -> null $ hand p) $ players gs
+allHandsPlayed gs = all (\p -> null $ hand p) $ playerStates gs
 
 allTricksSet :: GameState -> Bool
 allTricksSet gameState =  flip(all) players' haveEnoughEntries
-  where players' = players gameState
+  where players' = playerStates gameState
         round = currentRound gameState
         haveEnoughEntries = (\PlayerState{tricks=t} -> length(t) >=  round)
 

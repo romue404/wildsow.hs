@@ -49,7 +49,7 @@ data GameState = GameState {
   currentColor :: Maybe Color,
   pile :: Cards,
   trump :: Color,
-  players :: [PlayerState],
+  playerStates :: [PlayerState],
   stdGen ::  StdGen
 }
 
@@ -86,7 +86,7 @@ instance ToJSON GameState where
     "round"  .= currentRound,
     "color" .= currentColor,
     "trump"  .= trump,
-    "playerState" .= players
+    "playerState" .= playerStates
     ]
 
 
@@ -98,7 +98,7 @@ initWildsowGameState gen =  GameState{
   currentColor = Nothing,
   pile = [],
   trump = Gras,
-  players= [],
+  playerStates= [],
   stdGen=gen
 }
 

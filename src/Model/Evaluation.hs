@@ -9,9 +9,9 @@ import System.Random (StdGen, next)
 
 
 evaluateRound :: GameState -> GameState
-evaluateRound gameState = gameState{players = playersWithScore, currentRound = round + 1}
+evaluateRound gameState = gameState{playerStates = playersWithScore, currentRound = round + 1}
   where round = currentRound gameState
-        players' = players gameState
+        players' = playerStates gameState
         playersWithScore = map (\p@PlayerState{tricksSubround=tricksList, tricks=toldTricks, score=currentScore} ->
           let tricksInThisRound = foldl (\a (_,s) -> a+s) 0 (filter (\(r,_) -> round == r) tricksList)
               toldTricksThisRound = head toldTricks
@@ -23,7 +23,7 @@ evaluateSubRound gameState =
   let round = Model.currentRound gameState
       trump = Model.trump $ gameState
       color = Model.currentColor gameState
-      players = Model.players gameState
+      players = Model.playerStates gameState
       candidatesTrump = [(p, c) | PlayerState{player=p, playedCard=Just c} <- players,  Model.color c ==  trump]
       candidatesColor = [(p, c) | PlayerState{player=p, playedCard=Just c} <- players, fromMaybe False $ (==) <$> Just (Model.color c) <*>  color]
       -- alle player mit einem gespielten trumpf
@@ -31,7 +31,7 @@ evaluateSubRound gameState =
       -- wenn keinen gespielten trumpf gibt dann evaluiere die karten mit der angesagten farbe, die hoechste gewinnt
       -- wenn mindestens ein tumpf gespielt wurdde dann evaluiere diese, der hoehere gewinnt
       winner = if (not . null) candidatesTrump then highestCard candidatesTrump else highestCard candidatesColor
-  in (gameState{players = updatePlayer (\p -> p{tricksSubround = [(round, 1)] ++ tricksSubround p}) winner players}, winner)
+  in (gameState{playerStates = updatePlayer (\p -> p{tricksSubround = [(round, 1)] ++ tricksSubround p}) winner players}, winner)
 
 
 cardsOnTable :: [PlayerState] -> Cards
