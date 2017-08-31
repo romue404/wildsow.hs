@@ -102,14 +102,14 @@ gameLoop (conn, player) games gameId = flip finally(disconnectHandler gameId gam
       msg <- WS.receiveData conn
       action <- pure (decode(msg)::Maybe ClientMessage)
       case action of
-        Just (GameAction id  (GameModel.Join (GameModel.HumanPlayer p))) -> unicast conn GameModel.UnexpectedMove -- do nothing TODO check if player = player
+        Just (GameAction id  (GameModel.Join (GameModel.HumanPlayer p))) -> unicast conn $ GameModel.UnexpectedMove "You can only join one game" -- do nothing TODO check if player = player
         Just (GameAction id move) -> do
           possibleAction <- atomically $ gameActionSTM id games (GameModel.HumanPlayer $ whos move) move
           case possibleAction of
             Left e -> unicast conn e
             Right state ->  broadcastState id games
-        Just e -> unicast conn GameModel.UnexpectedMove
-        Nothing -> unicast conn GameModel.UnexpectedMove
+        Just e -> unicast conn $ GameModel.UnexpectedMove "Only gameactions are allowed"
+        Nothing -> unicast conn $ NetworkManagement.ParseError
 
 ----------------------------------------------------- PERSIST ACTIONS VIA STM -----------------------------------------------------
 
