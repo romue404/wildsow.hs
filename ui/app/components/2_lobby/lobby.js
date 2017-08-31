@@ -50,13 +50,13 @@
 
 
 
-    var botNames = localStorageService.get('botNames') || [
+    var botNames = JSON.parse(localStorageService.get('botNames')) || [
       'Thomas Müller',
       'Prizessin Leia',
       'Luke Skywalker',
       'Arjen Robenn',
       'Christiano Ronaldo',
-      'Han Solo'
+      'Donald Trump'
     ];
 
     var gameId = localStorageService.get("gameId");
@@ -73,7 +73,7 @@
 
     function addBot() {
       var botName = botNames.pop();
-      localStorageService.set('botNames', botNames);
+      localStorageService.set('botNames', JSON.stringify(botNames));
       var botType = {botType: getBotTypeByName($scope.select.value)};
       let action = GameState.createActionRequest('join', gameId, botName, botType);
       GameState.sendActionRequest(action);
@@ -82,7 +82,7 @@
     function getBotTypeByName(name) {
       if(name === botsDescriptions[0]) return "random";
       //TODO: add future bot types when backend implemented
-      if(name === botsDescriptions[1]) return "none";
+      if(name === botsDescriptions[1]) return "smart";
       if(name === botsDescriptions[2]) return "none";
       return 'none';
     }
