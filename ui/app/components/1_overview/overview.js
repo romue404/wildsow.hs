@@ -32,8 +32,19 @@
       'Essen3'
     ];
 
-    $scope.$on('gameStateUpdated', function(event, currentGameState) {
-      $scope.currentGameState = currentGameState;
+    $scope.$on('inLobby', function(event, currentGameState) {
+      console.log("Caught in lobby");
+      $state.go('lobby');
+    });
+
+    $scope.$on('badAction', function(event, error) {
+      console.log("Caught error");
+      console.log(error);
+      if(error.error.includes("already")) {
+        $scope.gameAlreadyExists = 'Spiel kann nicht erstellt werden, da der Name bereits vorhanden ist';
+      } else {
+        $scope.gameNotExists = 'Spiel kann nicht beigetreten werden, da es noch nicht existiert';
+      }
       $scope.$apply();
     });
 
@@ -68,18 +79,6 @@
       localStorageService.set("gameId", $scope.gameId);
       let action = GameState.createActionRequest(type, $scope.gameId, $scope.username, {botType: 'none'});
       GameState.sendActionRequest(action);
-
-      if($scope.currentGameState && $scope.currentGameState.error) {
-        if(type === 'create') {
-          // TODO show game name already exist
-          $scope.gameAlreadyExists = 'Spiel kann nicht erstellt werden, da der Name bereits vorhanden ist';
-        } else {
-          // TODO show game does not exist yet
-          $scope.gameNotExists = 'Spiel kann nicht beigetreten werden, da es noch nicht existiert';
-        }
-      } else {
-        $state.go('lobby');
-      }
     }
 
     function removeErrorMessage() {
