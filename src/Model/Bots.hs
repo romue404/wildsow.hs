@@ -51,7 +51,7 @@ randomBotCardToPlay :: GameState -> PlayerState -> PlayerMove
 randomBotCardToPlay gs@GameState { trump=trump, currentColor=currentColor, stdGen=gen} PlayerState{hand=hand, player=me} =
     case currentColor of
         Nothing -> PlayCard me (randomCard hand gen)
-        Just currentColor -> PlayCard me (randomCard (playeableCards2 trump currentColor hand) gen)
+        Just currentColor' -> PlayCard me (randomCard (playeableCards2 trump currentColor' hand) gen)
 
 {-
 SmartBot
@@ -139,15 +139,12 @@ opponentPlayedCards gs@GameState{playerStates=playerStates} =
 -- playable cards
 playeableCards2 :: Color -> Color -> Cards -> Cards
 playeableCards2 trump currentColor hand
-    | length cardsFitsCurrentColor > 0 = cardsFitsCurrentColor
-    | length cardsFitsTrump > 0 = cardsFitsTrump
+    | length cardsFitCurrentColor > 0 = cardsFitCurrentColor
+    | length cardsFitTrump > 0 = cardsFitTrump
     | otherwise = hand
     where
-        cardsFitsCurrentColor = filter (\Card{value=v', color=c'} ->  c' == currentColorJust) hand
-        cardsFitsTrump        = filter (\Card{value=v', color=c'} ->  c' == trump) hand
-        currentColorJust      = case currentColor of
-            isNothing -> trump
-            isJust -> currentColor
+        cardsFitCurrentColor = filter (\Card{value=v', color=c'} ->  c' == currentColor) hand
+        cardsFitTrump        = filter (\Card{value=v', color=c'} ->  c' == trump) hand
 
 randomCard :: Cards -> StdGen -> Card
 randomCard cards gen =
