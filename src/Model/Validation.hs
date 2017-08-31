@@ -71,6 +71,7 @@ isWaitingForTricks :: GamePhase -> Bool
 isWaitingForTricks (WaitingForTricks  _) = True
 isWaitingForTricks _ = False
 
+
 isWaitingForColor :: GamePhase -> Bool
 isWaitingForColor (WaitingForColor _) = True
 isWaitingForColor _ = False

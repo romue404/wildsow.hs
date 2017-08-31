@@ -26,6 +26,7 @@ import Model.Types
 import Model.Step
 
 
+
 ----------------------------------------------------- COMMUNICATION DATA -----------------------------------------------------
 type GameId = String
 type Games = NetworkManagement.GameChannels GameId
@@ -158,6 +159,7 @@ gameActionSTM gameId channels player move = do
     Left err -> return $ Left err
     Right newState -> do
       writeTVar channels $ NetworkManagement.stepGameInChannel newState gameId games
+      when ((GameModel.phase newState) == GameModel.GameOver) (modifyTVar channels $ Map.delete gameId)
       return $ Right (newState)
 
 

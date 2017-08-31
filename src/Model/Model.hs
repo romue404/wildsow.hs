@@ -37,7 +37,7 @@ data PlayerMove =
   | Leave Player
   | Begin deriving (Read, Show, Eq)
 
-data GamePhase = Idle | GameOver | WaitingForTricks Player | WaitingForColor Player | WaitingForCard Player  | Evaluation  deriving (Read)
+data GamePhase = Idle | GameOver | WaitingForTricks Player | WaitingForColor Player | WaitingForCard Player  | Evaluation  deriving (Read, Eq)
 
 data PlayerState = PlayerState {player :: Player, playedCard :: Maybe Card, hand :: Cards, tricks :: [Int], score :: [Int], tricksSubround::[(Int,Int)]} deriving (Read, Show)
 
