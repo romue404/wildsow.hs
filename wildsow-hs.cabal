@@ -42,7 +42,9 @@ test-suite wildsow-hs-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
-  build-depends:       base, wildsow-hs, HUnit, QuickCheck, hspec
+  exposed-modules:     Model.BotsSpec
+  build-depends:       base, wildsow-hs, HUnit, QuickCheck, hspec, random, containers, random-shuffle, transformers
+                       , free, network, websockets, text, aeson, either, stm, mtl
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
 
