@@ -54,7 +54,7 @@ channelExists :: Ord id => id -> GameChannels id -> Bool
 channelExists id channels = isJust $ Map.lookup id channels
 
 playersInChannel :: GameChannel -> Int
-playersInChannel channel = length $ GameModel.players $ gameState channel
+playersInChannel channel = length $ GameModel.playerStates $ gameState channel
 --fromMaybe 0 ((length . connectedPlayers) <$> getChannel id channels)
 
 checkChannelLimit :: Int -> GameChannel -> Either GameNetworkingException GameChannel
