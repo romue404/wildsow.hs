@@ -9,7 +9,26 @@
         Spieler:
         <ul id="player-list">
           <li ng-repeat="player in players">
-            {{ player.playerName }} - {{ player.tag }}
+
+              <div class="col s12">
+
+                      <div class="row valign-wrapper">
+                          <div class="col s2">
+                              <img src="http://lorempixel.com/160/160/cats/" alt="" class="circle responsive-img"> <!-- notice the "circle" class -->
+                          </div>
+                          <div class="col s10">
+                              <span class="white-text flow-text">
+                                {{ player.playerName }} - {{ player.tag }}
+                              </span>
+                          </div>
+                      </div>
+
+              </div>
+
+
+
+
+
           </li>
         </ul>
 
