@@ -42,7 +42,6 @@ test-suite wildsow-hs-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
-  exposed-modules:     Model.BotsSpec
   other-modules:       Model.BotsSpec
   build-depends:       base, wildsow-hs, HUnit, QuickCheck, hspec, random, containers, random-shuffle, transformers
                        , free, network, websockets, text, aeson, either, stm, mtl

@@ -43,7 +43,7 @@ randomBotMove gs me = randomBotCardToPlay gs me
 
 randomBotTricksToMake :: GameState -> PlayerState -> PlayerMove
 randomBotTricksToMake gs@GameState{playerStates = players, stdGen=gen} PlayerState{hand=hand, player=me} =
-    let (rand, _) = randomR (0,length hand) gen
+    let (rand, _) = randomR (0,length hand) gen -- TODO reset gen
         amountOfPlayers = length players
     in TellNumberOfTricks me rand
 
@@ -148,7 +148,7 @@ playeableCards2 trump currentColor hand
 
 randomCard :: Cards -> StdGen -> Card
 randomCard cards gen =
-    let (rand, _) = randomR (0, (length cards)-1) gen
+    let (rand, _) = randomR (0, (length cards)-1) gen -- TODO reset gen
         shuffled = shuffle' cards (length cards) gen
     in head shuffled
 
