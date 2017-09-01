@@ -8,6 +8,7 @@ import System.Random.Shuffle
 import Model.Validation
 import System.Random.Shuffle
 import Data.Function (on)
+import Data.Maybe
 
 
 -- Spieltheorie
@@ -98,30 +99,31 @@ cardWinningChance :: GameState -> Card -> Double
 cardWinningChance gs@GameState{pile=pile, playerStates=playersStates, currentColor=currentColor, trump=trump} card =
     let playersState = head playersStates
         possibleHigerCards = possibleHigherCards gs playersState card
-    in  1.0 - (genericLength possibleHigerCards) / (genericLength (unknownCards gs playersState) - genericLength pile) -- check unknownCards or deck
+    in  1.0 - (genericLength possibleHigerCards) / (genericLength (unknownCards gs playersState) + genericLength pile + genericLength (opponentPlayedCards gs)) -- check unknownCards or deck
+
 
 -- only if the bot has to tell the color
 possibleHigherCards :: GameState -> PlayerState -> Card -> Cards
-possibleHigherCards gs@GameState{pile=pile, trump=trump} ps@PlayerState{hand=hand} card@Card{value=v} =
-    let myUnknownCards = unknownCards gs ps
-    in  filter (\Card{value=v'} -> v' > v) myUnknownCards -- map (\(value a -> a)) myUnknownCards
+-- with no color -> tell color
+possibleHigherCards gs@GameState{currentColor=Nothing, trump=trump, pile=pile} ps@PlayerState{hand=hand} card@Card{value=v, color=c}
+    -- higher cards: higher trumps
+    | c == trump = filter (\Card{value=v', color=c'} -> v'>v && c'==trump) myUnknownCards -- map (\(value a -> a)) myUnknownCards
+    -- higher cards: all same color and trump
+    | otherwise  = filter (\Card{value=v', color=c'} -> v'>v && c'==c || c'==trump) myUnknownCards -- map (\(value a -> a)) myUnknownCards
+    where myUnknownCards = unknownCards gs ps
 
 -- with current color
-possibleHigherCardsWithCurrentColor :: GameState -> PlayerState -> Card -> Cards
-possibleHigherCardsWithCurrentColor gs@GameState{currentColor=currentColor, trump=trump} ps@PlayerState{hand=hand} card@Card{value=v, color=c}
+possibleHigherCards gs@GameState{currentColor=Just currentColor, trump=trump} ps@PlayerState{hand=hand} card@Card{value=v, color=c}
     -- higher cards: higher trumps
-    | currentColorJust == c && trump==c = filter (\Card{value=v', color=c'} -> v'>v && c'==trump) myUnknownCards
+    | currentColor == c && trump==c = filter (\Card{value=v', color=c'} -> v'>v && c'==trump) myUnknownCards
     -- higher cards: trumps and higher currentColor
-    | currentColorJust == c             = filter (\Card{value=v', color=c'} -> c'==trump || c'==currentColorJust && v'>v) myUnknownCards
+    | currentColor == c             = filter (\Card{value=v', color=c'} -> c'==trump || c'==currentColor && v'>v) myUnknownCards
     -- higher cards: all others
-    | currentColorJust /= c             = myUnknownCards -- and trump add possible trump cards?!??!?
+    | currentColor /= c             = myUnknownCards -- and trump add possible trump cards?!??!?
     | otherwise                         = myUnknownCards -- todo
     where
         myUnknownCards    = unknownCards gs ps
-        wc                = filter (\Card{value=v', color=c'} -> v' > v || c' == currentColorJust) myUnknownCards
-        currentColorJust  = case currentColor of
-            Nothing -> trump
-            Just currentColor -> currentColor
+        wc                = filter (\Card{value=v', color=c'} -> v' > v || c' == currentColor) myUnknownCards
 
 -- cards that are possible in the opponents hands
 unknownCards :: GameState -> PlayerState -> Cards
@@ -130,11 +132,7 @@ unknownCards gs@GameState{pile=pile} ps@PlayerState{hand=hand} = ((deck \\ pile)
 
 -- cards the opponent played before my turn
 opponentPlayedCards :: GameState -> Cards
-opponentPlayedCards gs@GameState{playerStates=playerStates} =
-      cardsOnTable playerStates -- todo check
---    let playedPlayerStates = filter (\PlayerState{playedCard=Just playedCard} -> isJust playedCard ) playerStates
---        aaa = fromJust playedCard playerStates
---    in map (playedCard) $ filter (\card@Card{color=c', value=v'} -> playedCard card) playedPlayerStates
+opponentPlayedCards gs@GameState{playerStates=playerStates} = catMaybes $ map (playedCard) playerStates
 
 -- playable cards
 playeableCards2 :: Color -> Color -> Cards -> Cards
