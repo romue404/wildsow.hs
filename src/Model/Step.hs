@@ -16,11 +16,10 @@ import Control.Applicative
 stepGame :: PlayerMove -> GameState -> Either PlayerMoveError GameState
 stepGame move gameState = stepWhileBot $ step' move gameState -- bot hier ueberpruefen
 
-
+-- TODO separate gameStates for every move
 stepWhileBot :: Either PlayerMoveError GameState -> Either PlayerMoveError GameState
-stepWhileBot rgs@(Right gs) = case botMove gs of
-                          Nothing -> rgs
-                          Just m -> stepWhileBot (step' m gs)
+stepWhileBot rgs@(Right gs@GameState{phase=GameOver}) = Right gs
+stepWhileBot rgs@(Right gs) =  maybe rgs (stepWhileBot . (flip step' gs)) $ botMove gs
 stepWhileBot err@(Left e) = err
 
 

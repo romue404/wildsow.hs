@@ -197,7 +197,7 @@ broadcastState id channels =
                     NetworkManagement.gameState=state} <- NetworkManagement.getChannel id game
                     return (state, map snd receivers)
         return sr
-    case stateReceivers of
+    case stateReceivers of -- TODO or use when (...)
       Just (state, receivers) -> forM_ (receivers) (\conn -> WS.sendTextData conn (Data.Aeson.encode(state)))
       Nothing -> return ()
 
