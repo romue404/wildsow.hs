@@ -64,12 +64,12 @@ smartBotMove :: GameState -> PlayerState -> PlayerMove
 smartBotMove gs@GameState {phase = WaitingForTricks p} me = smartBotTricksToMake gs me
 smartBotMove gs@GameState {phase = WaitingForCard p} me = smartBotCardToPlay gs me
 
---
+-- TODO !!!
 smartBotTricksToMake :: GameState -> PlayerState -> PlayerMove
 smartBotTricksToMake gs ps@PlayerState{hand=hand, player=me} =
     let chances = map (\card -> cardWinningChance gs ps card) hand
         chancesAvg =  (sum chances) / (genericLength chances)
-        predictedTricks = round chancesAvg * genericLength hand
+        predictedTricks = round (chancesAvg * genericLength hand / genericLength (playerStates gs))
     in TellNumberOfTricks me predictedTricks
 
 --
@@ -98,9 +98,9 @@ sortedHighestHandCards gs ps@PlayerState{hand=hand} =
 -- cardWinningChance
 cardWinningChance :: GameState -> PlayerState -> Card -> Double
 -- with no color -> tell color
-cardWinningChance gs@GameState{pile=pile, playerStates=playersStates, currentColor=Nothing} playerState card =
+cardWinningChance gs@GameState{pile=pile, playerStates=playersStates, currentColor=Nothing} playerState card@Card{value=v, color=c} =
     let
-      lengthPossibleHigherCards = genericLength (possibleHigherCards gs playerState card)
+      lengthPossibleHigherCards = genericLength (possibleHigherCards gs{currentColor=Just c} playerState card) -- chance if card is played -> so set currentColor!
       lengthUnknownCards = genericLength (unknownCards gs playerState)
       lengthPile = genericLength pile
       lengthCurrentCards = genericLength (opponentPlayedCards gs)
@@ -119,7 +119,7 @@ cardWinningChance gs@GameState{pile=pile, playerStates=playersStates, currentCol
 
 -- only if the bot has to tell the color
 possibleHigherCards :: GameState -> PlayerState -> Card -> Cards
--- with no color -> tell color
+-- with no color -> tell color TODO gibt es den fall überhaupt?!?
 possibleHigherCards gs@GameState{currentColor=Nothing, trump=trump, pile=pile} ps@PlayerState{hand=hand} card@Card{value=v, color=c}
     -- higher cards: higher trumps
     | c == trump = filter (\Card{value=v', color=c'} -> v'>v && c'==trump) myUnknownCards -- map (\(value a -> a)) myUnknownCards
