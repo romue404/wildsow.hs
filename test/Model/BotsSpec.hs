@@ -53,6 +53,9 @@ spec = do
        it "currentcolor, higer trump, without own hand" $
           possibleHigherCardsTest (Just Herz) (Card King Herz) [Card King Herz, Card Eight Schellen, Card Ace Herz]
           `shouldBe` delete (Card Ace Gras) (filter (\Card{value=v', color=c'} ->  c' == Gras) deck) ++ [Card Ten Herz]
+       it "all empty" $
+          possibleHigherCardsOneCardTest (Just Herz) (Card Ace Herz) [Card Ace Herz]
+          `shouldBe` (filter (\Card{value=v', color=c'} ->  c' == Gras) deck)
        -- TODO it "currentcolor, higer trump, without own hand, without played cards" $
   describe "test opponentPlayedCards" $ do
        it "just two cards" $
@@ -62,9 +65,19 @@ spec = do
        it "only trump" $
           cardWinningChanceTrumpTest (Card Ten Gras)
           `shouldBe` 1.0
-       it "with currentColor" $
-          cardWinningChanceTest (Card Ten Gras)
-          `shouldBe` 1.0
+       it "one card with currentColor" $
+          cardWinningChanceOneCardTest (Card Ace Herz)
+          `shouldBe` 1.0-8/31
+       it "one card 2 with currentColor" $
+          cardWinningChanceOneCardTest (Card Ten Herz)
+          `shouldBe` 1.0-9/31
+       it "not current color and not trump" $
+          cardWinningChanceOneCardTest (Card Ace Schellen)
+          `shouldBe` 0.0
+  describe "test sortedHighestCards" $ do
+       it "just two cards" $
+          sortedHighestHandCardsTest [Card King Gras, Card Ace Gras]
+          `shouldBe` [(Card Ace Gras, 1.0), (Card King Gras, 1.0-1.0/30)]
 
 --testtest
 addOneTest = aTest 41
@@ -91,16 +104,15 @@ possibleHigherCardsTest currentColor card hand = possibleHigherCards gs ps card
     }
     ps = head $ playerStates gs
 
--- cardWinningChance
-cardWinningChanceTrumpTest :: Card -> Double
-cardWinningChanceTrumpTest card = cardWinningChance gs card
+-- test with empty pile
+possibleHigherCardsOneCardTest :: Maybe Color -> Card -> Cards -> Cards
+possibleHigherCardsOneCardTest currentColor card hand = possibleHigherCards gs ps card
   where
-    gs = (generateBasicGameState []){
-      trump = Gras,
-      currentColor = Just Gras,
-      pile = [Card Ace Gras]
-    }
+    gs = generateOneCardGameState hand
+    ps = head $ playerStates gs
 
+
+-- opponentPlayedCards
 opponentPlayedCardsTest :: Cards
 opponentPlayedCardsTest = opponentPlayedCards gs
   where
@@ -121,18 +133,42 @@ opponentPlayedCardsTest = opponentPlayedCards gs
         ]
     }
 
-
-cardWinningChanceTest :: Card -> Double
-cardWinningChanceTest card = cardWinningChance gs card
+-- cardWinningChance
+cardWinningChanceTrumpTest :: Card -> Double
+cardWinningChanceTrumpTest card = cardWinningChance gs ps card
   where
-    gs = (generateBasicGameState []){
+    gs = (generateBasicGameState [card]){
       trump = Gras,
-      currentColor = Just Herz,
+      currentColor = Just Gras,
       pile = [Card Ace Gras]
     }
+    ps = head $ playerStates gs
+
+-- cardWinningChance
+cardWinningChanceOneCardTest :: Card -> Double
+cardWinningChanceOneCardTest card = cardWinningChance gs ps card
+  where
+    gs = generateOneCardGameState [card]
+    ps = head $ playerStates gs
+
+-- sortedHighestHandCards
+sortedHighestHandCardsTest :: Cards -> [(Card, Double)]
+sortedHighestHandCardsTest hand = sortedHighestHandCards gs ps
+  where
+    gs = generateOneCardGameState hand
+    ps = head $ playerStates gs
+
 
 
 ---- helper
+
+-- Gamestate with all empty
+generateOneCardGameState ::Cards -> GameState
+generateOneCardGameState hand = (generateBasicGameState hand){
+    trump = Gras,
+    currentColor = Just Herz,
+    pile = []
+    }
 
 -- GameState with one Player
 generateBasicGameState :: Cards -> GameState

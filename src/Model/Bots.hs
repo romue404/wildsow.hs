@@ -66,8 +66,8 @@ smartBotMove gs@GameState {phase = WaitingForCard p} me = smartBotCardToPlay gs 
 
 --
 smartBotTricksToMake :: GameState -> PlayerState -> PlayerMove
-smartBotTricksToMake gs@GameState{playerStates = players} PlayerState{hand=hand, player=me} =
-    let chances = map (\card -> cardWinningChance gs card) hand
+smartBotTricksToMake gs ps@PlayerState{hand=hand, player=me} =
+    let chances = map (\card -> cardWinningChance gs ps card) hand
         chancesAvg =  (sum chances) / (genericLength chances)
         predictedTricks = round chancesAvg * genericLength hand
     in TellNumberOfTricks me predictedTricks
@@ -91,16 +91,31 @@ belowTricks GameState{currentRound=currentRound} ps@PlayerState{tricks=tricks, t
     in toldTricksThisRound < tricksInThisRound
 
 sortedHighestHandCards:: GameState -> PlayerState -> [(Card, Double)]
-sortedHighestHandCards gs PlayerState{hand=hand} =
-    let zipped = zip (hand) (map (cardWinningChance gs) hand)
+sortedHighestHandCards gs ps@PlayerState{hand=hand} =
+    let zipped = zip (hand) (map (cardWinningChance gs ps) hand)
     in sortBy (flip compare `on` snd) zipped
 
-cardWinningChance :: GameState -> Card -> Double
-cardWinningChance gs@GameState{pile=pile, playerStates=playersStates, currentColor=currentColor, trump=trump} card =
-    let playersState = head playersStates
-        possibleHigerCards = possibleHigherCards gs playersState card
-    in  1.0 - (genericLength possibleHigerCards) / (genericLength (unknownCards gs playersState) + genericLength pile + genericLength (opponentPlayedCards gs)) -- check unknownCards or deck
+-- cardWinningChance
+cardWinningChance :: GameState -> PlayerState -> Card -> Double
+-- with no color -> tell color
+cardWinningChance gs@GameState{pile=pile, playerStates=playersStates, currentColor=Nothing} playerState card =
+    let
+      lengthPossibleHigherCards = genericLength (possibleHigherCards gs playerState card)
+      lengthUnknownCards = genericLength (unknownCards gs playerState)
+      lengthPile = genericLength pile
+      lengthCurrentCards = genericLength (opponentPlayedCards gs)
+    in 1.0 - lengthPossibleHigherCards / (lengthUnknownCards + lengthPile + lengthCurrentCards)
 
+-- with current color
+cardWinningChance gs@GameState{pile=pile, playerStates=playersStates, currentColor=Just currentColor, trump=trump} playerState card@Card{value=v, color=c}
+    -- no chance to win against first currentCard
+    | c/= currentColor && c/=trump = 0.0
+    | otherwise = 1.0 - lengthPossibleHigherCards / (lengthUnknownCards + lengthPile + lengthCurrentCards)
+    where
+      lengthPossibleHigherCards = genericLength (possibleHigherCards gs playerState card)
+      lengthUnknownCards = genericLength (unknownCards gs playerState)
+      lengthPile = genericLength pile
+      lengthCurrentCards = genericLength (opponentPlayedCards gs)
 
 -- only if the bot has to tell the color
 possibleHigherCards :: GameState -> PlayerState -> Card -> Cards
@@ -115,15 +130,15 @@ possibleHigherCards gs@GameState{currentColor=Nothing, trump=trump, pile=pile} p
 -- with current color
 possibleHigherCards gs@GameState{currentColor=Just currentColor, trump=trump} ps@PlayerState{hand=hand} card@Card{value=v, color=c}
     -- higher cards: higher trumps
-    | currentColor == c && trump==c = filter (\Card{value=v', color=c'} -> v'>v && c'==trump) myUnknownCards
+    | currentColor==c && trump==c   = filter (\Card{value=v', color=c'} -> v'>v && c'==trump) myUnknownCards
+    | currentColor/=c && trump==c   = filter (\Card{value=v', color=c'} -> v'>v && c'==trump) myUnknownCards
     -- higher cards: trumps and higher currentColor
-    | currentColor == c             = filter (\Card{value=v', color=c'} -> c'==trump || c'==currentColor && v'>v) myUnknownCards
+    | currentColor==c && trump/=c   = filter (\Card{value=v', color=c'} -> c'==trump || c'==currentColor && v'>v) myUnknownCards
     -- higher cards: all others
-    | currentColor /= c             = myUnknownCards -- and trump add possible trump cards?!??!?
-    | otherwise                         = myUnknownCards -- todo
+    | currentColor/=c && trump/=c   = filter (\Card{value=v', color=c'} -> c'==trump || c'==currentColor) myUnknownCards
+    | otherwise                     = myUnknownCards -- todo
     where
         myUnknownCards    = unknownCards gs ps
-        wc                = filter (\Card{value=v', color=c'} -> v' > v || c' == currentColor) myUnknownCards
 
 -- cards that are possible in the opponents hands
 unknownCards :: GameState -> PlayerState -> Cards
