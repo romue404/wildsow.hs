@@ -25,6 +25,26 @@
           </div>
         </div>
 
+
+
+
+        <div class="row center">
+          <div class="col s4">
+            <h3>Trumpf</h3>
+            <img ng-src="{{getTrumpImg(currentGameState.trump)}}" width="auto" height="100px"> <br>
+          </div>
+          <div class="col s8">
+            <h3>Heap</h3>
+            <div ng-repeat="card in heap track by $index" class="wildsow-card heap-wildsow-card">
+              <img ng-src="{{getCardImgPath(card.heapCard)}}" width="auto" height="100px"> <br>
+              <span>{{card ? card.heapCard.color : ''}}</span> <br>
+              <span>{{card ? card.heapCard.value : ''}}</span> <br>
+              <span>{{card ? "Von " + card.cardPlayer : ''}}</span>
+            </div>
+          </div>
+        </div>
+
+
         Mein Name: {{player.player.playerName}} <br>
         Score: {{player.score}} <br>
         Tricks: {{player.tricks}} <br>
@@ -34,25 +54,9 @@
           <div class="col s12">
             <h3>Deine Karten</h3>
             <div ng-repeat="card in player.hand track by $index" class="wildsow-card">
-              <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)"> <br>
+              <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)" width="auto" height="100px"> <br>
               <span>{{card ? card.color : ''}}</span> <br>
               <span>{{card ? card.value : ''}}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="row center">
-          <div class="col s4">
-            <h3>Trumpf</h3>
-            <img ng-src="{{getTrumpImg(currentGameState.trump)}}" width="80px" height="auto"> <br>
-          </div>
-          <div class="col s8">
-            <h3>Heap</h3>
-            <div ng-repeat="card in heap track by $index" class="wildsow-card heap-wildsow-card">
-              <img ng-src="{{getCardImgPath(card.heapCard)}}"> <br>
-              <span>{{card ? card.heapCard.color : ''}}</span> <br>
-              <span>{{card ? card.heapCard.value : ''}}</span> <br>
-              <span>{{card ? "Von " + card.cardPlayer : ''}}</span>
             </div>
           </div>
         </div>

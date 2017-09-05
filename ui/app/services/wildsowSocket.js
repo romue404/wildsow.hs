@@ -40,6 +40,7 @@
 
       let gameState = current.state && current.state.phase;
       let error = current.state && current.state.error;
+      let kind = current.state && current.state.kind;
 
       states.push(JSON.parse(message.data));
       console.log("Received following response...");
@@ -56,6 +57,8 @@
         }
       } else if(error) {
         $rootScope.$broadcast('badAction', JSON.parse(message.data));
+      } else if(kind && (kind == 'games')) {
+        $rootScope.$broadcast('gamelistLoaded', JSON.parse(message.data));
       }
     });
 

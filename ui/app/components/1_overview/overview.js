@@ -15,22 +15,15 @@
     $scope.state = GameState.current;
     $scope.about = "Overview Page";
     $scope.games = [
-      'Party',
-      'Hacken',
-      'Feiern',
-      'Saufen',
-      'Essen',
-      'Party2',
-      'Hacken2',
-      'Feiern2',
-      'Saufen2',
-      'Essen2',
-      'Party3',
-      'Hacken3',
-      'Feiern3',
-      'Saufen3',
-      'Essen3'
+
     ];
+
+
+    $scope.$on('gamelistLoaded', function(event, currentGameState) {
+      $scope.games = currentGameState.payload;
+      console.log($scope.games)
+
+    });
 
     $scope.$on('inLobby', function(event, currentGameState) {
       console.log("Caught in lobby");
@@ -85,6 +78,12 @@
       $scope.gameAlreadyExists = null;
       $scope.gameNotExists = null;
     }
+
+    function getGames() {
+      GameState.sendActionRequest({kind: "openGames", userName: $scope.username});
+    }
+
+    getGames();
 
   }
 
