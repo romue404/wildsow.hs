@@ -3,37 +3,27 @@
   <div id="game-content" class="container">
 
     <div class="row">
-      <div class="col s5">
-        <h3>Spiel: {{ gameId }}</h3>
-      </div>
-      <div class="col s2">
-        <h3>Round {{ currentGameState.round }}</h3>
+      <div class="col s12">
+        <h3>
+          Spiel: {{ gameId }}
+          <span class="right">Round {{ currentGameState.round }}</span>
+        </h3>
       </div>
     </div>
 
     <div id="players" class="row">
 
       <div class="col s12">
-        Game Status: {{currentGameState.phase}} <br>
-        Farbe: {{currentGameState.color}}
-        <div class="row">
-          <div class="col s6">
-            <input ng-model="tricks" type="number" step="1">
-          </div>
-          <div class="col s6">
-            <button ng-click="tellTricks()" class="btn waves-effect waves-light wildsow-button">Stiche angeben</button>
-          </div>
-        </div>
-
-
-
+        <div class="center"> Game Status: {{currentGameState.phase}} </div>
 
         <div class="row center">
-          <div class="col s4">
-            <h3>Trumpf</h3>
-            <img ng-src="{{getTrumpImg(currentGameState.trump)}}" width="auto" height="100px"> <br>
+
+          <div class="col s3">
+            <h4>Farbe</h4>
+            <img ng-src="{{getTrumpImg(currentGameState.color)}}" width="auto" height="100px"> <br>
           </div>
-          <div class="col s8">
+
+          <div class="col s6">
             <h3>Heap</h3>
             <div ng-repeat="card in heap track by $index" class="wildsow-card heap-wildsow-card">
               <img ng-src="{{getCardImgPath(card.heapCard)}}" width="auto" height="100px"> <br>
@@ -42,8 +32,13 @@
               <span>{{card ? "Von " + card.cardPlayer : ''}}</span>
             </div>
           </div>
-        </div>
 
+          <div class="col s3">
+            <h4>Trumpf</h4>
+            <img ng-src="{{getTrumpImg(currentGameState.trump)}}" width="auto" height="100px"> <br>
+          </div>
+
+        </div>
 
         Mein Name: {{player.player.playerName}} <br>
         Score: {{player.score}} <br>
@@ -61,10 +56,18 @@
           </div>
         </div>
 
+        <div class="row">
+          <div class="col s6">
+            <input ng-model="tricks" type="number" step="1">
+          </div>
+          <div class="col s6">
+            <button ng-click="tellTricks()" class="btn waves-effect waves-light wildsow-button">Stiche angeben</button>
+          </div>
+        </div>
+
 
       </div>
     </div>
-
 
   </div>
 </div>

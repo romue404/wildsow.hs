@@ -21,8 +21,6 @@
 
     $scope.$on('gamelistLoaded', function(event, currentGameState) {
       $scope.games = currentGameState.payload;
-      console.log($scope.games)
-
     });
 
     $scope.$on('inLobby', function(event, currentGameState) {

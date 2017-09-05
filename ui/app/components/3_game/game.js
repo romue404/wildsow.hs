@@ -80,7 +80,8 @@
     }
 
     function getTrumpImg(trump) {
-      return `images/trump/${trump}.png`;
+      if(trump)
+        return `images/trump/${trump}.png`;
     }
 
   }
