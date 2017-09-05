@@ -3,7 +3,28 @@
 
   angular
     .module('wildsow')
-    .controller('GameCtrl', GameCtrl);
+    .controller('GameCtrl', GameCtrl)
+      .animation('.fade', function() {
+          return {
+              enter: function(element, done) {
+                  element.css('display', 'none');
+                  $(element).fadeIn(2000, function() {
+                      done();
+                  });
+              },
+              leave: function(element, done) {
+                  $(element).fadeOut(500, function() {
+                      done();
+                  });
+              },
+              move: function(element, done) {
+                  element.css('display', 'none');
+                  $(element).slideDown(0, function() {
+                      done();
+                  });
+              }
+          }
+      });
 
   GameCtrl.$inject = ['$scope', '$state', 'localStorageService', 'GameState'];
 
@@ -14,6 +35,7 @@
     $scope.gameId = localStorageService.get("gameId");
     $scope.tricks = localStorageService.get("tricks") || 0;
 
+    $scope.showTellTricks = false;
 
     // variables
     $scope.about = "Game Page";
@@ -41,6 +63,9 @@
         $scope.heap = $scope.currentGameState.playerState.map(function(ps) {
           return {heapCard: ps.playedCard, cardPlayer: ps.player.playerName};
         });
+        $scope.showTellTricks = $scope.currentGameState.phase.includes($scope.player.player.playerName) &&
+            $scope.currentGameState.phase.includes("tricks");
+
 
       }
     }
@@ -50,6 +75,7 @@
     $scope.playCard = playCard;
     $scope.getCardImgPath = getCardImgPath;
     $scope.getTrumpImg = getTrumpImg;
+
 
     function tellTricks() {
       localStorageService.set("tricks", $scope.tricks);
