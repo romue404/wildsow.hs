@@ -3,6 +3,7 @@ import qualified Network.WebSockets as WS
 import qualified Model.Model as GameModel
 import qualified Model.Updates as GameModelUpdates
 import qualified Data.Map.Strict as Map
+import Model.Validation (isOpen)
 import Data.Aeson hiding (Value)
 import Data.Maybe
 import Data.List
@@ -31,6 +32,13 @@ instance Show GameNetworkingException where
 instance ToJSON GameNetworkingException where
   toJSON e = object [T.pack "error" .= show e]
 
+isOpenGameChannel :: GameChannel -> Bool
+isOpenGameChannel GameChannel{gameState=gs} = isOpen gs
+
+allOpenGames :: Ord id => GameChannels id  -> GameChannels id
+allOpenGames gcs = Map.filter isOpenGameChannel gcs
+
+allOpenGameNames gcs = Map.keys $ allOpenGames gcs
 
 joinChannel :: Ord id =>  (GameModel.Player, WS.Connection) -> id -> GameChannels id -> GameChannels id
 joinChannel player id channels = Map.adjust (\gc@GameChannel{connectedPlayers = players, gameState=gameState}->
