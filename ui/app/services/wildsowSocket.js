@@ -45,9 +45,9 @@
       states.push(JSON.parse(message.data));
       console.log("Received following response...");
       console.log(current.state);
-      localStorageService.set("gameState", JSON.stringify(JSON.parse(message.data)));
 
       if(gameState){
+        localStorageService.set("gameState", JSON.stringify(JSON.parse(message.data)));
         let phase = current.state.phase;
         $rootScope.$broadcast('gameStateUpdated', JSON.parse(message.data));
         if(phase.startsWith("Waiting for player")){
@@ -59,6 +59,8 @@
         $rootScope.$broadcast('badAction', JSON.parse(message.data));
       } else if(kind && (kind == 'games')) {
         $rootScope.$broadcast('gamelistLoaded', JSON.parse(message.data));
+      } else if(kind && (kind == 'chat')) {
+        $rootScope.$broadcast('chatReceived', JSON.parse(message.data).payload);
       }
     });
 

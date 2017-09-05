@@ -21,13 +21,21 @@
       $scope.$apply();
     });
 
+    $scope.chatInput = '';
+    $scope.chats = [];
+
+    $scope.$on('chatReceived', function(event, chat) {
+      $scope.chats.push(chat);
+      $scope.$apply();
+    });
+
     $scope.$on('gameStarted', function(event, currentGameState) {
       $state.go('game');
     });
 
     function updateUi(currentGameState) {
       var debug = JSON.stringify(currentGameState, null, 2);
-    //  console.log(debug)
+      //  console.log(debug)
 
       $scope.currentGameState = currentGameState || localStorageService.get("gameState");
 
@@ -64,6 +72,7 @@
 
     $scope.startGame = startGame;
     $scope.addBot = addBot;
+    $scope.sendChat = sendChat;
 
     function startGame() {
       let action = GameState.createActionRequest('start', gameId, $scope.username);
@@ -86,6 +95,12 @@
       if(name === botsDescriptions[2]) return "none";
       return 'none';
     }
+
+    function sendChat(msg) {
+      GameState.sendActionRequest({kind: 'chat', userName: $scope.username, message: msg});
+      $scope.chatInput = '';
+    }
+
   }
 
 })();

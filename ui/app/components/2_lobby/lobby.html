@@ -4,54 +4,66 @@
 
     <div id="players" class="row">
 
-      <div class="col s12">
+      <div class="col s6">
 
         Spieler:
         <ul id="player-list">
           <li ng-repeat="player in players">
-
-              <div class="col s12">
-
-                      <div class="row valign-wrapper">
-                          <div class="col s2">
-                              <img src="http://lorempixel.com/160/160/cats/" alt="" class="circle responsive-img"> <!-- notice the "circle" class -->
-                          </div>
-                          <div class="col s10">
+            <div class="col s12">
+              <div class="row valign-wrapper">
+                <div class="col s2">
+                  <img src="http://lorempixel.com/160/160/cats/" alt="" class="circle responsive-img"> <!-- notice the "circle" class -->
+                </div>
+                <div class="col s10">
                               <span class="white-text flow-text">
                                 {{ player.playerName }} - {{ player.tag }}
                               </span>
-                          </div>
-                      </div>
-
+                </div>
               </div>
-
-
-
-
-
+            </div>
           </li>
         </ul>
+      </div>
 
-        Bot hinzufügen:
+      <div class="col s6">
+        Chat
+        <div ng-repeat="chat in chats">
+          <span class="chat-user" style="color:gold">{{ chat.userName.playerName }}:</span>
+          <span class="chat-message">{{ chat.message }}</span>
+        </div>
+
         <div class="row">
-          <div class="col s6">
-
-            <div input-field>
-              <select ng-model="select.value" material-select>
-                <option ng-repeat="value in select.choices">{{value}}</option>
-              </select>
-            </div>
-
+          <div class="col s8">
+            <input ng-model="chatInput" placeholder="Write something to chat...">
           </div>
-          <div class="col s6">
-            <button ng-click="addBot()" class="btn waves-effect waves-light wildsow-button" ng-disabled="players.length>=6">Bot hinzufügen</button>
+          <div class="col s4">
+            <button class="btn waves-effect waves-light"  ng-click="sendChat(chatInput)">Senden</button>
           </div>
         </div>
 
-        <button ng-click="startGame()" class="btn waves-effect waves-light wildsow-button" ng-disabled="players.length<3">Spiel starten</button>
+      </div>
+
+    </div>
+
+    Bot hinzufügen:
+    <div class="row">
+      <div class="col s6">
+        <div input-field>
+          <select ng-model="select.value" material-select>
+            <option ng-repeat="value in select.choices">{{value}}</option>
+          </select>
+        </div>
 
       </div>
+      <div class="col s6">
+        <button ng-click="addBot()" class="btn waves-effect waves-light wildsow-button" ng-disabled="players.length>=6">Bot hinzufügen</button>
+      </div>
     </div>
+
+    <button ng-click="startGame()" class="btn waves-effect waves-light wildsow-button" ng-disabled="players.length<3">Spiel starten</button>
+
+
+
 
 
   </div>
