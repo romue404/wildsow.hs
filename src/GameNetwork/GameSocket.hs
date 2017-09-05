@@ -32,8 +32,11 @@ type GameId = String
 type Games = NetworkManagement.GameChannels GameId
 data Client = Client {name::String}  deriving (Eq, Show)
 data ClientMessage =
-   Create {userName::String, gameId::String} |GameAction GameId GameModel.PlayerMove
+   Create {userName::String, gameId::String} | OpenGames | GameAction GameId GameModel.PlayerMove
   deriving (Show)
+
+data Reply a = Reply {kind::String, payload:: a}
+deriveJSON defaultOptions ''Reply
 
 instance PlayerAction ClientMessage where
   whos (Create userName _) = userName
@@ -44,21 +47,29 @@ instance FromJSON ClientMessage where
   parseJSON = withObject "client message" $ \o -> do
     kind <- o .: "kind"
     userName <- o.: "userName"
-    gameId <- o.: "gameId"
     case kind of
       "join"  -> do
-          botType <- o .: "botType"
-          return $ if T.pack(botType) == "random" then GameAction gameId $ GameModel.Join (GameModel.RandomBot userName)
-             else if T.pack(botType) == "smart" then  GameAction gameId $ GameModel.Join (GameModel.SmartBot userName)
-             else GameAction gameId $ GameModel.Join (GameModel.HumanPlayer userName)
-      "create"-> do return $ Create userName gameId
+        gameId <- o.: "gameId"
+        botType <- o .: "botType"
+        return $ if T.pack(botType) == "random" then GameAction gameId $ GameModel.Join (GameModel.RandomBot userName)
+           else if T.pack(botType) == "smart" then  GameAction gameId $ GameModel.Join (GameModel.SmartBot userName)
+           else GameAction gameId $ GameModel.Join (GameModel.HumanPlayer userName)
+      "create"-> do
+        gameId <- o.: "gameId"
+        return $ Create userName gameId
       "tellNumberOfTricks" -> do
+        gameId <- o.: "gameId"
         tricks <- o.: "tricks"
         return $ GameAction gameId $ GameModel.TellNumberOfTricks (GameModel.HumanPlayer userName) tricks
       "playCard" -> do
+        gameId <- o.: "gameId"
         card <- o.: "card"
         return $ GameAction gameId $ GameModel.PlayCard (GameModel.HumanPlayer userName) card
-      "start" -> do return $ GameAction gameId $ GameModel.Begin
+      "start" -> do
+        gameId <- o.: "gameId"
+        return $ GameAction gameId $ GameModel.Begin
+      "openGames" -> do
+        return $ OpenGames
       _        -> fail ("unknown kind: " ++ kind)
 
 
@@ -90,6 +101,10 @@ app games pending = do
         let player = GameModel.HumanPlayer userName
         created <- atomically $ createSTM gameId games (player, conn) gen
         either (throw) (\_ -> gameLoop (conn, player) games gameId) created
+      OpenGames -> do
+        openGames <- atomically $ allGamesSTM games
+        let msg = Reply "games" openGames
+        unicast conn msg
       _ -> throw NetworkManagement.MessageNotAllowed
     -- hier alles parsen und action behandlung machen
     --WS.sendTextData conn ("Parsed:" `mappend` (T.pack(show $ action))::Text)
@@ -116,6 +131,11 @@ gameLoop (conn, player) games gameId =
         Nothing -> unicast conn $ NetworkManagement.ParseError
 
 ----------------------------------------------------- PERSIST ACTIONS VIA STM -----------------------------------------------------
+
+
+allGamesSTM channels = do
+  channel <- readTVar channels
+  return $ NetworkManagement.allOpenGameNames channel
 
 loginSTM ::
   (Ord id) => id
@@ -177,9 +197,6 @@ disconnectHandler id games player = do
   print("DISCONNECTED: " `mappend` show player)
   broadcastState id games
 
-discTest :: SomeException -> IO ()
-discTest e = print(show e)
-
 unicast conn msg =  WS.sendTextData conn (Data.Aeson.encode(msg))
 
 errorHandler :: WS.Connection -> NetworkManagement.GameNetworkingException -> IO ()
@@ -205,17 +222,3 @@ broadcastState id channels =
 mapEitherR f (Left error) = Left(f error)
 mapEitherR f (Right r) = Right(r)
 
-assertTrue :: MonadError e m => Bool -> e -> m ()
-assertTrue x err = if x then pure () else throwError err
-
-assertJust :: MonadError e m => Maybe a -> e -> m a
-assertJust x err = maybe (throwError err) pure x
-
-assertNothing :: MonadError e m => Maybe a -> (a -> e) -> m ()
-assertNothing x toErr = maybe (pure ()) (throwError . toErr) x
-
-assertLeft :: MonadError e m => Either a e -> m a
-assertLeft = either pure throwError
-
-assertRight :: MonadError e m => Either a b -> (a -> e) -> m b
-assertRight x toErr = either (throwError . toErr) pure x

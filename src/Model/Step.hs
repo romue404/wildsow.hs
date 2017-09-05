@@ -47,7 +47,6 @@ step' Begin gs@GameState{phase = Idle, playerStates=players}
 step' move gs = Left $ UnexpectedMove "The game does not expect you to make that move"
 
 
-
 eval gs@GameState {currentRound=round}
   |not $ allHandsPlayed gs = (clearCurrentColor . clearPlayedCards . waitForWinnerToPlayCard winner) subroundEvaluatedGame
   |round >= length  (cardsPerRound Model.deck $ length $ playerStates gs) = evaluateRound subroundEvaluatedGame{phase=GameOver}
@@ -62,3 +61,5 @@ loginLogic p gs@GameState{phase=Idle, playerStates=ps}
 loginLogic p gs@GameState{playerStates=ps}
   |amountOfBots ps > 0 = Right (reevaluatePlayersTurn $ gs{playerStates= (p `replaceBotWithPlayer` ps)})
   |otherwise = Left GameFull
+
+

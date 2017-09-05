@@ -71,7 +71,6 @@ isWaitingForTricks :: GamePhase -> Bool
 isWaitingForTricks (WaitingForTricks  _) = True
 isWaitingForTricks _ = False
 
-
 isWaitingForColor :: GamePhase -> Bool
 isWaitingForColor (WaitingForColor _) = True
 isWaitingForColor _ = False
@@ -86,4 +85,8 @@ isBot (RandomBot _) = True
 
 isHuman :: Player -> Bool
 isHuman = not . isBot
+
+isOpen :: GameState ->  Bool
+isOpen  gs@GameState{phase=Idle, playerStates=ps} = length ps < maxAmountOfPlayers
+isOpen  _ = False
 
