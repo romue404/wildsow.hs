@@ -4,13 +4,16 @@ import Model.Evaluation (evaluateSubRound, evaluateRound)
 import Model.Updates(cardPlayedUpdate, tricksPlayerUpdate, updatePlayer,
   addPlayers, waitForColor,dealCards, waitForNextCard, waitForNextTricks,
   setNewTrump, clearPlayedCards, cardsPerRound,nextPlayer, reevaluatePlayersTurn,removePlayer,
-  replaceBotWithPlayer, replaceHumanPlayerWithBot,clearCurrentColor, waitForWinnerToPlayCard)
+  replaceBotWithPlayer, replaceHumanPlayerWithBot,clearCurrentColor, waitForWinnerToPlayCard,
+  clearDiscardPile, updateDiscardPile)
 import Model.Bots(botMove)
 import Data.Maybe (fromMaybe)
 import Data.List (find)
 import Model.Model as Model
 import Data.Maybe (isNothing)
 import Control.Applicative
+import Model.Types
+
 
 ---------- SINGLE FUNCTION TO CALL ----------
 stepGame :: PlayerMove -> GameState -> Either PlayerMoveError GameState
@@ -30,7 +33,7 @@ step' (PlayCard player card) gs@GameState{phase = phase@(WaitingForCard player')
       (isPlayersTurn player phase) `mustHoldOr` NotPlayersTurn
       let gs' = gs{currentColor=(Model.currentColor gs) <|> Just(Model.color card)}
       (card `elem` playeableCards player gs') `mustHoldOr` MoveAgainstRules "You are not allowed to play this card"
-      let state = gs'{playerStates = cardPlayedUpdate card player $ Model.playerStates gs}
+      let state = updateDiscardPile (playerName player, card) gs'{playerStates = cardPlayedUpdate card player $ Model.playerStates gs}
       if everyPlayerPlayed state then Right (eval state) else Right (waitForNextCard state)
 step' (TellNumberOfTricks player tricks) gs@GameState{phase= phase@(WaitingForTricks player'), playerStates=players} = do
       (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
@@ -40,7 +43,8 @@ step' (TellNumberOfTricks player tricks) gs@GameState{phase= phase@(WaitingForTr
       if allTricksSet state then Right $ waitForNextCard state else Right $ waitForNextTricks state
 step' (Join player) gs = (loginLogic player gs)
 step' (Leave player) gs@GameState{phase = Idle} = Right $ reevaluatePlayersTurn  $ removePlayer player gs
-step' (Leave player) gs = Right $ reevaluatePlayersTurn $ gs{playerStates= (replaceHumanPlayerWithBot player (Model.RandomBot $ Model.playerName player) (playerStates gs))}
+step' (Leave player) gs = Right $ reevaluatePlayersTurn $ gs{playerStates=
+        (replaceHumanPlayerWithBot player (Model.RandomBot $ Model.playerName player) (playerStates gs))}
 step' Begin gs@GameState{phase = Idle, playerStates=players}
       |enoughPlayers players = Right $ (waitForNextTricks . setNewTrump . dealCards) gs
       |otherwise = Left NotEnoughPlayers

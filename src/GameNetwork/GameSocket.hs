@@ -125,7 +125,7 @@ app games pending = do
     return res)
 
 
-gameLoop :: ( WS.Connection, GameModel.Player) -> TVar (NetworkManagement.GameChannels GameId) -> GameId -> IO ()
+gameLoop :: (WS.Connection, GameModel.Player) -> TVar (NetworkManagement.GameChannels GameId) -> GameId -> IO ()
 gameLoop (conn, player) games gameId =
   do
     broadcastState gameId games
