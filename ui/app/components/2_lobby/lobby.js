@@ -54,9 +54,9 @@
       'Thomas Müller',
       'Prizessin Leia',
       'Luke Skywalker',
-      'Arjen Robenn',
-      'Christiano Ronaldo',
-      'Donald Trump'
+      'Robben',
+      'CR7',
+      'DT'
     ];
 
     var gameId = localStorageService.get("gameId");
