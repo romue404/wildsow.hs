@@ -16,8 +16,80 @@
 
         <div class="center"> Game Status: {{currentGameState.phase}} </div>
 
-        <div class="row">
-          <div class="player" ng-repeat="opponent in opponents" style="float:left">
+        <div class="row" ng-if="opponents.length === 2">
+          <div class="player col s2 offset-s3">
+            <img src="images/players/trump.jpg" alt="" class="circle responsive-img"> <br>
+            {{opponents[0].score}}<br>
+            {{opponents[0].tricks}}<br>
+            {{opponents[0].tricksSubround}}<br>
+            {{opponents[0].player.playerName}}<br>
+            {{opponents[0].player.tag}}<br>
+            {{opponents[0].player.hand}}<br>
+            {{opponents[0].player.playedCard}}<br>
+          </div>
+          <div class="player col s2 offset-s2">
+            <img src="images/players/trump.jpg" alt="" class="circle responsive-img"> <br>
+            {{opponents[1].score}}<br>
+            {{opponents[1].tricks}}<br>
+            {{opponents[1].tricksSubround}}<br>
+            {{opponents[1].player.playerName}}<br>
+            {{opponents[1].player.tag}}<br>
+            {{opponents[1].player.hand}}<br>
+            {{opponents[1].player.playedCard}}<br>
+          </div>
+        </div>
+
+        <div class="row" ng-if="opponents.length === 3">
+          <div class="player col s2 offset-s1">
+            <img src="images/players/trump.jpg" alt="" class="circle responsive-img"> <br>
+            {{opponents[0].score}}<br>
+            {{opponents[0].tricks}}<br>
+            {{opponents[0].tricksSubround}}<br>
+            {{opponents[0].player.playerName}}<br>
+            {{opponents[0].player.tag}}<br>
+            {{opponents[0].player.hand}}<br>
+            {{opponents[0].player.playedCard}}<br>
+          </div>
+          <div class="player col s2 offset-s2">
+            <img src="images/players/trump.jpg" alt="" class="circle responsive-img"> <br>
+            {{opponents[1].score}}<br>
+            {{opponents[1].tricks}}<br>
+            {{opponents[1].tricksSubround}}<br>
+            {{opponents[1].player.playerName}}<br>
+            {{opponents[1].player.tag}}<br>
+            {{opponents[1].player.hand}}<br>
+            {{opponents[1].player.playedCard}}<br>
+          </div>
+          <div class="player col s2 offset-s2">
+            <img src="images/players/trump.jpg" alt="" class="circle responsive-img"> <br>
+            {{opponents[2].score}}<br>
+            {{opponents[2].tricks}}<br>
+            {{opponents[2].tricksSubround}}<br>
+            {{opponents[2].player.playerName}}<br>
+            {{opponents[2].player.tag}}<br>
+            {{opponents[2].player.hand}}<br>
+            {{opponents[2].player.playedCard}}<br>
+          </div>
+        </div>
+
+        <div class="row" ng-if="opponents.length === 4">
+          <div class="col s2"></div>
+          <div class="player col s2" ng-repeat="opponent in opponents">
+            <img src="images/players/trump.jpg" alt="" class="circle responsive-img"> <br>
+            {{opponent.score}}<br>
+            {{opponent.tricks}}<br>
+            {{opponent.tricksSubround}}<br>
+            {{opponent.player.playerName}}<br>
+            {{opponent.player.tag}}<br>
+            {{opponent.player.hand}}<br>
+            {{opponent.player.playedCard}}<br>
+          </div>
+        </div>
+
+        <div class="row" ng-if="opponents.length === 5">
+          <div class="col s1"></div>
+          <div class="player col s2" ng-repeat="opponent in opponents">
+            <img src="images/players/trump.jpg" alt="" class="circle responsive-img"> <br>
             {{opponent.score}}<br>
             {{opponent.tricks}}<br>
             {{opponent.tricksSubround}}<br>
