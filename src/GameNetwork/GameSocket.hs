@@ -68,6 +68,9 @@ instance FromJSON ClientMessage where
       "start" -> do
         gameId <- o.: "gameId"
         return $ GameAction gameId $ GameModel.Begin
+      "leave" -> do
+        gameId <- o.: "gameId"
+        return $ GameAction gameId $ GameModel.Leave (GameModel.HumanPlayer userName)
       "openGames" -> do
         return $ OpenGames
       _        -> fail ("unknown kind: " ++ kind)
