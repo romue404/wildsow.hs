@@ -3,28 +3,7 @@
 
   angular
     .module('wildsow')
-    .controller('GameCtrl', GameCtrl)
-      .animation('.fade', function() {
-          return {
-              enter: function(element, done) {
-                  element.css('display', 'none');
-                  $(element).fadeIn(2000, function() {
-                      done();
-                  });
-              },
-              leave: function(element, done) {
-                  $(element).fadeOut(500, function() {
-                      done();
-                  });
-              },
-              move: function(element, done) {
-                  element.css('display', 'none');
-                  $(element).slideDown(0, function() {
-                      done();
-                  });
-              }
-          }
-      });
+    .controller('GameCtrl', GameCtrl);
 
   GameCtrl.$inject = ['$scope', '$state', 'localStorageService', 'GameState'];
 
