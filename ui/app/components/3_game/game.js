@@ -35,10 +35,13 @@
         $scope.player = $scope.currentGameState.playerState.filter(
           ps => ps.player.playerName === $scope.username
         )[0];
+        $scope.opponents = $scope.currentGameState.playerState.filter(
+          ps => ps.player.playerName !== $scope.username
+        );
         $scope.heap = $scope.currentGameState.playerState.map(function(ps) {
           return {heapCard: ps.playedCard, cardPlayer: ps.player.playerName};
         });
-        console.log($scope.player);
+
       }
     }
 

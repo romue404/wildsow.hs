@@ -12,9 +12,22 @@
     </div>
 
     <div id="players" class="row">
-
       <div class="col s12">
+
         <div class="center"> Game Status: {{currentGameState.phase}} </div>
+
+        <div class="row">
+          <div class="player" ng-repeat="opponent in opponents" style="float:left">
+            {{opponent.score}}<br>
+            {{opponent.tricks}}<br>
+            {{opponent.tricksSubround}}<br>
+            {{opponent.player.playerName}}<br>
+            {{opponent.player.tag}}<br>
+            {{opponent.player.hand}}<br>
+            {{opponent.player.playedCard}}<br>
+          </div>
+        </div>
+
 
         <div class="row center">
 
