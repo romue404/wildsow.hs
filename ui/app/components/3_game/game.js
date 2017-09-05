@@ -46,6 +46,7 @@
     $scope.tellTricks = tellTricks;
     $scope.playCard = playCard;
     $scope.getCardImgPath = getCardImgPath;
+    $scope.getTrumpImg = getTrumpImg;
 
     function tellTricks() {
       localStorageService.set("tricks", $scope.tricks);
@@ -76,6 +77,10 @@
       let cardValue = cardValueMapper[card.value];
       let cardImgName = cardColor + cardValue;
       return `images/cards/${cardImgName}.svg`;
+    }
+
+    function getTrumpImg(trump) {
+      return `images/trump/${trump}.png`;
     }
 
   }
