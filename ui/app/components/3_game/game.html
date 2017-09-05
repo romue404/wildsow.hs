@@ -133,15 +133,15 @@
         <div class="row center">
           <div class="col s12">
             <h3>Deine Karten</h3>
-            <div ng-repeat="card in player.hand track by $index" class="wildsow-card">
-              <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)" width="auto" height="100px"> <br>
+            <div ng-repeat="card in player.hand track by $index" class="wildsow-card my-wildsow-card">
+              <img ng-src="{{getCardImgPath(card)}}"  ng-click="playCard(card)" width="auto" height="200px"> <br>
               <span>{{card ? card.color : ''}}</span> <br>
               <span>{{card ? card.value : ''}}</span>
             </div>
           </div>
         </div>
 
-        <div class="row">
+        <div class="row my-show-hide" ng-show="showTellTricks">
           <div class="col s6">
             <input ng-model="tricks" type="number" step="1">
           </div>
