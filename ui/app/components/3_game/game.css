@@ -32,18 +32,41 @@
 .my-show-hide.ng-hide {
     opacity: 0;
 }
+
+.my-wildsow-card {
+    position: relative;
+}
+
 .my-wildsow-card.ng-enter {
-    -webkit-transition:2.5s linear all;
-    -moz-transition:2.5s linear all;
-    -o-transition:2.5s linear all;
-    transition:2.5s linear all;
-    max-height: 0;
+    -webkit-transition:0.5s linear all;
+    -moz-transition:0.5s linear all;
+    -o-transition:0.5s linear all;
+    transition:0.5s linear all;
     opacity: 0;
     top: -150px;
 }
 
 .my-wildsow-card.ng-enter.ng-enter-active {
-    max-height: 90px;
     opacity: 1;
     top: 0;
 }
+
+.my-wildsow-card.ng-leave {
+    -webkit-transition:0.5s linear all;
+    -moz-transition:0.5s linear all;
+    -o-transition:0.5s linear all;
+    transition:0.5s linear all;
+    opacity: 1;
+    top: 0px;
+}
+
+.my-wildsow-card.ng-leave.ng-leave-active {
+    opacity: 0;
+    top: -150px;
+}
+
+
+
+
+
+

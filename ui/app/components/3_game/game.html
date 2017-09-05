@@ -130,14 +130,16 @@
         Tricks: {{player.tricks}} <br>
         Tricks Subround: {{player.tricksSubround}} <br>
 
-        <div class="row center">
-          <div class="col s12">
+        <div class="row center" style="min-height: 400px">
             <h3>Deine Karten</h3>
-            <div ng-repeat="card in player.hand track by $index" class="wildsow-card my-wildsow-card">
-              <img ng-src="{{getCardImgPath(card)}}"  ng-click="playCard(card)" width="auto" height="200px"> <br>
-              <span>{{card ? card.color : ''}}</span> <br>
-              <span>{{card ? card.value : ''}}</span>
-            </div>
+          <div class="col s12">
+
+              <div ng-repeat="card in player.hand track by $index" class="wildsow-card my-wildsow-card">
+                    <img ng-src="{{getCardImgPath(card)}}"  ng-click="playCard(card)" width="auto" max-height="140px"> <br>
+                  <span>{{card ? card.color : ''}}</span> <br>
+                  <span>{{card ? card.value : ''}}</span>
+              </div>
+
           </div>
         </div>
 
