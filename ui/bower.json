@@ -21,6 +21,7 @@
     "angular-ui-router": "^1.0.6",
     "normalize-css": "^7.0.0",
     "angular-local-storage": "^0.7.1",
-    "css-modal": "^1.5.0"
+    "css-modal": "^1.5.0",
+    "angular-animate": "^1.6.6"
   }
 }
