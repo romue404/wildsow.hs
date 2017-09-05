@@ -5,7 +5,7 @@ import Model.Updates(cardPlayedUpdate, tricksPlayerUpdate, updatePlayer,
   addPlayers, waitForColor,dealCards, waitForNextCard, waitForNextTricks,
   setNewTrump, clearPlayedCards, cardsPerRound,nextPlayer, reevaluatePlayersTurn,removePlayer,
   replaceBotWithPlayer, replaceHumanPlayerWithBot,clearCurrentColor, waitForWinnerToPlayCard,
-  clearDiscardPile, updateDiscardPile)
+  clearDiscardPile)
 import Model.Bots(botMove)
 import Data.Maybe (fromMaybe)
 import Data.List (find)
@@ -28,12 +28,12 @@ stepWhileBot err@(Left e) = err
 
 step' :: PlayerMove -> GameState -> Either PlayerMoveError GameState
 step' _ gs@GameState {phase = GameOver} = Left $ UnexpectedMove "The game has already finished, no more moves allowed"
-step' (PlayCard player card) gs@GameState{phase = phase@(WaitingForCard player'),playerStates=players, discardPile=dp} = do
+step' (PlayCard player card) gs@GameState{phase = phase@(WaitingForCard player'),playerStates=players, discardPile=dp, currentRound=round} = do
       (enoughPlayers players) `mustHoldOr` NotEnoughPlayers
       (isPlayersTurn player phase) `mustHoldOr` NotPlayersTurn
       let gs' = gs{currentColor=(Model.currentColor gs) <|> Just(Model.color card)}
       (card `elem` playeableCards player gs') `mustHoldOr` MoveAgainstRules "You are not allowed to play this card"
-      let discardPile' =  take ((length players)*2) $ (playerName player, card):dp
+      let discardPile' =  take ((length players)*2) $ (playerName player, round, card):dp
       let state =  gs'{playerStates = cardPlayedUpdate card player $ Model.playerStates gs, discardPile = discardPile'}
       if everyPlayerPlayed state then Right (eval state) else Right (waitForNextCard state)
 step' (TellNumberOfTricks player tricks) gs@GameState{phase= phase@(WaitingForTricks player'), playerStates=players} = do

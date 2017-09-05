@@ -21,9 +21,6 @@ dealCards gs@GameState{currentRound=round, pile=pile, playerStates=players, stdG
           playersWithDealtCards = map (\(chunk, player) -> player{hand=chunk, playedCard=Nothing}) (zip chunked players)
           undealtCards = concat $ drop (length players) chunked
 
-updateDiscardPile :: (String, Card) -> GameState -> GameState
-updateDiscardPile card gs@GameState{discardPile=dp, playerStates = ps} = gs{discardPile = take (length ps) $ card : dp}
-
 clearDiscardPile :: Card -> GameState -> GameState
 clearDiscardPile card gs = gs{discardPile = []}
 

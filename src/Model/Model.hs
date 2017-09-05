@@ -48,7 +48,7 @@ data GameState = GameState {
   currentRound :: Int,
   currentColor :: Maybe Color,
   pile :: Cards,
-  discardPile :: [(String, Card)],
+  discardPile :: [(String, Int, Card)],
   trump :: Color,
   playerStates :: [PlayerState],
   stdGen ::  StdGen
