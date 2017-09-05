@@ -32,7 +32,7 @@ type GameId = String
 type Games = NetworkManagement.GameChannels GameId
 data Client = Client {name::String}  deriving (Eq, Show)
 data ClientMessage =
-   Create {userName::String, gameId::String} | OpenGames | GameAction GameId GameModel.PlayerMove
+   Create {userName::String, gameId::String} | OpenGames | ChatMessage {player::GameModel.Player, message:: String} | GameAction GameId GameModel.PlayerMove
   deriving (Show)
 
 data Reply a = Reply {kind::String, payload:: a}
@@ -41,6 +41,7 @@ deriveJSON defaultOptions ''Reply
 instance PlayerAction ClientMessage where
   whos (Create userName _) = userName
   whos (GameAction id ga) = whos ga
+
 
 deriveJSON defaultOptions ''Client -- template haskell
 instance FromJSON ClientMessage where
@@ -73,9 +74,19 @@ instance FromJSON ClientMessage where
         return $ GameAction gameId $ GameModel.Leave (GameModel.HumanPlayer userName)
       "openGames" -> do
         return $ OpenGames
+      "chat" -> do
+        message <- o.: "message"
+        return $ (ChatMessage (GameModel.HumanPlayer userName) message)
       _        -> fail ("unknown kind: " ++ kind)
 
 
+instance ToJSON ClientMessage where
+  toJSON cm =
+    case cm of
+      (ChatMessage name msg) -> object [
+          "userName" .= name,
+          "message"  .= msg ]
+      _ -> undefined
 ----------------------------------------------------- GAME SOCKET -----------------------------------------------------
 
 gameSocket :: IO()
@@ -130,6 +141,7 @@ gameLoop (conn, player) games gameId =
           case possibleAction of
             Left e -> unicast conn e
             Right state ->  broadcastState id games
+        Just (ChatMessage sender msg) -> broadCastMsg games gameId $ Reply "chat" $ ChatMessage sender msg
         Just e -> unicast conn $ GameModel.UnexpectedMove "Only game-actions are allowed"
         Nothing -> unicast conn $ NetworkManagement.ParseError
 
@@ -207,6 +219,14 @@ errorHandler conn e = do
   print("handling error in main loop")
   WS.sendTextData conn (Data.Aeson.encode(e))
 
+
+receiversSTM channels gameId =  do
+        game <- readTVar channels
+        return $ do
+          NetworkManagement.GameChannel{NetworkManagement.connectedPlayers=receivers,
+          NetworkManagement.gameState=state} <- NetworkManagement.getChannel gameId game
+          return (state, map snd receivers)
+
 broadcastState :: (Ord id) => id -> TVar(NetworkManagement.GameChannels id) -> IO ()
 broadcastState id channels =
   do
@@ -220,6 +240,15 @@ broadcastState id channels =
     case stateReceivers of -- TODO or use when (...)
       Just (state, receivers) -> forM_ (receivers) (\conn -> WS.sendTextData conn (Data.Aeson.encode(state)))
       Nothing -> return ()
+
+
+--broadCastMsg :: GameModel.Player -> GameId -> TVar(NetworkManagement.GameChannels id) -> IO ()
+broadCastMsg channels gameId msg = do
+  receivers <- atomically $ receiversSTM channels gameId
+  case receivers of
+      Just (state, receivers) -> forM_ (receivers) (flip WS.sendTextData (Data.Aeson.encode(msg)))
+      Nothing -> return ()
+
 
 ----------------------------------------------------- HELPER -----------------------------------------------------
 mapEitherR f (Left error) = Left(f error)
