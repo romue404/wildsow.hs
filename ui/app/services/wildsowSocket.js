@@ -1,6 +1,9 @@
 (function () {
   'use strict';
 
+  // start a small webserver
+  // ui>python -m SimpleHTTPServer 8000
+
   var baseUrl = 'ws://localhost:5000';
 
   angular

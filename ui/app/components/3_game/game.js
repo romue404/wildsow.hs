@@ -49,6 +49,15 @@
       }
     }
 
+    $scope.getScore = function(arr){
+        return arr.reduce((a, b) => a + b, 0);
+    };
+
+      $scope.getStiche = function(arr, round){
+          var x = arr.filter(a => a[0]==round, 0);
+          return x.length;
+      };
+
     // apis
     $scope.tellTricks = tellTricks;
     $scope.playCard = playCard;

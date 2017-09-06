@@ -1,24 +1,59 @@
+.row {
+    padding: 8px 8px;
+    margin: 0px;
+}
+
+h3, h4, h5{
+    margin: 4px;
+}
+
+#head{
+    background-color: rgba(0, 0, 0, 0.95);
+}
+
 #game {
-  text-align: center;
-  height:100vh;
-  overflow: hidden;
-  background: url(../../../images/login-bg.jpg) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  display: flex;
-  justify-content: center; /* align horizontal */
-  align-items: center; /* align vertical */;
+    text-align: center;
+    height: 100vh;
+    background: url(../../../images/login-bg.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */;
 }
 
 #game-content {
-  border: 1px solid black;
-  border-radius: 25px;
-  background-color: rgba(0, 0, 0, 0.9);
-  color: white;
-  padding: 0 20px 30px 20px;
-  text-align: left;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid black;
+    border-radius: 16px;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: white;
+    text-align: left;
+    min-height: 400px;
+    max-height: 700px;
+}
+
+#players{
+}
+
+.player{
+}
+
+.player img{
+    height: auto;
+    width: 100%;
+}
+
+.playersCard{
+    height: auto;
+    width: 100%;
+}
+
+#tricks{
 }
 
 /* animations */
@@ -26,22 +61,32 @@
 .my-show-hide {
     transition: all linear 1.0s;
 }
+
 .my-show-hide.ng-show {
     opacity: 1;
 }
+
 .my-show-hide.ng-hide {
     opacity: 0;
+}
+
+#my-wildsow-cards-container {
 }
 
 .my-wildsow-card {
     position: relative;
 }
 
+.my-wildsow-card img {
+    width: auto;
+    height: 180px;
+}
+
 .my-wildsow-card.ng-enter {
-    -webkit-transition:0.5s linear all;
-    -moz-transition:0.5s linear all;
-    -o-transition:0.5s linear all;
-    transition:0.5s linear all;
+    -webkit-transition: 0.5s linear all;
+    -moz-transition: 0.5s linear all;
+    -o-transition: 0.5s linear all;
+    transition: 0.5s linear all;
     opacity: 0;
     top: -150px;
 }
@@ -52,10 +97,10 @@
 }
 
 .my-wildsow-card.ng-leave {
-    -webkit-transition:0.5s linear all;
-    -moz-transition:0.5s linear all;
-    -o-transition:0.5s linear all;
-    transition:0.5s linear all;
+    -webkit-transition: 0.5s linear all;
+    -moz-transition: 0.5s linear all;
+    -o-transition: 0.5s linear all;
+    transition: 0.5s linear all;
     opacity: 1;
     top: 0px;
 }
