@@ -24,11 +24,10 @@
                         <img src="images/players/trump.jpg" alt="" class="circle responsive-img">
                         <div class="img-overlay-bottom">
                             <div class="tricksSubroundBox">
-
-                                <span class="">{{getStiche(player.tricksSubround, currentGameState.round)}}</span>
+                                <span class="">{{player.tricks[0]}}</span>
                             </div>
                             <div class="tricksBox">
-                                <span class="">{{player.tricks[0]}}</span>
+                                <span class="">{{getStiche(player.tricksSubround, currentGameState.round)}}</span>
                             </div>
                         </div>
                         <span class="">Score: {{getScore(player.score)}}</span>
@@ -42,11 +41,10 @@
                         <img src="images/players/trump.jpg" alt="" class="circle responsive-img">
                         <div class="img-overlay-bottom">
                             <div class="tricksSubroundBox">
-
-                                <span class="">{{getStiche(opponent.tricksSubround, currentGameState.round)}}</span>
+                                <span class="">{{opponent.tricks[0]}}</span>
                             </div>
                             <div class="tricksBox">
-                                <span class="">{{opponent.tricks[0]}}</span>
+                                <span class="">{{getStiche(opponent.tricksSubround, currentGameState.round)}}</span>
                             </div>
                         </div>
                         <span class="">Score: {{getScore(opponent.score)}}</span>
@@ -56,7 +54,7 @@
                 <div class="my-flex-container">
                     <div ng-repeat="card in heap track by $index"
                          class="my-flex-item wildsow-card heap-wildsow-card">
-                        <img class="playersCard" ng-src="{{getCardImgPath(card.heapCard)}}">
+                        <img class="playersCard " ng-src="{{getCardImgPath(card.heapCard)}}">
                         <!--
                         <span class="">{{card ? card.heapCard.color : ''}}</span>
                         <span class="">{{card ? card.heapCard.value : ''}}</span>
@@ -67,31 +65,23 @@
         </div>
 
 
-        <div class="row">
-            <div class="col s1 offset-s4">
-                <span>Farbe</span>
-                <img ng-src="{{getTrumpImg(currentGameState.color)}}" width="100%" height="auto"> <br>
+        <div class="row my-flex-center-container">
+            <div class="" >
+                <span>Farbe</span> <br>
+                <img ng-src="{{getTrumpImg(currentGameState.color)}}" style="max-height: 80px"> <br>
             </div>
-            <div class="col s1 offset-s1">
-                <span>Trumpf</span>
-                <img ng-src="{{getTrumpImg(currentGameState.trump)}}" width="100%" height="auto"> <br>
+            <div style="width: 20px"></div>
+            <div class="" >
+                <span>Trumpf</span> <br>
+                <img ng-src="{{getTrumpImg(currentGameState.trump)}}" style="max-height: 80px"> <br>
             </div>
         </div>
 
-        <div class="center"> Game Status: {{currentGameState.phase}}</div>
+        <div class="center">Game Status: {{currentGameState.phase}}</div>
 
-        <div id="my-wildsow-cards-container" class="row center">
-            <h3>Deine Karten</h3>
-            <div class="col s12">
-
-                <div ng-repeat="card in player.hand track by $index" class="wildsow-card my-wildsow-card ">
-                    <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)">
-                    <!--
-                    <br>
-                    <span>{{card ? card.color : ''}}</span> <br>
-                    <span>{{card ? card.value : ''}}</span>
-                    -->
-                </div>
+        <div id="my-wildsow-cards-container" class="row">
+            <div ng-repeat="card in player.hand track by $index" class="wildsow-card my-wildsow-card ">
+                <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)">
             </div>
         </div>
 

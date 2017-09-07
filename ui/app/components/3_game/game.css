@@ -24,7 +24,8 @@ h3, h4, h5{
 }
 
 #game-content {
-    max-width: 700px;
+    min-width: 600px;
+    max-width: 1000px;
     height: 95%;
     overflow-y: auto;
     overflow-x: hidden;
@@ -32,13 +33,18 @@ h3, h4, h5{
     border-radius: 16px;
     background-color: rgba(0, 0, 0, 0.85);
     color: white;
-    text-align: left;
 }
 
 .my-flex-container{
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+}
+
+.my-flex-center-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }
 
 .my-flex-item{
@@ -51,6 +57,10 @@ h3, h4, h5{
 .player{
     position: relative;
     width: 100%; /* for IE 6 */
+}
+
+.player span{
+    vertical-align: super;
 }
 
 .player .img-overlay-top{
@@ -68,7 +78,6 @@ h3, h4, h5{
 }
 
 .tricksBox, .tricksSubroundBox{
-    background: rgba(0, 0, 0, 0.8);
     width: 36px;
     height: 36px;
     display: flex;
@@ -88,7 +97,6 @@ h3, h4, h5{
     border: 2px solid;
     border-color: white;
 }
-
 
 .playersCard{
     height: auto;
@@ -113,6 +121,9 @@ h3, h4, h5{
 }
 
 #my-wildsow-cards-container {
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
 }
 
 .my-wildsow-card {
