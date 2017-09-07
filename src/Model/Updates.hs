@@ -133,3 +133,6 @@ initPlayerState player = PlayerState player Nothing [] [] [] []
 nextPlayer :: [PlayerState] -> [PlayerState]
 nextPlayer (p:ps) = ps ++ [p]
 
+--sortByName :: [PlayerState] -> [PlayerState]
+--sortByName playerStates =
+
