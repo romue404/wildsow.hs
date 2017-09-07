@@ -27,6 +27,7 @@
     flex-direction: row;
     min-height: 400px;
 }
+
 .lobby_content_chat{
     flex: 1;
     padding: 1rem;
@@ -34,6 +35,8 @@
     flex-direction: column;
     justify-content: space-between;
 }
+
+
 .lobby_content_players {
     flex: 1;
     padding: 1rem;
@@ -41,6 +44,11 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+.lobby_content_players_list {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 600px;
 }
 
 
@@ -63,13 +71,7 @@
 
 .chat_messages {
     overflow-y: auto;
-    max-height: 650px;
-}
-
-.lobby_content_players_list {
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-height: 650px;
+    max-height: 600px;
 }
 
 
