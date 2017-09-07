@@ -55,7 +55,7 @@ step' move gs = Left $ UnexpectedMove "The game does not expect you to make that
 eval gs@GameState {currentRound=round}
   |not $ allHandsPlayed gs = (clearCurrentColor . clearPlayedCards . waitForWinnerToPlayCard winner) subroundEvaluatedGame
   |round >= length  (cardsPerRound Model.deck $ length $ playerStates gs) = evaluateRound subroundEvaluatedGame{phase=GameOver}
-  |otherwise = (waitForNextTricks . clearCurrentColor . clearPlayedCards . setNewTrump . dealCards . evaluateRound) subroundEvaluatedGame
+  |otherwise = (setNewRoundStarter . clearCurrentColor . clearPlayedCards . setNewTrump . dealCards . evaluateRound) subroundEvaluatedGame
   where (subroundEvaluatedGame, winner) = evaluateSubRound gs
 
 
