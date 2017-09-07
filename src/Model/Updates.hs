@@ -129,9 +129,8 @@ nextPlayer :: [PlayerState] -> [PlayerState]
 nextPlayer (p:ps) = ps ++ [p]
 
 setNewRoundStarter :: GameState -> GameState
-setNewRoundStarter gs@GameState{playerStates = ps, currentRound=r} =
-  gs{playerStates = sortedPlayerStates, phase = WaitingForTricks starter}
-  where sortedPlayerStates = sortBy (comparing $ player) ps
-        starter = player $ cycle(sortedPlayerStates) !! (r-1)
-
-
+setNewRoundStarter gs@GameState{playerStates=ps, currentRound=r} =
+  let starter = player $ head $ drop (r-1) $ cycle sortedPlayerStates
+      players' = dropWhile (\ps -> player ps /= starter) (cycle ps)
+      sortedPlayerStates = sortBy (comparing player) ps
+  in gs{playerStates=take (length ps) players', phase = WaitingForTricks starter}
