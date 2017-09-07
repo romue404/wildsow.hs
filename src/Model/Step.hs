@@ -2,7 +2,7 @@ module Model.Step (stepGame) where
 import Model.Validation
 import Model.Evaluation (evaluateSubRound, evaluateRound)
 import Model.Updates(cardPlayedUpdate, tricksPlayerUpdate, updatePlayer,
-  addPlayers, waitForColor,dealCards, waitForNextCard, waitForNextTricks,
+  addPlayers,dealCards, waitForNextCard, waitForNextTricks,
   setNewTrump, clearPlayedCards, cardsPerRound,nextPlayer, reevaluatePlayersTurn,removePlayer,
   replaceBotWithPlayer, replaceHumanPlayerWithBot,clearCurrentColor, waitForWinnerToPlayCard,
   clearDiscardPile, setNewRoundStarter)

@@ -73,9 +73,6 @@ instance Show GamePhase where
   show (WaitingForCard player) = "Waiting for player " `mappend` show (playerName player) `mappend` " to play a card"
   show (Evaluation) = "Evaluation"
 
-instance Ord PlayerState where
-    compare = comparing player
-
 deriveJSON defaultOptions ''PlayerState
 deriveJSON defaultOptions ''PlayerMoveError
 deriveJSON defaultOptions ''GamePhase

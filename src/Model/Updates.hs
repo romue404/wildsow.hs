@@ -115,7 +115,7 @@ cardPlayedUpdate :: Card -> Player -> [PlayerState] -> [PlayerState]
 cardPlayedUpdate card = updatePlayer $ playCard card
 
 playCard :: Card -> PlayerState -> PlayerState
-playCard card playerState = playerState{playedCard=Just(card), hand= delete card (Model.hand playerState)}
+playCard card playerState = playerState{playedCard = Just(card), hand= delete card (Model.hand playerState)}
 
 updatePlayer :: (PlayerState->PlayerState) -> Player -> [PlayerState] -> [PlayerState]
 updatePlayer f p ps = map (\x -> if player x == p then f(x) else x) ps
@@ -131,6 +131,7 @@ nextPlayer (p:ps) = ps ++ [p]
 setNewRoundStarter :: GameState -> GameState
 setNewRoundStarter gs@GameState{playerStates = ps, currentRound=r} =
   gs{playerStates = sortedPlayerStates, phase = WaitingForTricks starter}
-  where sortedPlayerStates = sort ps
+  where sortedPlayerStates = sortBy (comparing $ player) ps
         starter = player $ cycle(sortedPlayerStates) !! (r-1)
+
 
