@@ -27,6 +27,7 @@
     flex-direction: row;
     min-height: 400px;
     max-height: 650px;
+    overflow-y: auto;
 }
 .lobby_content_chat{
     flex: 1;
