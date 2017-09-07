@@ -2,7 +2,6 @@
     padding: 8px 8px;
     margin: 0px;
 }
-
 h3, h4, h5{
     margin: 4px;
 }
@@ -36,16 +35,58 @@ h3, h4, h5{
     text-align: left;
 }
 
+.my-flex-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.my-flex-item{
+    max-width: 90px;
+}
+
 #players{
 }
 
 .player{
+    position: relative;
+    width: 100%; /* for IE 6 */
 }
 
-.player img{
-    height: auto;
-    width: 100%;
+.player .img-overlay-top{
+    position: absolute;
+    top: -20px;
+    left: 0;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    line-height: 1.5;
 }
+
+.player .img-overlay-bottom{
+    position: absolute;
+    top: 65px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.tricksSubroundBox{
+
+}
+
+.tricksBox{
+
+}
+
+.tricksBox, .tricksSubroundBox{
+    padding: 5px;
+    border: 2px solid;
+    border-color: white;
+    background: rgba(0, 0, 0, 0.8);
+}
+
 
 .playersCard{
     height: auto;

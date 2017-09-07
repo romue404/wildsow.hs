@@ -15,36 +15,46 @@
 
         <div id="players" class="row">
             <div class="col s12">
-                <div class="row">
-                    <div class="player col s2 center">
+                <div class="my-flex-container">
+                    <div class="player my-flex-item">
                         <img src="images/players/trump.jpg" alt="" class="circle responsive-img">
-                        <div class="col" style="position: relative; z-index:10; ">
+                        <div class="" style="position: relative; z-index:10; ">
+                            <i class="material-icons">{{getPlayerIcon(player.player.tag)}}</i>
                             <span class="row">{{player.player.playerName}}</span>
-                            <span class="row">{{player.player.tag}}</span>
+
                             <span class="row">Score: {{getScore(player.score)}}</span>
                             <span class="row">Trick: {{player.tricks[0]}}</span>
                             <span class="row">Stiche: {{getStiche(player.tricksSubround, currentGameState.round)}}</span>
                         </div>
                     </div>
 
-                    <div ng-repeat="opponent in opponents track by $index" class="player col s2 center">
-                        <img src="images/players/trump.jpg" alt="" class="circle responsive-img">
-                        <div class="col" style="position: relative; z-index:10;">
-                            <span class="row">{{opponent.player.playerName}}</span>
-                            <span class="row">{{opponent.player.tag}}</span>
-                            <span class="row">Score: {{getScore(opponent.score)}}</span>
-                            <span class="row">Trick: {{opponent.tricks[0]}}</span>
-                            <span class="row">Stiche: {{getStiche(opponent.tricksSubround, currentGameState.round)}}</span>
+                    <div ng-repeat="opponent in opponents track by $index" class="player my-flex-item">
+                        <div class="img-overlay-top">
+                            <i class="material-icons">{{getPlayerIcon(opponent.player.tag)}}</i>
+                            <span class="">{{opponent.player.playerName}}</span>
                         </div>
+                        <img src="images/players/trump.jpg" alt="" class="circle responsive-img">
+                        <div class="img-overlay-bottom">
+                            <div class="tricksSubroundBox">
+                                <i class="material-icons">chat_bubble</i>
+                                <span class="">{{getStiche(opponent.tricksSubround, currentGameState.round)}}</span>
+                            </div>
+                            <div class="tricksBox">
+                                <span class="">{{opponent.tricks[0]}}</span>
+                            </div>
+                        </div>
+                        <span class="">Score: {{getScore(opponent.score)}}</span>
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="my-flex-container">
                     <div ng-repeat="card in heap track by $index"
-                         class="col s2 center wildsow-card heap-wildsow-card">
-                        <img class="row playersCard" ng-src="{{getCardImgPath(card.heapCard)}}">
-                        <span class="row">{{card ? card.heapCard.color : ''}}</span>
-                        <span class="row">{{card ? card.heapCard.value : ''}}</span>
+                         class="my-flex-item wildsow-card heap-wildsow-card">
+                        <img class="playersCard" ng-src="{{getCardImgPath(card.heapCard)}}">
+                        <!--
+                        <span class="">{{card ? card.heapCard.color : ''}}</span>
+                        <span class="">{{card ? card.heapCard.value : ''}}</span>
+                        -->
                     </div>
                 </div>
             </div>
@@ -69,9 +79,12 @@
             <div class="col s12">
 
                 <div ng-repeat="card in player.hand track by $index" class="wildsow-card my-wildsow-card ">
-                    <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)"> <br>
+                    <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)">
+                    <!--
+                    <br>
                     <span>{{card ? card.color : ''}}</span> <br>
                     <span>{{card ? card.value : ''}}</span>
+                    -->
                 </div>
             </div>
         </div>

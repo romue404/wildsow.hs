@@ -45,7 +45,6 @@
         $scope.showTellTricks = $scope.currentGameState.phase.includes($scope.player.player.playerName) &&
             $scope.currentGameState.phase.includes("tricks");
 
-
       }
     }
 
@@ -57,6 +56,23 @@
           var x = arr.filter(a => a[0]==round, 0);
           return x.length;
       };
+
+
+        $scope.getPlayerIcon = function (tag) {
+            if(tag){
+                if (tag =="HumanPlayer"){
+                    return "person";
+                }
+                else if (tag == "RandomBot"){
+                    return "laptop";
+                }
+                else if (tag == "SmartBot"){
+                    return "android";
+                }
+            }
+            return "HumanPlayer";
+        };
+
 
     // apis
     $scope.tellTricks = tellTricks;
