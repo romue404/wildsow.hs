@@ -78,11 +78,6 @@ waitForWinnerToPlayCard winner gs@GameState{playerStates=players} =
   let players' = dropWhile (\ps -> player ps /= winner) (cycle players)
   in gs{playerStates=take (length players) players', phase = WaitingForCard winner}
 
--- TODO avoid duplication
-waitForColor :: GameState -> GameState
-waitForColor gameState =  gameState{playerStates = playerQueue, phase = WaitingForColor nextInLine, currentColor = Nothing}
-  where playerQueue = nextPlayer(playerStates gameState)
-        nextInLine = (player . head) playerQueue
 
 -- TODO avoid duplication
 waitForNextTricks :: GameState -> GameState
@@ -135,10 +130,7 @@ nextPlayer (p:ps) = ps ++ [p]
 
 setNewRoundStarter :: GameState -> GameState
 setNewRoundStarter gs@GameState{playerStates = ps, currentRound=r} =
-  gs{playerStates = sortedPlayerStates, phase=WaitingForTricks starter}
-  where starterIndex = r-1
-        sortedPlayerStates = sort ps
-        starter = player $ cycle(sortedPlayerStates) !! starterIndex
-
-
+  gs{playerStates = sortedPlayerStates, phase = WaitingForTricks starter}
+  where sortedPlayerStates = sort ps
+        starter = player $ cycle(sortedPlayerStates) !! (r-1)
 
