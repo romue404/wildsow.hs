@@ -26,6 +26,10 @@
       $scope.$apply();
     });
 
+    $scope.$on('$locationChangeStart', function(event, next, current){
+      event.preventDefault();
+    });
+
     function updateUi(currentGameState) {
       var debug = JSON.stringify(currentGameState, null, 2);
       //console.log(debug)
