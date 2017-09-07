@@ -9,6 +9,10 @@
 
   function LobbyCtrl($scope, $state, localStorageService, GameState) {
 
+
+    var gameId = localStorageService.get("gameId");
+    $scope.gameId = gameId;
+
     $scope.username = localStorageService.get("username");
     if(!$scope.username) $state.go('login');
 
@@ -67,7 +71,6 @@
       'DT'
     ];
 
-    var gameId = localStorageService.get("gameId");
 
 
     $scope.startGame = startGame;

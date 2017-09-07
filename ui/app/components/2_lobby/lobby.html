@@ -1,70 +1,75 @@
 <div id="lobby">
 
-  <div id="lobby-content" class="container">
 
-    <div id="players" class="row">
+    <div id="lobby_content" class="container">
 
-      <div class="col s6">
 
-        Spieler:
-        <ul id="player-list">
-          <li ng-repeat="player in players">
-            <div class="col s12">
-              <div class="row valign-wrapper">
-                <div class="col s2">
-                  <img src="http://lorempixel.com/160/160/cats/" alt="" class="circle responsive-img"> <!-- notice the "circle" class -->
-                </div>
-                <div class="col s10">
-                              <span class="white-text flow-text">
-                                {{ player.playerName }} - {{ player.tag }}
-                              </span>
-                </div>
-              </div>
+        <div class = "lobby_content_header">
+            <h4>
+                Spiel: <strong>{{ gameId }}</strong>
+            </h4>
+            <img src="images/wildsow.png" alt="" class="col s2 circle responsive-img" style="height: 40px; width: auto">
+        </div>
+
+
+        <div class="lobby_content_main">
+        <div class="lobby_content_players">
+
+            <div class="lobby_content_players_list">
+                <h5>Spieler</h5>
+                <ul id="player-list">
+                    <li ng-repeat="player in players">
+                        <div class="col s12">
+                            <div class="row valign-wrapper">
+                                <div class="col s2">
+                                    <img src="http://lorempixel.com/160/160/cats/" alt="" class="circle responsive-img">
+                                    <!-- notice the "circle" class -->
+                                </div>
+                                <div class="col s10">
+                                  <span class="white-text flow-text">
+                                    {{ player.playerName }} - {{ player.tag }}
+                                  </span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
             </div>
-          </li>
-        </ul>
-      </div>
 
-      <div class="col s6">
-        Chat
-        <div ng-repeat="chat in chats">
-          <span class="chat-user" style="color:gold">{{ chat.userName.playerName }}:</span>
-          <span class="chat-message">{{ chat.message }}</span>
+            <div class="lobby_content_players_navigation">
+                <div class = "lobby_content_players_navigation_botChoice">
+                    <input type="radio" id="random_bot" value="random" ng-model="select.value"/>
+                    <label for="random_bot"><span>Random Bot</span></label>
+                    <input type="radio" id="statistical_bot" value="smart" ng-model="select.value"/>
+                    <label for="statistical_bot"><span>Statistical Bot</span></label>
+                </div>
+                <div class = "lobby_content_players_navigation_actions">
+                <button ng-click="addBot()" class="btn waves-effect waves-light wildsow-button" ng-disabled="players.length>=6">Bot hinzufügen</button>
+                <button ng-click="startGame()" class="btn waves-effect waves-light wildsow-button" ng-disabled="players.length<3">Spiel starten</button>
+                </div>
+            </div>
+
+
         </div>
 
-        <div class="row">
-          <div class="col s8">
-            <input ng-model="chatInput" placeholder="Write something to chat...">
-          </div>
-          <div class="col s4">
-            <button class="btn waves-effect waves-light"  ng-click="sendChat(chatInput)">Senden</button>
-          </div>
-        </div>
+        <div class="lobby_content_chat chat">
+            <div class="chat_messages">
+                <h5>Chat</h5>
+                <div ng-repeat="chat in chats">
+                    <span class="chat_messages_user">{{ chat.userName.playerName }}:</span>
+                    <span class="chat_messages_message">{{ chat.message }}</span>
+                </div>
+            </div>
+            <div class="chat_submit row">
+                <div class="col s8">
+                    <input ng-model="chatInput" placeholder="Write something to chat...">
+                </div>
+                <div class="col s4">
+                    <button class="btn waves-effect waves-light wildsow-button" ng-click="sendChat(chatInput)">Senden</button>
+                </div>
+            </div>
 
-      </div>
+        </div>
+        </div>
 
     </div>
-
-    Bot hinzufügen:
-    <div class="row">
-      <div class="col s6">
-        <div input-field>
-          <select ng-model="select.value" material-select>
-            <option ng-repeat="value in select.choices">{{value}}</option>
-          </select>
-        </div>
-
-      </div>
-      <div class="col s6">
-        <button ng-click="addBot()" class="btn waves-effect waves-light wildsow-button" ng-disabled="players.length>=6">Bot hinzufügen</button>
-      </div>
-    </div>
-
-    <button ng-click="startGame()" class="btn waves-effect waves-light wildsow-button" ng-disabled="players.length<3">Spiel starten</button>
-
-
-
-
-
-  </div>
-</div>
