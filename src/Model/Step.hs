@@ -61,9 +61,11 @@ eval gs@GameState {currentRound=round}
 
 loginLogic :: Player -> GameState ->  Either Model.PlayerMoveError Model.GameState
 loginLogic p gs@GameState{phase=Idle, playerStates=ps}
+  |not $ playerNameIsFree (playerName p) ps = Left NameTaken
   |length ps < maxAmountOfPlayers = Right (addPlayers [p] gs)
   |otherwise = Left GameFull
 loginLogic p gs@GameState{playerStates=ps}
+  |not $ playerNameIsFree (playerName p) ps = Left NameTaken
   |amountOfBots ps > 0 = Right (reevaluatePlayersTurn $ gs{playerStates= (p `replaceBotWithPlayer` ps)})
   |otherwise = Left GameFull
 
