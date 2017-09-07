@@ -140,7 +140,7 @@ gameLoop (conn, player) games gameId =
           possibleAction <- atomically $ gameActionSTM id games (GameModel.HumanPlayer $ whos move) move
           case possibleAction of
             Left e -> unicast conn e
-            Right state ->  broadcastState id games
+            Right state ->  broadcastState' id games state
         Just (ChatMessage sender msg) -> broadCastMsg games gameId $ Reply "chat" $ ChatMessage sender msg
         Just e -> unicast conn $ GameModel.UnexpectedMove "Only game-actions are allowed"
         Nothing -> unicast conn $ NetworkManagement.ParseError
@@ -195,7 +195,7 @@ gameActionSTM gameId channels player move = do
     Left err -> return $ Left err
     Right newState -> do
       writeTVar channels $ NetworkManagement.stepGameInChannel newState gameId games
-      --when ((GameModel.phase newState) == GameModel.GameOver) (modifyTVar channels $ Map.delete gameId)
+      when ((GameModel.phase newState) == GameModel.GameOver) (modifyTVar channels $ Map.delete gameId)
       return $ Right (newState)
 
 
@@ -239,6 +239,20 @@ broadcastState id channels =
         return sr
     case stateReceivers of -- TODO or use when (...)
       Just (state, receivers) -> forM_ (receivers) (\conn -> WS.sendTextData conn (Data.Aeson.encode(state)))
+      Nothing -> return ()
+
+broadcastState' :: (Ord id) => id ->  TVar(NetworkManagement.GameChannels id) -> GameModel.GameState -> IO ()
+broadcastState' id channels state =
+  do
+    stateReceivers <- atomically $ do
+        game <- readTVar channels
+        let sr = do
+                    NetworkManagement.GameChannel{NetworkManagement.connectedPlayers=receivers,
+                    NetworkManagement.gameState=state} <- NetworkManagement.getChannel id game
+                    return (state, map snd receivers)
+        return sr
+    case stateReceivers of -- TODO or use when (...)
+      Just (_, receivers) -> forM_ (receivers) (\conn -> WS.sendTextData conn (Data.Aeson.encode(state)))
       Nothing -> return ()
 
 
