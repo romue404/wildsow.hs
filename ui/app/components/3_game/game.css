@@ -54,17 +54,12 @@ h3, h4, h5{
 }
 
 .player .img-overlay-top{
-    position: absolute;
-    top: -20px;
-    left: 0;
-    padding: 6px;
-    background: rgba(0, 0, 0, 0.8);
     line-height: 1.5;
 }
 
 .player .img-overlay-bottom{
     position: absolute;
-    top: 65px;
+    top: 90px;
     left: 0;
     width: 100%;
     display: flex;
@@ -72,19 +67,26 @@ h3, h4, h5{
     justify-content: space-between;
 }
 
-.tricksSubroundBox{
+.tricksBox, .tricksSubroundBox{
+    background: rgba(0, 0, 0, 0.8);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.tricksSubroundBox{
+    background: url(../../../images/chat2.svg) no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: 100%;
 }
 
 .tricksBox{
-
-}
-
-.tricksBox, .tricksSubroundBox{
-    padding: 5px;
     border: 2px solid;
     border-color: white;
-    background: rgba(0, 0, 0, 0.8);
 }
 
 

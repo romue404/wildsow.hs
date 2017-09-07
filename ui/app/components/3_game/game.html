@@ -17,15 +17,21 @@
             <div class="col s12">
                 <div class="my-flex-container">
                     <div class="player my-flex-item">
-                        <img src="images/players/trump.jpg" alt="" class="circle responsive-img">
-                        <div class="" style="position: relative; z-index:10; ">
+                        <div class="img-overlay-top">
                             <i class="material-icons">{{getPlayerIcon(player.player.tag)}}</i>
-                            <span class="row">{{player.player.playerName}}</span>
-
-                            <span class="row">Score: {{getScore(player.score)}}</span>
-                            <span class="row">Trick: {{player.tricks[0]}}</span>
-                            <span class="row">Stiche: {{getStiche(player.tricksSubround, currentGameState.round)}}</span>
+                            <span class="">{{player.player.playerName}}</span>
                         </div>
+                        <img src="images/players/trump.jpg" alt="" class="circle responsive-img">
+                        <div class="img-overlay-bottom">
+                            <div class="tricksSubroundBox">
+
+                                <span class="">{{getStiche(player.tricksSubround, currentGameState.round)}}</span>
+                            </div>
+                            <div class="tricksBox">
+                                <span class="">{{player.tricks[0]}}</span>
+                            </div>
+                        </div>
+                        <span class="">Score: {{getScore(player.score)}}</span>
                     </div>
 
                     <div ng-repeat="opponent in opponents track by $index" class="player my-flex-item">
@@ -36,7 +42,7 @@
                         <img src="images/players/trump.jpg" alt="" class="circle responsive-img">
                         <div class="img-overlay-bottom">
                             <div class="tricksSubroundBox">
-                                <i class="material-icons">chat_bubble</i>
+
                                 <span class="">{{getStiche(opponent.tricksSubround, currentGameState.round)}}</span>
                             </div>
                             <div class="tricksBox">
