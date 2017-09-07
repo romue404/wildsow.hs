@@ -26,10 +26,10 @@
     display: flex;
     flex-direction: row;
     min-height: 400px;
-    max-height: 650px;
-    overflow-y: auto;
 }
 .lobby_content_chat{
+    max-height: 650px;
+    overflow-y: auto;
     flex: 1;
     padding: 1rem;
     display: flex;
