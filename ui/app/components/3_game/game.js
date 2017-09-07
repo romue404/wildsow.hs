@@ -33,45 +33,61 @@
       $scope.currentGameState = currentGameState || localStorageService.get("gameState");
 
       if($scope.currentGameState && $scope.currentGameState.playerState){
+
         $scope.player = $scope.currentGameState.playerState.filter(
           ps => ps.player.playerName === $scope.username
         )[0];
+
         $scope.opponents = $scope.currentGameState.playerState.filter(
           ps => ps.player.playerName !== $scope.username
-        );
+        ).sort(function(a,b) {return (a.player.playerName > B.player.playerName) ? 1 : ((b.player.playerName > a.player.playerName) ? -1 : 0);} );
+
         $scope.heap = $scope.currentGameState.playerState.map(function(ps) {
           return {heapCard: ps.playedCard, cardPlayer: ps.player.playerName};
         });
+
+        $scope.currentCardsPlayed = $scope.currentGameState.playerState.map(
+          ps => ps.playedCard
+        ).filter(card => !!card);
+
+        console.log(  $scope.currentCardsPlayed )
+
         $scope.showTellTricks = $scope.currentGameState.phase.includes($scope.player.player.playerName) &&
-            $scope.currentGameState.phase.includes("tricks");
+          $scope.currentGameState.phase.includes("tricks");
+
+        $scope.allCardsOfPrevSubround = $scope.currentGameState.playedCards.filter(
+          pc => !$scope.currentCardsPlayed.some(ccp => (ccp.color===pc[2].color) && (ccp.value===pc[2].value) ))
+          .splice(0, 3);
+
+        console.log( $scope.allCardsOfPrevSubround)
 
       }
     }
 
     $scope.getScore = function(arr){
-        return arr.reduce((a, b) => a + b, 0);
+      return arr.reduce((a, b) => a + b, 0);
     };
 
-      $scope.getStiche = function(arr, round){
-          var x = arr.filter(a => a[0]==round, 0);
-          return x.length;
-      };
+    $scope.getStiche = function(arr, round){
+      var x = arr.filter(a => a[0]==round, 0);
+      return x.length;
+    };
 
 
-        $scope.getPlayerIcon = function (tag) {
-            if(tag){
-                if (tag =="HumanPlayer"){
-                    return "person";
-                }
-                else if (tag == "RandomBot"){
-                    return "laptop";
-                }
-                else if (tag == "SmartBot"){
-                    return "android";
-                }
-            }
-            return "HumanPlayer";
-        };
+    $scope.getPlayerIcon = function (tag) {
+      if(tag){
+        if (tag =="HumanPlayer"){
+          return "person";
+        }
+        else if (tag == "RandomBot"){
+          return "laptop";
+        }
+        else if (tag == "SmartBot"){
+          return "android";
+        }
+      }
+      return "HumanPlayer";
+    };
 
 
     // apis
@@ -115,6 +131,7 @@
     function getTrumpImg(trump) {
       if(trump)
         return `images/trump/${trump}.png`;
+      else "";
     }
 
   }
