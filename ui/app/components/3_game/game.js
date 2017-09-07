@@ -131,6 +131,7 @@
     function getTrumpImg(trump) {
       if(trump)
         return `images/trump/${trump}.png`;
+      else "";
     }
 
   }

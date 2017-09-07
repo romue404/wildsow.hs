@@ -75,12 +75,11 @@
 
 
     var botNames = JSON.parse(localStorageService.get('botNames')) || [
-      'Thomas Müller',
-      'Prizessin Leia',
-      'Luke Skywalker',
-      'Robben',
-      'CR7',
-      'DT'
+      'Arni',
+      'Merkel',
+      'Ronaldo',
+      'Trump',
+      'Yoda'
     ];
 
 
