@@ -7,12 +7,13 @@ import System.Random(StdGen, newStdGen, next, mkStdGen)
 import System.Random.Shuffle
 import Data.Aeson.TH(deriveJSON, defaultOptions)
 import Data.Aeson as Aeson hiding (Value)
+import Data.Ord(comparing)
 
 data Card = Card {value :: Value, color :: Color} deriving (Read, Show, Eq)
 data Color = Eichel | Gras | Herz | Schellen deriving (Read, Show, Enum, Eq, Bounded)
 data Value =   Seven | Eight | Nine | Jack | Queen | King | Ten | Ace deriving (Read, Show, Enum, Eq, Ord, Bounded)
 type Cards = [Card]
-data Player = HumanPlayer {playerName :: String} | RandomBot {playerName :: String} | SmartBot {playerName :: String} deriving (Read, Show, Eq)
+data Player = HumanPlayer {playerName :: String} | RandomBot {playerName :: String} | SmartBot {playerName :: String} deriving (Read, Show, Eq, Ord)
 
 
 listAll :: (Enum a, Bounded a) => [a]
@@ -39,7 +40,7 @@ data PlayerMove =
 
 data GamePhase = Idle | GameOver | WaitingForTricks Player | WaitingForColor Player | WaitingForCard Player  | Evaluation  deriving (Read, Eq)
 
-data PlayerState = PlayerState {player :: Player, playedCard :: Maybe Card, hand :: Cards, tricks :: [Int], score :: [Int], tricksSubround::[(Int,Int)]} deriving (Read, Show)
+data PlayerState = PlayerState {player :: Player, playedCard :: Maybe Card, hand :: Cards, tricks :: [Int], score :: [Int], tricksSubround::[(Int,Int)]} deriving (Read, Show, Eq)
 
 data PlayerMoveError = NotPlayersTurn | MoveAgainstRules {reason::String} | UnexpectedMove {reason::String} | NotEnoughPlayers | GameFull | NameTaken  deriving (Show)
 
@@ -71,6 +72,9 @@ instance Show GamePhase where
   show (WaitingForColor player) = "Waiting for player " `mappend` show (playerName player) `mappend` " to tell the color"
   show (WaitingForCard player) = "Waiting for player " `mappend` show (playerName player) `mappend` " to play a card"
   show (Evaluation) = "Evaluation"
+
+instance Ord PlayerState where
+    compare = comparing player
 
 deriveJSON defaultOptions ''PlayerState
 deriveJSON defaultOptions ''PlayerMoveError

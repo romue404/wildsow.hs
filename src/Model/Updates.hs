@@ -133,6 +133,12 @@ initPlayerState player = PlayerState player Nothing [] [] [] []
 nextPlayer :: [PlayerState] -> [PlayerState]
 nextPlayer (p:ps) = ps ++ [p]
 
---sortByName :: [PlayerState] -> [PlayerState]
---sortByName playerStates =
+setNewRoundStarter :: GameState -> GameState
+setNewRoundStarter gs@GameState{playerStates = ps, currentRound=r} =
+  gs{playerStates = sortedPlayerStates, phase=WaitingForTricks starter}
+  where starterIndex = r-1
+        sortedPlayerStates = sort ps
+        starter = player $ cycle(sortedPlayerStates) !! starterIndex
+
+
 

@@ -5,7 +5,7 @@ import Model.Updates(cardPlayedUpdate, tricksPlayerUpdate, updatePlayer,
   addPlayers, waitForColor,dealCards, waitForNextCard, waitForNextTricks,
   setNewTrump, clearPlayedCards, cardsPerRound,nextPlayer, reevaluatePlayersTurn,removePlayer,
   replaceBotWithPlayer, replaceHumanPlayerWithBot,clearCurrentColor, waitForWinnerToPlayCard,
-  clearDiscardPile)
+  clearDiscardPile, setNewRoundStarter)
 import Model.Bots(botMove)
 import Data.Maybe (fromMaybe)
 import Data.List (find)
@@ -47,7 +47,7 @@ step' (Leave player) gs@GameState{phase = Idle} = Right $ reevaluatePlayersTurn 
 step' (Leave player) gs = Right $ reevaluatePlayersTurn $ gs{playerStates=
         (replaceHumanPlayerWithBot player (Model.RandomBot $ Model.playerName player) (playerStates gs))}
 step' Begin gs@GameState{phase = Idle, playerStates=players}
-      |enoughPlayers players = Right $ (waitForNextTricks . setNewTrump . dealCards) gs
+      |enoughPlayers players = Right $ (setNewRoundStarter . setNewTrump . dealCards) gs
       |otherwise = Left NotEnoughPlayers
 step' move gs = Left $ UnexpectedMove "The game does not expect you to make that move"
 
@@ -55,7 +55,7 @@ step' move gs = Left $ UnexpectedMove "The game does not expect you to make that
 eval gs@GameState {currentRound=round}
   |not $ allHandsPlayed gs = (clearCurrentColor . clearPlayedCards . waitForWinnerToPlayCard winner) subroundEvaluatedGame
   |round >= length  (cardsPerRound Model.deck $ length $ playerStates gs) = evaluateRound subroundEvaluatedGame{phase=GameOver}
-  |otherwise = (waitForNextTricks . clearCurrentColor . clearPlayedCards . setNewTrump . dealCards . evaluateRound) subroundEvaluatedGame
+  |otherwise = (setNewRoundStarter . clearCurrentColor . clearPlayedCards . setNewTrump . dealCards . evaluateRound) subroundEvaluatedGame
   where (subroundEvaluatedGame, winner) = evaluateSubRound gs
 
 
