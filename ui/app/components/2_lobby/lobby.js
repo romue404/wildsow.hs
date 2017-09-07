@@ -11,10 +11,22 @@
 
 
     var gameId = localStorageService.get("gameId");
-    $scope.gameId = gameId;
+    $scope.gameId = localStorageService.get("gameId");
 
     $scope.username = localStorageService.get("username");
     if(!$scope.username) $state.go('login');
+
+    $scope.isHuman = function (tag) {
+        if(tag) {
+            if(tag == "RandomBot"){
+                return "laptop"
+            }
+            else if (tag == "SmartBot") {
+                return "android"
+            }
+            }
+        return "person";
+    };
 
     $scope.about = "Lobby Page";
     $scope.currentGameState = GameState.current.state || localStorageService.get("gameState");
@@ -86,7 +98,7 @@
     function addBot() {
       var botName = botNames.pop();
       localStorageService.set('botNames', JSON.stringify(botNames));
-      var botType = {botType: getBotTypeByName($scope.select.value)};
+      var botType = {botType: $scope.select.value};
       let action = GameState.createActionRequest('join', gameId, botName, botType);
       GameState.sendActionRequest(action);
     }
