@@ -62,9 +62,16 @@
 }
 
 .chat_messages {
-    overflow-y: scroll;
+    overflow-y: auto;
     max-height: 650px;
 }
+
+.lobby_content_players_list {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 650px;
+}
+
 
 .lobby_content_header {
     display: flex;
