@@ -89,7 +89,6 @@
         </div>
 
         <div class="center">Game Status: {{currentGameState.phase}}</div><br>
-      <div class="center"><button class="btn" ng-click="next()">Nächste Sub Runde</button> </div><br>
 
         <div id="my-wildsow-cards-container" class="row">
             <div ng-repeat="card in player.hand track by $index" class="wildsow-card my-wildsow-card ">
@@ -97,14 +96,21 @@
             </div>
         </div>
 
-        <div id="tricks" class="row my-show-hide" ng-show="showTellTricks">
-            <div class="col s3 offset-s2">
-                <input ng-model="tricks" type="number" step="1">
+        <div id="tricks" class="row" >
+            <div class="col s8">
+                <div class="row my-show-hide" ng-show="showTellTricks">
+                    <div class="col s2 offset-s2">
+                        <input ng-model="tricks" type="number" step="1">
+                    </div>
+                    <div class="col offset-s0 s7">
+                        <button ng-click="tellTricks()" class="btn pulse waves-effect waves-light wildsow-button">Stiche
+                            angeben
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="col offset-s1 s4">
-                <button ng-click="tellTricks()" class="btn pulse waves-effect waves-light wildsow-button">Stiche
-                    angeben
-                </button>
+            <div class="col offset-s0 s4">
+                <button class="btn" ng-click="next()">Weiter</button>
             </div>
         </div>
 
