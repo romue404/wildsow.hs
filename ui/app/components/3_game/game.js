@@ -73,6 +73,7 @@
     }
 
     function playCard(card) {
+      if($scope.showPrevRound) return;
       var c = {color: card.color, value: card.value};
       var action = GameState.createActionRequest("playCard", $scope.gameId, $scope.username, {card: c});
       GameState.sendActionRequest(action);
