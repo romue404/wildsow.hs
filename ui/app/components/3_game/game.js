@@ -141,7 +141,7 @@
 
          $timeout(function () {
           $scope.showPrevRound = false;
-        }, 8000);
+        }, 6000);
 
       }
     }
