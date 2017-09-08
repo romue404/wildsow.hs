@@ -88,7 +88,8 @@
             </div>
         </div>
 
-        <div class="center">Game Status: {{currentGameState.phase}}</div>
+        <div class="center">Game Status: {{currentGameState.phase}}</div><br>
+      <div class="center"><button class="btn" ng-click="next()">Nächste Sub Runde</button> </div><br>
 
         <div id="my-wildsow-cards-container" class="row">
             <div ng-repeat="card in player.hand track by $index" class="wildsow-card my-wildsow-card ">

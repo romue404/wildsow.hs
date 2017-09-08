@@ -54,6 +54,10 @@
       return "HumanPlayer";
     };
 
+    $scope.next = function () {
+      $scope.showPrevRound = false;
+    }
+
 
     // apis
     $scope.tellTricks = tellTricks;
@@ -139,9 +143,11 @@
 
         $scope.showPrevRound = true;
 
+        /*
          $timeout(function () {
           $scope.showPrevRound = false;
         }, 6000);
+        */
 
       }
     }
