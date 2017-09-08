@@ -395,29 +395,6 @@
        transform="matrix(-1.000000,5.336985e-17,-5.336985e-17,-1.000000,201.5431,353.6201)"
        width="201.96849"
        height="354.33072" />
-    <g
-       id="g9845"
-       transform="translate(0.000000,1.580659)">
-      <text
-         transform="matrix(0.796919,-0.604087,0.604087,0.796919,0.000000,0.000000)"
-         sodipodi:linespacing="125.00000%"
-         id="text9839"
-         y="148.26683"
-         x="-69.35659"
-         style="font-size:31.209005px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125.00000%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1.0000000;stroke:none;stroke-width:1.0000000px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000;font-family:Amazone BT"
-         xml:space="preserve"><tspan
-           y="148.26683"
-           x="-69.356590"
-           id="tspan9841"
-           sodipodi:role="line">Eichel-König</tspan></text>
-      <use
-         height="354.33072"
-         width="201.96849"
-         transform="matrix(-1.000000,-9.603321e-17,2.577690e-17,-1.000000,201.9685,351.1694)"
-         id="use9843"
-         xlink:href="#text9839"
-         y="0.0000000"
-         x="0.0000000" />
-    </g>
+
   </g>
 </svg>
