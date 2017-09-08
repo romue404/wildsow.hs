@@ -5,9 +5,9 @@
     .module('wildsow')
     .controller('OverviewCtrl', OverviewCtrl);
 
-  OverviewCtrl.$inject = ['$scope', '$state', 'localStorageService', 'GameState'];
+  OverviewCtrl.$inject = ['$scope', '$state', '$interval', 'localStorageService', 'GameState'];
 
-  function OverviewCtrl($scope, $state, localStorageService, GameState) {
+  function OverviewCtrl($scope, $state,  $interval, localStorageService, GameState) {
 
     $scope.username = localStorageService.get("username");
     if(!$scope.username) $state.go('login');
@@ -18,6 +18,8 @@
 
     ];
 
+    $scope.intervalPromise;
+
 
     $scope.$on('gamelistLoaded', function(event, currentGameState) {
       $scope.games = currentGameState.payload;
@@ -25,6 +27,7 @@
 
     $scope.$on('inLobby', function(event, currentGameState) {
       console.log("Caught in lobby");
+      $interval.cancel($scope.intervalPromise);
       $state.go('lobby');
     });
 
@@ -81,7 +84,7 @@
       GameState.sendActionRequest({kind: "openGames", userName: $scope.username});
     }
 
-    getGames();
+    $scope.intervalPromise = $interval(getGames, 1300);
 
   }
 
