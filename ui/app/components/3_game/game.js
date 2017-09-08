@@ -130,7 +130,7 @@
 
         $scope.allCardsOfPrevSubround = $scope.currentGameState.playedCards.filter(
           pc => !$scope.currentCardsPlayed.some(ccp => (ccp.color===pc[2].color) && (ccp.value===pc[2].value) ))
-          .splice(0, 3)
+          .splice(0, $scope.currentGameState.playerState.length)
           .map(function(card) {
             return {heapCard: card[2], cardPlayer: card[0]}
           });
