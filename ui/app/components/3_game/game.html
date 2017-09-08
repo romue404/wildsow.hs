@@ -51,7 +51,7 @@
                     </div>
                 </div>
 
-                <div class="my-flex-container">
+                <div class="my-flex-container" ng-if="!showPrevRound">
                     <div ng-repeat="card in heap track by $index"
                          class="my-flex-item wildsow-card heap-wildsow-card">
                         <img class="playersCard " ng-src="{{getCardImgPath(card.heapCard)}}">
@@ -61,6 +61,17 @@
                         -->
                     </div>
                 </div>
+
+              <div class="my-flex-container" ng-if="showPrevRound">
+                <div ng-repeat="card in allCardsOfPrevSubround track by $index"
+                     class="my-flex-item wildsow-card heap-wildsow-card">
+                  <img class="playersCard " ng-src="{{getCardImgPath(card.heapCard)}}">
+                  <!--
+                  <span class="">{{card ? card.heapCard.color : ''}}</span>
+                  <span class="">{{card ? card.heapCard.value : ''}}</span>
+                  -->
+                </div>
+              </div>
             </div>
         </div>
 
