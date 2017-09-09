@@ -8,13 +8,14 @@ Before each round starts each player have to predict his tricks. The players wit
 ![Screen1](https://raw.githubusercontent.com/romue404/wildsow.hs/master/screens/screen4.PNG)
 
 ## Features
-- Written in haskell.
-- Play against your friends via websocket.
-- Play against challenging bots.
+- Game Logic and Server written in haskell
+- Unit tested
+- Stateless Haskell Server -> Client extensions easily (e.g. Android, iOS, Desktop and also Web) 
+- Includes web based client with AngularJS (mainly displaying the game state returned by the Haskell Server)
+- Play against your friends via websocket
+- Play against challenging bots of various difficulties
 - Game lobby
 - Chat
-- Unit tests
-- Webclient with Angular
 
 ## Install and run
 Navigate into this projects root directory and enter `stack install`.
