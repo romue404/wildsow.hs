@@ -5,9 +5,9 @@
     .module('wildsow')
     .controller('GameCtrl', GameCtrl);
 
-  GameCtrl.$inject = ['$scope', '$state', '$timeout', 'localStorageService', 'GameState'];
+  GameCtrl.$inject = ['$scope', '$state', 'localStorageService', 'GameState'];
 
-  function GameCtrl($scope, $state, $timeout, localStorageService, GameState) {
+  function GameCtrl($scope, $state, localStorageService, GameState) {
 
     $scope.username = localStorageService.get("username");
     if(!$scope.username) $state.go('login');
@@ -31,13 +31,14 @@
       event.preventDefault();
     });
 
-    $scope.getScore = function(arr){
-      return arr ? arr.reduce((a, b) => a + b, 0) : 0;
-    };
 
-    $scope.getStiche = function(arr, round){
-      return arr ? arr.filter(a => a[0]==round, 0).length : 0;
-    };
+    // apis
+
+    $scope.getScore = arr => arr ? arr.reduce((a, b) => a + b, 0) : 0;
+
+    $scope.getStiche = (arr, round) => arr ? arr.filter(a => a[0]==round, 0).length : 0;
+
+    $scope.getTrumpImg = trump => trump ? `images/trump/${trump}.png` : '';
 
     $scope.getPlayerIcon = function (tag) {
       if(tag){
@@ -58,11 +59,9 @@
       $scope.showPrevRound = false;
     }
 
-    // apis
     $scope.tellTricks = tellTricks;
     $scope.playCard = playCard;
     $scope.getCardImgPath = getCardImgPath;
-    $scope.getTrumpImg = getTrumpImg;
 
     function tellTricks() {
       localStorageService.set("tricks", $scope.tricks);
@@ -94,12 +93,6 @@
       let cardValue = cardValueMapper[card.value];
       let cardImgName = cardColor + cardValue;
       return `images/cards/${cardImgName}.svg`;
-    }
-
-    function getTrumpImg(trump) {
-      if(trump)
-        return `images/trump/${trump}.png`;
-      else "";
     }
 
     function updateUi(currentGameState) {
