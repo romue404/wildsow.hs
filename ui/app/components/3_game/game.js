@@ -110,24 +110,39 @@
             : ((b.player.playerName > a.player.playerName) ? -1 : 0));
 
         $scope.heap = $scope.currentGameState.playerState
-          .map(ps => ({ heapCard: ps.playedCard, cardPlayer: ps.player.playerName }) );
+          .map(ps => ({ heapCard: ps.playedCard, cardPlayer: ps.player.playerName }) )
+          .sort(cardSorter);
 
         $scope.currentCardsPlayed = $scope.currentGameState.playerState
           .map(ps => ps.playedCard)
           .filter(card => !!card);
 
         $scope.showTellTricks = $scope.currentGameState.phase
-            .includes($scope.player.player.playerName) && $scope.currentGameState.phase.includes("tricks");
+          .includes($scope.player.player.playerName) && $scope.currentGameState.phase
+          .includes("tricks");
 
         $scope.allCardsOfPrevSubround = $scope.currentGameState.playedCards
           .filter(pc => !$scope.currentCardsPlayed
             .some(ccp => (ccp.color===pc[2].color) && (ccp.value===pc[2].value)))
           .splice(0, $scope.currentGameState.playerState.length)
-          .map(card => ({ heapCard: card[2], cardPlayer: card[0] }) );
+          .map(card => ({ heapCard: card[2], cardPlayer: card[0] }) )
+          .sort(cardSorter);
 
         $scope.showPrevRound = true;
 
       }
+    }
+
+    function cardSorter(card1, card2) {
+      if(card1.cardPlayer === $scope.player.player.playerName)
+        return -1;
+      else if(card2.cardPlayer === $scope.player.player.playerName)
+        return 1;
+      else if(card1.cardPlayer > card2.cardPlayer)
+        return 1;
+      else if(card1.cardPlayer < card2.cardPlayer)
+        return -1;
+      return 0;
     }
 
   }
