@@ -88,13 +88,13 @@
             </div>
         </div>
 
-        <div class="center">Game Status: {{currentGameState.phase}}</div><br>
-
         <div id="my-wildsow-cards-container" class="row">
             <div ng-repeat="card in player.hand track by $index" class="wildsow-card my-wildsow-card ">
                 <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)">
             </div>
         </div>
+
+        <div class="center" ng-show="!showPrevRound">Game Status: {{currentGameState.phase}}</div><br>
 
         <div id="tricks" class="row" >
             <div class="col s8">
@@ -110,7 +110,9 @@
                 </div>
             </div>
             <div class="col offset-s0 s4">
-                <button class="btn pulse waves-effect waves-light wildsow-button" ng-click="next()">Weiter</button>
+                <div ng-show="showPrevRound">
+                    <button class="btn pulse waves-effect waves-light wildsow-button" ng-click="next()">Weiter</button>
+                </div>
             </div>
         </div>
 
