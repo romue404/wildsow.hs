@@ -9,12 +9,13 @@
 
   function LobbyCtrl($scope, $state, localStorageService, GameState) {
 
+    $scope.username = localStorageService.get("username");
+    if(!$scope.username) $state.go('login');
 
     var gameId = localStorageService.get("gameId");
     $scope.gameId = localStorageService.get("gameId");
 
-    $scope.username = localStorageService.get("username");
-    if(!$scope.username) $state.go('login');
+    $scope.players = [];
 
     $scope.isHuman = function (tag) {
       if(tag) {
@@ -72,17 +73,13 @@
       choices: botsDescriptions
     };
 
-
-
     var botNames = JSON.parse(localStorageService.get('botNames')) || [
+      'Yoda',
       'Arni',
       'Merkel',
       'Ronaldo',
       'Trump',
-      'Yoda'
     ];
-
-
 
     $scope.startGame = startGame;
     $scope.addBot = addBot;
@@ -94,10 +91,11 @@
       $state.go('game');
     }
 
-    function addBot() {
+    function addBot(type) {
+      if($scope.players.length>=6) return;
       var botName = botNames.pop();
       localStorageService.set('botNames', JSON.stringify(botNames));
-      var botType = {botType: $scope.select.value};
+      var botType = {botType: type};
       let action = GameState.createActionRequest('join', gameId, botName, botType);
       GameState.sendActionRequest(action);
     }
