@@ -30,7 +30,8 @@
                 <span class="">{{getStiche(player.tricksSubround, currentGameState.round)}}</span>
               </div>
             </div>
-            <span class="">Score: {{getScore(player.score)}}</span>
+            <br><br>
+            <span>Score: {{getScore(player.score)}}</span>
           </div>
 
           <div ng-repeat="opponent in opponents track by $index" class="player my-flex-item">
@@ -47,7 +48,8 @@
                 <span class="">{{getStiche(opponent.tricksSubround, currentGameState.round)}}</span>
               </div>
             </div>
-            <span class="">Score: {{getScore(opponent.score)}}</span>
+            <br><br>
+            <span>Score: {{getScore(opponent.score)}}</span>
           </div>
         </div>
 
