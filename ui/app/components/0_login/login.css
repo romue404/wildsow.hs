@@ -29,7 +29,7 @@
 }
 
 #input-username:focus {
-    border: 1px solid darkblue;
+    border: 3px solid darkblue;
     box-shadow: none;
     color: gold;
 }
@@ -44,4 +44,8 @@
     background-color: darkblue;
     font-size:24px;
     height: 60px;
+}
+
+#button-username:hover {
+  background-color: blue;
 }
