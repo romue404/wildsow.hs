@@ -58,13 +58,11 @@
       $scope.showPrevRound = false;
     }
 
-
     // apis
     $scope.tellTricks = tellTricks;
     $scope.playCard = playCard;
     $scope.getCardImgPath = getCardImgPath;
     $scope.getTrumpImg = getTrumpImg;
-
 
     function tellTricks() {
       localStorageService.set("tricks", $scope.tricks);
@@ -105,8 +103,6 @@
     }
 
     function updateUi(currentGameState) {
-      var debug = JSON.stringify(currentGameState, null, 2);
-      //console.log(debug)
 
       $scope.currentGameState = currentGameState || localStorageService.get("gameState");
 
@@ -116,39 +112,31 @@
           ps => ps.player.playerName === $scope.username
         )[0];
 
-        $scope.opponents = $scope.currentGameState.playerState.filter(
-          ps => ps.player.playerName !== $scope.username
-        ).sort(function(a,b) {return (a.player.playerName > b.player.playerName) ? 1 : ((b.player.playerName > a.player.playerName) ? -1 : 0);} );
+        $scope.opponents = $scope.currentGameState.playerState
+          .filter(ps => ps.player.playerName !== $scope.username)
+          .sort((a,b) => (a.player.playerName > b.player.playerName) ? 1 : ((b.player.playerName > a.player.playerName) ? -1 : 0));
 
         $scope.heap = $scope.currentGameState.playerState.map(function(ps) {
-          return {heapCard: ps.playedCard, cardPlayer: ps.player.playerName};
-        });
+          return {
+            heapCard: ps.playedCard, cardPlayer: ps.player.playerName
+          }});
 
-        $scope.currentCardsPlayed = $scope.currentGameState.playerState.map(
-          ps => ps.playedCard
-        ).filter(card => !!card);
-
-        console.log(  $scope.currentCardsPlayed )
+        $scope.currentCardsPlayed = $scope.currentGameState.playerState
+          .map(ps => ps.playedCard)
+          .filter(card => !!card);
 
         $scope.showTellTricks = $scope.currentGameState.phase.includes($scope.player.player.playerName) &&
           $scope.currentGameState.phase.includes("tricks");
 
-        $scope.allCardsOfPrevSubround = $scope.currentGameState.playedCards.filter(
-          pc => !$scope.currentCardsPlayed.some(ccp => (ccp.color===pc[2].color) && (ccp.value===pc[2].value) ))
+        $scope.allCardsOfPrevSubround = $scope.currentGameState.playedCards
+          .filter(pc => !$scope.currentCardsPlayed.some(ccp => (ccp.color===pc[2].color) && (ccp.value===pc[2].value)))
           .splice(0, $scope.currentGameState.playerState.length)
           .map(function(card) {
-            return {heapCard: card[2], cardPlayer: card[0]}
-          });
-
-        console.log( $scope.allCardsOfPrevSubround)
+            return {
+              heapCard: card[2], cardPlayer: card[0]
+            }});
 
         $scope.showPrevRound = true;
-
-        /*
-         $timeout(function () {
-          $scope.showPrevRound = false;
-        }, 6000);
-        */
 
       }
     }
