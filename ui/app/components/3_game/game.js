@@ -101,33 +101,29 @@
 
       if($scope.currentGameState && $scope.currentGameState.playerState){
 
-        $scope.player = $scope.currentGameState.playerState.filter(
-          ps => ps.player.playerName === $scope.username
-        )[0];
+        $scope.player = $scope.currentGameState.playerState
+          .filter(ps => ps.player.playerName === $scope.username)[0];
 
         $scope.opponents = $scope.currentGameState.playerState
           .filter(ps => ps.player.playerName !== $scope.username)
-          .sort((a,b) => (a.player.playerName > b.player.playerName) ? 1 : ((b.player.playerName > a.player.playerName) ? -1 : 0));
+          .sort((a,b) => (a.player.playerName > b.player.playerName) ? 1
+            : ((b.player.playerName > a.player.playerName) ? -1 : 0));
 
-        $scope.heap = $scope.currentGameState.playerState.map(function(ps) {
-          return {
-            heapCard: ps.playedCard, cardPlayer: ps.player.playerName
-          }});
+        $scope.heap = $scope.currentGameState.playerState
+          .map(ps => ({ heapCard: ps.playedCard, cardPlayer: ps.player.playerName }) );
 
         $scope.currentCardsPlayed = $scope.currentGameState.playerState
           .map(ps => ps.playedCard)
           .filter(card => !!card);
 
-        $scope.showTellTricks = $scope.currentGameState.phase.includes($scope.player.player.playerName) &&
-          $scope.currentGameState.phase.includes("tricks");
+        $scope.showTellTricks = $scope.currentGameState.phase
+            .includes($scope.player.player.playerName) && $scope.currentGameState.phase.includes("tricks");
 
         $scope.allCardsOfPrevSubround = $scope.currentGameState.playedCards
-          .filter(pc => !$scope.currentCardsPlayed.some(ccp => (ccp.color===pc[2].color) && (ccp.value===pc[2].value)))
+          .filter(pc => !$scope.currentCardsPlayed
+            .some(ccp => (ccp.color===pc[2].color) && (ccp.value===pc[2].value)))
           .splice(0, $scope.currentGameState.playerState.length)
-          .map(function(card) {
-            return {
-              heapCard: card[2], cardPlayer: card[0]
-            }});
+          .map(card => ({ heapCard: card[2], cardPlayer: card[0] }) );
 
         $scope.showPrevRound = true;
 
