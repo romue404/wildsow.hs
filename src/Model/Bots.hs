@@ -10,17 +10,12 @@ import System.Random.Shuffle
 import Data.Function (on)
 import Data.Maybe
 
-
 -- Spieltheorie
 -- bei Poker um ein dynamisches Spiel mit unvollkommener Informationen und Zufallsereignissen. Poker ist dabei ein
 -- strikt kompetatives Nullsummenspiel (einer gewinnt, alle anderen verlieren) und nicht symmetrisch,
--- da die zu w¨ahlenden Handlungsalternativen von der Position am Tisch abh¨angen.
-
---Pokerspiel um ein unvollkommenes dynamisches Nullsummenspiel mit Zufallseinfluß
--- Rückwärrtsinduktion
-
-
--- am beste wir haben ein bots file aus dem man dann die verschiedenen bts aufrufen kann
+-- da die zu wählenden Handlungsalternativen von der Position am Tisch abhängen.
+-- fast so wie Wildsow...
+-- Pokerspiel um ein unvollkommenes dynamisches Nullsummenspiel mit Zufallseinfluß
 
 -- check if its a turn for a bot and do it
 botMove :: GameState -> Maybe PlayerMove
@@ -44,7 +39,7 @@ randomBotMove gs me = randomBotCardToPlay gs me
 
 randomBotTricksToMake :: GameState -> PlayerState -> PlayerMove
 randomBotTricksToMake gs@GameState{playerStates = players, stdGen=gen} PlayerState{hand=hand, player=me} =
-    let (rand, _) = randomR (0,length hand) gen -- TODO reset gen
+    let (rand, _) = randomR (0,length hand) gen
         amountOfPlayers = length players
     in TellNumberOfTricks me rand
 
@@ -64,7 +59,6 @@ smartBotMove :: GameState -> PlayerState -> PlayerMove
 smartBotMove gs@GameState {phase = WaitingForTricks p} me = smartBotTricksToMake gs me
 smartBotMove gs@GameState {phase = WaitingForCard p} me = smartBotCardToPlay gs me
 
--- TODO !!!
 smartBotTricksToMake :: GameState -> PlayerState -> PlayerMove
 smartBotTricksToMake gs ps@PlayerState{hand=hand, player=me} =
     let chances = map (\card -> cardWinningChance gs ps card) hand
@@ -119,7 +113,7 @@ cardWinningChance gs@GameState{pile=pile, playerStates=playersStates, currentCol
 
 -- only if the bot has to tell the color
 possibleHigherCards :: GameState -> PlayerState -> Card -> Cards
--- with no color -> tell color TODO gibt es den fall überhaupt?!?
+-- with no color -> tell color
 possibleHigherCards gs@GameState{currentColor=Nothing, trump=trump, pile=pile} ps@PlayerState{hand=hand} card@Card{value=v, color=c}
     -- higher cards: higher trumps
     | c == trump = filter (\Card{value=v', color=c'} -> v'>v && c'==trump) myUnknownCards -- map (\(value a -> a)) myUnknownCards
@@ -136,7 +130,7 @@ possibleHigherCards gs@GameState{currentColor=Just currentColor, trump=trump} ps
     | currentColor==c && trump/=c   = filter (\Card{value=v', color=c'} -> c'==trump || c'==currentColor && v'>v) myUnknownCards
     -- higher cards: all others
     | currentColor/=c && trump/=c   = filter (\Card{value=v', color=c'} -> c'==trump || c'==currentColor) myUnknownCards
-    | otherwise                     = myUnknownCards -- todo
+    | otherwise                     = myUnknownCards
     where
         myUnknownCards    = unknownCards gs ps
 
@@ -161,7 +155,7 @@ playeableCards2 trump currentColor hand
 
 randomCard :: Cards -> StdGen -> Card
 randomCard cards gen =
-    let (rand, _) = randomR (0, (length cards)-1) gen -- TODO reset gen
+    let (rand, _) = randomR (0, (length cards)-1) gen
         shuffled = shuffle' cards (length cards) gen
     in head shuffled
 
