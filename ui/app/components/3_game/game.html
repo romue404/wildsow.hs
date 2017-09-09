@@ -21,7 +21,7 @@
               <i class="material-icons">{{getPlayerIcon(player.player.tag)}}</i>
               <span class="">{{player.player.playerName}}</span>
             </div>
-            <img src="images/players/sau0.jpg" alt="" class="circle responsive-img">
+            <img src="images/players/{{player.player.playerName ? player.player.playerName : 'who'}}.jpg" alt="" class="circle responsive-img">
             <div class="img-overlay-bottom">
               <div class="tricksSubroundBox">
                 <span class="">{{player.tricks[0]}}</span>

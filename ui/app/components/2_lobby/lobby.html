@@ -19,12 +19,7 @@
               <div class="col s12">
                 <div class="row valign-wrapper">
                   <div class="col s3">
-                    <img src="images/players/Sau0.jpg" alt="" class="circle responsive-img"
-                         ng-if="player.tag=='HumanPlayer' && $index==0">
-                    <img src="images/players/Sau1.jpg" alt="" class="circle responsive-img"
-                         ng-if="player.tag=='HumanPlayer' && $index!=0">
-                    <img src="images/players/{{player.playerName}}.jpg" alt=""
-                         class="circle responsive-img"  ng-if="player.tag!='HumanPlayer'">
+                    <img src="images/players/{{player.playerName ? player.playerName : 'who'}}.jpg" alt="" class="circle responsive-img">
                     <!-- notice the "circle" class -->
                   </div>
                   <div class="col s9">
