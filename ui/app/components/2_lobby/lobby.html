@@ -70,7 +70,7 @@
                 <div class="chat_submit row">
                     <div class="col s8">
                         <input ng-model="chatInput" placeholder="Write something to chat..."
-                               ng-keyup="$event.keyCode == 13 && sendChat(chatInput)">
+                               ng-keyup="$event.keyCode == 13 && sendChat(chatInput)" class="wildsow-input">
                     </div>
                     <div class="col s4">
                         <button class="btn waves-effect waves-light wildsow-button" ng-click="sendChat(chatInput)">
