@@ -1,0 +1,2 @@
+Die Rechte am code werden in der LICENSE Datei beschrieben.
+Die Screenshots im Ordener "screens", die Beschreibung des Spiels sowie die Namen der Teammitglieder dürfen auf der Vorlesungshomepage veröffentlicht werden.
