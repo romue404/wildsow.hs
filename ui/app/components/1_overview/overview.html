@@ -6,16 +6,17 @@
       <div class="col s12 center-align">
         <h2>Welcome {{ username }}!</h2>
       </div>
-        <button ng-click="logout()"  class="btn waves-effect waves-light wildsow-button overview_logout" id = "overview_logout" style="margin-top:50px">
-            <i class="large material-icons">cancel</i>
-        </button>
     </div>
 
     <div id="games" class="row">
 
       <div class="col s12">
         <div class="label">Filter:</div><input ng-model="filterGameId" placeholder="Nach Spiel Name filtern" id="input-filter">
+      </div>
+    </div>
 
+    <div class="row">
+      <div class="col s6">
         Verfügbare Spiele:
         <ul id="game-list">
           <li ng-repeat="game in games | filter:filterGameId"  ng-click="selectGame(game)" ng-class="{selected: game === selectedGame}">
@@ -23,25 +24,34 @@
           </li>
         </ul>
       </div>
+      <div class="col s6">
+        <br><br>
+        <img src="images/wildsow2.png" class="responsive-img" width="80%" height="auto">
+      </div>
     </div>
 
-          Spiel Name:
-        <div class="row">
+    Spiel Name:
+    <div class="row">
 
-          <div class="col s6">
-            <input ng-model="gameId" placeholder="Name des Spiels eingeben" ng-change="removeErrorMessage()">
-          </div>
-            <div class="col s6">
-                <div class="col s6">
-                    <button ng-click="joinGame()"  class="btn waves-effect waves-light wildsow-button">Beitreten</button>
-                    <p class="error">{{gameNotExists}}</p>
-                </div>
-                <div class="col s6">
-                    <button ng-click="createGame()"  class="btn waves-effect waves-light wildsow-button">Erstellen</button>
-                    <p class="error">{{gameAlreadyExists}}</p>
-                </div>
-            </div>
+      <div class="col s4">
+        <input ng-model="gameId" class="wildsow-input" placeholder="Name des Spiels eingeben" ng-change="removeErrorMessage()">
+      </div>
+      <div class="col s8">
+        <div class="col s4">
+          <button ng-click="joinGame()"  class="btn waves-effect waves-light wildsow-button">Beitreten</button>
+          <p class="error">{{gameNotExists}}</p>
         </div>
+        <div class="col s4">
+          <button ng-click="createGame()"  class="btn waves-effect waves-light wildsow-button">Erstellen</button>
+          <p class="error">{{gameAlreadyExists}}</p>
+        </div>
+
+        <div class="col s3">
+          <button ng-click="logout()"  class="btn waves-effect waves-light wildsow-button">Exit
+          </button>
+        </div>
+      </div>
+    </div>
 
 
 

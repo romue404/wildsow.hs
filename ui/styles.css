@@ -15,8 +15,12 @@
 
 .wildsow-button {
   color: gold;
-  width: 100%;
+  width: 100% !important;
   background-color: darkblue;
+}
+
+.wildsow-button:hover {
+  background-color: mediumblue;
 }
 
 .selected {
@@ -37,4 +41,20 @@
 
 .error {
     color: red;
+}
+
+.wildsow-input {
+  color: gold !important;
+  border: 1px solid #ccc !important;
+  text-align: center;
+}
+
+.wildsow-input:focus {
+  border: 1px solid darkblue !important;
+  box-shadow: none !important;;
+  color: gold;
+}
+
+.wildsow-input:focus + label {
+  color: gold;
 }

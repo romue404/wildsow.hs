@@ -39,28 +39,11 @@
 
 #game-list {
     height:200px;
-    width: 20%;
+    width: 66%;
     overflow:hidden;
     overflow-y:scroll;
 }
 
 #game-list {
     cursor: pointer;
-}
-
-#overview_header {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-#overview_logout {
-    position: absolute;
-    width: 3.5em;
-    right:-32px;
-
-}
-
-#overview_logout i {
-    font-size:1.9rem;
 }
