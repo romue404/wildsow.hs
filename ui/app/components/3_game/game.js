@@ -127,7 +127,8 @@
           .map(card => ({ heapCard: card[2], cardPlayer: card[0] }) )
           .sort(cardSorter);
 
-        $scope.showPrevRound = true;
+        if($scope.currentGameState.phase.includes($scope.username))
+          $scope.showPrevRound = true;
 
       }
     }
