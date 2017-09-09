@@ -1,120 +1,123 @@
 <div id="game">
 
-    <div id="game-content" class="container">
+  <div id="game-content" class="container">
 
-        <div class="row" id="head">
-            <img src="images/wildsow.png" alt="" class="col s2 circle responsive-img" style="height: 40px; width: auto">
-            <h4 class="col s6">
-                Spiel: {{ gameId }}
-            </h4>
-            <h4 class="col s4">
-                Runde: {{ currentGameState.round }}
-            </h4>
-        </div>
+    <div class="row" id="head">
+      <img src="images/wildsow.png" alt="" class="col s2 circle responsive-img" style="height: 40px; width: auto">
+      <h4 class="col s6">
+        Spiel: {{ gameId }}
+      </h4>
+      <h4 class="col s4">
+        Runde: {{ currentGameState.round }}
+      </h4>
+    </div>
 
 
-        <div id="players" class="row">
-            <div class="col s12">
-                <div class="my-flex-container">
-                    <div class="player my-flex-item">
-                        <div class="img-overlay-top">
-                            <i class="material-icons">{{getPlayerIcon(player.player.tag)}}</i>
-                            <span class="">{{player.player.playerName}}</span>
-                        </div>
-                        <img src="images/players/sau0.jpg" alt="" class="circle responsive-img">
-                        <div class="img-overlay-bottom">
-                            <div class="tricksSubroundBox">
-                                <span class="">{{player.tricks[0]}}</span>
-                            </div>
-                            <div class="tricksBox">
-                                <span class="">{{getStiche(player.tricksSubround, currentGameState.round)}}</span>
-                            </div>
-                        </div>
-                        <span class="">Score: {{getScore(player.score)}}</span>
-                    </div>
-
-                    <div ng-repeat="opponent in opponents track by $index" class="player my-flex-item">
-                        <div class="img-overlay-top">
-                            <i class="material-icons">{{getPlayerIcon(opponent.player.tag)}}</i>
-                            <span class="">{{opponent.player.playerName}}</span>
-                        </div>
-                        <img src="images/players/{{opponent.player.playerName}}.jpg" alt="" class="circle responsive-img">
-                        <div class="img-overlay-bottom">
-                            <div class="tricksSubroundBox">
-                                <span class="">{{opponent.tricks[0]}}</span>
-                            </div>
-                            <div class="tricksBox">
-                                <span class="">{{getStiche(opponent.tricksSubround, currentGameState.round)}}</span>
-                            </div>
-                        </div>
-                        <span class="">Score: {{getScore(opponent.score)}}</span>
-                    </div>
-                </div>
-
-                <div class="my-flex-container" ng-if="!showPrevRound">
-                    <div ng-repeat="card in heap track by $index"
-                         class="my-flex-item wildsow-card heap-wildsow-card">
-                        <img class="playersCard " ng-src="{{getCardImgPath(card.heapCard)}}">
-
-                        <span class="">{{card ? card.heapCard.color : ''}}</span>
-                        <span class="">{{card ? card.heapCard.value : ''}}</span>
-
-                    </div>
-                </div>
-
-              <div class="my-flex-container" ng-if="showPrevRound">
-                <div ng-repeat="card in allCardsOfPrevSubround track by $index"
-                     class="my-flex-item wildsow-card heap-wildsow-card">
-                  <img class="playersCard " ng-src="{{getCardImgPath(card.heapCard)}}">
-
-                  <span class="">{{card ? card.heapCard.color : ''}}</span>
-                  <span class="">{{card ? card.heapCard.value : ''}}</span>
-
-                </div>
+    <div id="players" class="row">
+      <div class="col s12">
+        <div class="my-flex-container">
+          <div class="player my-flex-item">
+            <div class="img-overlay-top">
+              <i class="material-icons">{{getPlayerIcon(player.player.tag)}}</i>
+              <span class="">{{player.player.playerName}}</span>
+            </div>
+            <img src="images/players/sau0.jpg" alt="" class="circle responsive-img">
+            <div class="img-overlay-bottom">
+              <div class="tricksSubroundBox">
+                <span class="">{{player.tricks[0]}}</span>
+              </div>
+              <div class="tricksBox">
+                <span class="">{{getStiche(player.tricksSubround, currentGameState.round)}}</span>
               </div>
             </div>
+            <span class="">Score: {{getScore(player.score)}}</span>
+          </div>
+
+          <div ng-repeat="opponent in opponents track by $index" class="player my-flex-item">
+            <div class="img-overlay-top">
+              <i class="material-icons">{{getPlayerIcon(opponent.player.tag)}}</i>
+              <span class="">{{opponent.player.playerName}}</span>
+            </div>
+            <img src="images/players/{{opponent.player.playerName}}.jpg" alt="" class="circle responsive-img">
+            <div class="img-overlay-bottom">
+              <div class="tricksSubroundBox">
+                <span class="">{{opponent.tricks[0]}}</span>
+              </div>
+              <div class="tricksBox">
+                <span class="">{{getStiche(opponent.tricksSubround, currentGameState.round)}}</span>
+              </div>
+            </div>
+            <span class="">Score: {{getScore(opponent.score)}}</span>
+          </div>
         </div>
 
+        <div class="my-flex-container" ng-if="!showPrevRound">
+          <div ng-repeat="card in heap track by $index"
+               class="my-flex-item wildsow-card heap-wildsow-card">
+            <img class="playersCard " ng-src="{{getCardImgPath(card.heapCard)}}">
 
-        <div class="row my-flex-center-container">
-            <div class="" >
-                <span>Farbe</span> <br>
-                <img ng-src="{{getTrumpImg(currentGameState.color)}}" ng-hide="currentGameState.color==null" style="max-height: 80px"> <br>
-            </div>
-            <div style="width: 20px"></div>
-            <div class="" >
-                <span>Trumpf</span> <br>
-                <img ng-src="{{getTrumpImg(currentGameState.trump)}}" style="max-height: 80px"> <br>
-            </div>
+            <span class="">{{card ? card.heapCard.color : ''}}</span>
+            <span class="">{{card ? card.heapCard.value : ''}}</span>
+
+          </div>
         </div>
 
-        <div id="my-wildsow-cards-container" class="row">
-            <div ng-repeat="card in player.hand track by $index" class="wildsow-card my-wildsow-card ">
-                <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)">
-            </div>
+        <div class="my-flex-container" ng-if="showPrevRound">
+          <div ng-repeat="card in allCardsOfPrevSubround track by $index"
+               class="my-flex-item wildsow-card heap-wildsow-card">
+            <img class="playersCard " ng-src="{{getCardImgPath(card.heapCard)}}">
+
+            <span class="">{{card ? card.heapCard.color : ''}}</span>
+            <span class="">{{card ? card.heapCard.value : ''}}</span>
+
+          </div>
         </div>
-
-        <div class="center" ng-show="!showPrevRound || showTellTricks">Game Status: {{currentGameState.phase}}</div><br>
-
-        <div id="tricks" class="row" >
-            <div class="col s8">
-                <div class="row my-show-hide" ng-show="showTellTricks">
-                    <div class="col s2 offset-s2">
-                        <input ng-model="tricks" type="number" step="1">
-                    </div>
-                    <div class="col offset-s0 s7">
-                        <button ng-click="tellTricks()" class="btn pulse waves-effect waves-light wildsow-button">Stiche
-                            angeben
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="col offset-s0 s4">
-                <div ng-show="showPrevRound && !showTellTricks">
-                    <button class="btn pulse waves-effect waves-light wildsow-button" ng-click="next()">Weiter</button>
-                </div>
-            </div>
-        </div>
-
+      </div>
     </div>
+
+
+    <div class="row my-flex-center-container">
+      <div class="" >
+        <span>Farbe</span> <br>
+        <img ng-src="{{getTrumpImg(currentGameState.color)}}" ng-hide="currentGameState.color==null" style="max-height: 80px"> <br>
+      </div>
+      <div style="width: 20px"></div>
+      <div class="" >
+        <span>Trumpf</span> <br>
+        <img ng-src="{{getTrumpImg(currentGameState.trump)}}" style="max-height: 80px"> <br>
+      </div>
+    </div>
+
+    <div class="center" ng-show="!showPrevRound || showTellTricks">
+      Game Status: {{currentGameState.phase}}
+    </div>
+
+    <div id="my-wildsow-cards-container" class="row">
+      <div ng-repeat="card in player.hand track by $index" class="wildsow-card my-wildsow-card ">
+        <img ng-src="{{getCardImgPath(card)}}" ng-click="playCard(card)">
+      </div>
+    </div>
+
+    <div class="row my-show-hide" ng-show="showTellTricks">
+      <div class="col s12">
+        <div class="col s4 offset-s1">
+          <input ng-model="tricks" type="number" step="1" min="0" placeholder="Anzahl der Stiche" class="wildsow-input">
+        </div>
+        <div class="col s4 offset-s1">
+          <button ng-click="tellTricks()" class="btn pulse waves-effect waves-light wildsow-button">
+            Stiche angeben
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col m4 offset-m4">
+        <div ng-show="showPrevRound && !showTellTricks">
+          <button class="btn pulse waves-effect waves-light wildsow-button" ng-click="next()">Weiter</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
