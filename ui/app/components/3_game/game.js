@@ -9,6 +9,7 @@
 
   function GameCtrl($scope, $state, localStorageService, GameState) {
 
+    // variables
     $scope.username = localStorageService.get("username");
     if(!$scope.username) $state.go('login');
     $scope.gameId = localStorageService.get("gameId");
@@ -17,9 +18,8 @@
     $scope.showTellTricks = false;
     $scope.showPrevRound = false;
 
-    // variables
-    $scope.about = "Game Page";
     $scope.currentGameState = GameState.current.state || localStorageService.get("gameState");
+
     updateUi($scope.currentGameState);
 
     $scope.$on('gameStateUpdated', function(event, currentGameState) {
@@ -30,7 +30,6 @@
     $scope.$on('$locationChangeStart', function(event, next, current){
       event.preventDefault();
     });
-
 
     // apis
 
