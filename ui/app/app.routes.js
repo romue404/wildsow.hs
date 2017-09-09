@@ -34,7 +34,6 @@
         templateUrl: 'app/components/4_error/error.html',
         controller: 'ErrorCtrl'
       })
-
     ;
 
   }

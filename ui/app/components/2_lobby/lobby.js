@@ -17,15 +17,15 @@
     if(!$scope.username) $state.go('login');
 
     $scope.isHuman = function (tag) {
-        if(tag) {
-            if(tag == "RandomBot"){
-                return "laptop"
-            }
-            else if (tag == "SmartBot") {
-                return "android"
-            }
-            }
-        return "person";
+      if(tag) {
+        if(tag == "RandomBot"){
+          return "laptop"
+        }
+        else if (tag == "SmartBot") {
+          return "android"
+        }
+      }
+      return "person";
     };
 
     $scope.about = "Lobby Page";
@@ -102,15 +102,8 @@
       GameState.sendActionRequest(action);
     }
 
-    function getBotTypeByName(name) {
-      if(name === botsDescriptions[0]) return "random";
-      //TODO: add future bot types when backend implemented
-      if(name === botsDescriptions[1]) return "smart";
-      if(name === botsDescriptions[2]) return "none";
-      return 'none';
-    }
-
     function sendChat(msg) {
+      if(!msg) return;
       GameState.sendActionRequest({kind: 'chat', userName: $scope.username, message: msg});
       $scope.chatInput = '';
     }
