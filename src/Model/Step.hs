@@ -13,16 +13,22 @@ import Model.Model as Model
 import Data.Maybe (isNothing)
 import Control.Applicative
 import Model.Types
+import System.Random
+
 
 
 ---------- SINGLE FUNCTION TO CALL ----------
 stepGame :: PlayerMove -> GameState -> Either PlayerMoveError GameState
-stepGame move gameState = stepWhileBot $ step' move gameState -- bot hier ueberpruefen
+stepGame move gameState = stepWhileBot $ step' move gameState
+
 
 -- TODO separate gameStates for every move
 stepWhileBot :: Either PlayerMoveError GameState -> Either PlayerMoveError GameState
 stepWhileBot rgs@(Right gs@GameState{phase=GameOver}) = Right gs
-stepWhileBot rgs@(Right gs) =  maybe rgs (stepWhileBot . (flip step' gs)) $ botMove gs
+stepWhileBot rgs@(Right gs) =  maybe rgs (stepWhileBot . (flip step' gs')) $ botMove gs' -- bot hier ueberpruefen
+  where gs' = gs{stdGen=newGen}
+        oldGen = stdGen gs
+        (_,newGen) = next oldGen
 stepWhileBot err@(Left e) = err
 
 
