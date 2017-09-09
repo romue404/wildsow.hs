@@ -27,7 +27,6 @@
 
     $scope.$on('inLobby', function(event, currentGameState) {
       console.log("Caught in lobby");
-      $interval.cancel($scope.intervalPromise);
       $state.go('lobby');
     });
 
@@ -40,6 +39,10 @@
         $scope.gameNotExists = 'Spiel kann nicht beigetreten werden, da es noch nicht existiert';
       }
       $scope.$apply();
+    });
+
+    $scope.$on('$destroy', function iVeBeenDismissed() {
+      $interval.cancel($scope.intervalPromise);
     });
 
     $scope.selectGame = selectGame;
