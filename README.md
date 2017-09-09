@@ -1,8 +1,20 @@
 # wildsow-hs
+Wildsow the cardgame. A student project of LMU Munich.
 
-# Description
-Wildsow a cardgame. Written in Haskell in a Project at LMU.
-![Screen1](http://github.com/romue404/wildsow.hs/screens/screen4.png)
+## Description
+Implementation of the cardgame Wildsow. It is round-based game where 3 up to 6 players have to make tricks in several rounds to gain points.
+Before each round starts each player have to predict his tricks. The players with the right prediction gains extra points. The player with the most points wins the game. 
+
+![Screen1](https://raw.githubusercontent.com/romue404/wildsow.hs/master/screens/screen4.PNG)
+
+## Features
+- Written in haskell.
+- Play against your friends via websocket.
+- Play against challenging bots.
+- Game lobby
+- Chat
+- Unit tests
+- Webclient with Angular
 
 ## Install and run
 Navigate into this projects root directory and enter `stack install`.
