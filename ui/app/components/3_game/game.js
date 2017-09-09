@@ -105,8 +105,8 @@
 
         $scope.opponents = $scope.currentGameState.playerState
           .filter(ps => ps.player.playerName !== $scope.username)
-          .sort((a,b) => (a.player.playerName > b.player.playerName) ? 1
-            : ((b.player.playerName > a.player.playerName) ? -1 : 0));
+          .sort((a,b) => (a.player.playerName.toLowerCase() > b.player.playerName.toLowerCase()) ? 1
+            : ((b.player.playerName.toLowerCase() > a.player.playerName.toLowerCase()) ? -1 : 0));
 
         $scope.heap = $scope.currentGameState.playerState
           .map(ps => ({ heapCard: ps.playedCard, cardPlayer: ps.player.playerName }) )
