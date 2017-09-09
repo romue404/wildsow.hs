@@ -39,7 +39,7 @@
               <i class="material-icons">{{getPlayerIcon(opponent.player.tag)}}</i>
               <span class="">{{opponent.player.playerName}}</span>
             </div>
-            <img src="images/players/{{opponent.player.playerName}}.jpg" alt="" class="circle responsive-img">
+            <img src="images/players/{{opponent.player.playerName ? opponent.player.playerName : 'who'}}.jpg" alt="" class="circle responsive-img">
             <div class="img-overlay-bottom">
               <div class="tricksSubroundBox">
                 <span class="">{{opponent.tricks[0]}}</span>
@@ -58,7 +58,9 @@
                class="my-flex-item wildsow-card heap-wildsow-card">
             <img class="playersCard " ng-src="{{getCardImgPath(card.heapCard)}}">
 
-            <span class="">{{card ? card.cardPlayer : ''}}</span>
+            <!--
+              <span class="">{{card ? card.cardPlayer : ''}}</span>
+             -->
 
           </div>
         </div>
@@ -68,7 +70,9 @@
                class="my-flex-item wildsow-card heap-wildsow-card">
             <img class="playersCard " ng-src="{{getCardImgPath(card.heapCard)}}">
 
+            <!--
             <span class="">{{card ? card.cardPlayer : ''}}</span>
+             -->
 
           </div>
         </div>
@@ -91,6 +95,23 @@
     <div class="center" ng-show="!showPrevRound || showTellTricks">
       Game Status: {{currentGameState.phase}}
     </div>
+
+    <div id="winner" ng-if="gameOver">
+      <div class="my-flex-container">
+        <div class="player my-flex-item" style="border: 3px solid gold">
+          <div class="img-overlay-top">
+            <i class="material-icons">{{getPlayerIcon(winner.player.tag)}}</i>
+            <span class="">{{winner.player.playerName}}</span>
+          </div>
+          <img src="images/players/{{winner.player.playerName ? winner.player.playerName : 'who'}}.jpg"
+               alt="" class="circle responsive-img">
+          <span style="color:gold">hat</span>
+          <span style="color:gold">Gewonnen!</span>
+          <span>Score: {{getScore(winner.score)}}</span><br>
+        </div>
+      </div>
+    </div>
+
 
     <div id="my-wildsow-cards-container" class="row">
       <div ng-repeat="card in player.hand track by $index" class="wildsow-card my-wildsow-card ">
