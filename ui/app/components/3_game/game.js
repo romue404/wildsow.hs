@@ -17,6 +17,7 @@
 
     $scope.showTellTricks = false;
     $scope.showPrevRound = false;
+    $scope.gameOver = false;
 
     $scope.currentGameState = GameState.current.state || localStorageService.get("gameState");
 
@@ -130,7 +131,23 @@
         if($scope.currentGameState.phase.includes($scope.username))
           $scope.showPrevRound = true;
 
+        if($scope.currentGameState.phase.toLowerCase().includes('game over')) {
+          $scope.gameOver = true;
+          let playersRankedByScore = $scope.currentGameState.playerState
+            .sort(playerSorterByScore);
+          $scope.winner = playersRankedByScore[0];
+        }
+
       }
+    }
+
+    function playerSorterByScore(ps1, ps2) {
+      let ps1Score = $scope.getScore(ps1.score);
+      let ps2Score = $scope.getScore(ps2.score);
+
+      if(ps1Score > ps2Score) return -1;
+      if(ps1Score < ps2Score) return 1;
+      return 0;
     }
 
     function cardSorter(card1, card2) {
