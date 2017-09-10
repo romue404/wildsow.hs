@@ -4,7 +4,7 @@
   // start a small webserver
   // ui>python -m SimpleHTTPServer 8000
 
-  var baseUrl = 'ws://localhost:5000';
+  var baseUrl = 'ws://85.214.111.42:5000';
 
   angular
     .module('wildsow')
