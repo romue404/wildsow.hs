@@ -92,7 +92,7 @@ instance ToJSON ClientMessage where
 gameSocket :: IO()
 gameSocket = do
   games <-  atomically $ newTVar (Map.empty:: Games)
-  WS.runServer "127.0.0.1" 5000 $ app games
+  WS.runServer "85.214.111.42" 5000 $ app games
 
 app :: TVar (NetworkManagement.GameChannels GameId) -> WS.PendingConnection ->  IO ()
 app games pending = do
