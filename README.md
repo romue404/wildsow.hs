@@ -26,6 +26,14 @@ Run bower install in folder "ui/".
 To run the ui you need to start a webserver. You can use a simple python webserver with "python -m SimpleHTTPServer 8000".
 To play the game, now open "localhost:8000/index.html" in your browser. Done :-). 
 
+### On a Linux Server example
+```
+stack install
+nohup wildsow-hs-exe &
+cd ui
+nohup http-server &
+```
+
 ## Additional Informations
 For copyright information see LICENSE and copyright.txt.
  
